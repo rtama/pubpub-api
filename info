@@ -1,0 +1,7 @@
+RAML
+	Using Osprey, upon receiving a request tells if it is in the raml
+
+Swagger
+	(IS a spec with lots of tools)
+	Generates an API from JSON file
+	

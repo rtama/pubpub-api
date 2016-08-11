@@ -1,0 +1,29 @@
+#%RAML 0.8
+title: PubPub
+version: v1.0
+
+schemas:
+    - user: |
+        {
+            "title": "User Schema",
+            "type": "object",
+            "properties" : {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        }
+
+
+protocols: [ HTTP ]
+baseUri: http://localhost:9876
+/users:
+  get:
+  /new:
+    post:
+      body:
+        application/json:
+          schema: user
