@@ -5,6 +5,8 @@ var app = express()
 
 var path = join(__dirname, 'assets', 'api.raml')
 
+let users = ['hassan' , 'john']
+
 // Be careful, this uses all middleware functions by default. You might just
 // want to use each one separately instead - `osprey.server`, etc.
 osprey.loadFile(path)
@@ -29,7 +31,7 @@ osprey.loadFile(path)
 
   app.get('/users/', function (req, res, next) {
     res.setHeader('Content-Type', 'application/json')
-    res.send('{ "Yo" : "You"}')
+    res.send('{ "Yo" : "' + users[0] + '"}')
     // req.form.on('error', next)
   })
 

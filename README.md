@@ -22,3 +22,8 @@ application/json:
         }
       }
     }
+
+
+### Useful resources
+
+https://github.com/raml2html/raml2html/blob/master/examples/github.raml
