@@ -1,6 +1,6 @@
 To generate documentation run
 
-raml2html api.raml > example.html
+raml2html -t template/template.nunjucks api.raml > index.html
 
 This is dependent on raml2html which can be installed with homebrew.
 
@@ -22,6 +22,10 @@ application/json:
         }
       }
     }
+
+### Useful scripts
+
+fswatch -0 template/template.nunjucks  | (xargs -0 -n1 -I{} raml2html -t template/template.nunjucks api.raml > index.html)
 
 
 ### Useful resources
