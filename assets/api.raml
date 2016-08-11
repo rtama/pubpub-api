@@ -1,5 +1,9 @@
 #%RAML 0.8
 title: PubPub
+documentation:
+  - title: Welcome
+    content: |
+      hi
 version: v1.0
 protocols: [ HTTP ]
 baseUri: http://localhost:9876
@@ -10,6 +14,8 @@ mediaType: application/json
     post:
     delete:
     get:
+      description: |
+        get the user you deserve
       queryParameters:
         name:
           type: string
