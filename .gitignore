@@ -4,3 +4,4 @@ node_modules
 .info
 *.swp
 *.swo
+npm-debug.log

@@ -17,7 +17,7 @@ osprey.loadFile(path)
     next();
   })
 
-  app.post('/users/new/', function (req, res, next) {
+  app.post('/users/{id}/', function (req, res, next) {
     console.log("Got a hit son " + req.body.name)
 
     // console.log(req.body.)
@@ -31,6 +31,16 @@ osprey.loadFile(path)
     res.setHeader('Content-Type', 'application/json')
     res.send('{ "Yo" : "You"}')
     // req.form.on('error', next)
+  })
+
+  app.post('/users/new/', function (req, res, next) {
+    console.log("Got a hit son new user " + req.body.name)
+
+    // console.log(req.body.)
+
+    // req.body.on('error', next)
+
+    // req.pipe(req.form)
   })
 
   app.listen(9876)

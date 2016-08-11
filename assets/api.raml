@@ -1,36 +1,27 @@
 #%RAML 0.8
 title: PubPub
 version: v1.0
-
-schemas:
-    - user: |
-        {
-            "title": "User Schema",
-            "type": "object",
-            "properties" : {
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        }
-
-
 protocols: [ HTTP ]
 baseUri: http://localhost:9876
-mediaType: [ application/json ]
+mediaType: application/json
 /users:
-  {id}:
+  /{id}:
+    put:
+    post:
+    delete:
     get:
-      responses:
-        200:
-          body:
-            application/json:
-              schema: user
+      queryParameters:
+        name:
+          type: string
   /new:
     post:
-      body:
-        application/json:
-          schema: user
+      queryParameters:
+        name:
+          type: string
+        id:
+          type: integer
+/lists:
+  get:
+  put:
+  post:
+  delete:
