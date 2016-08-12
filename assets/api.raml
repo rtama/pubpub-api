@@ -54,7 +54,29 @@ mediaType: application/json
 /journal:
   /{slug}:
     get:
-      # should return journal details
+      description: |
+        returns information about the journal with the given slug
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "journalName": "",
+                  "description": "",
+                  "about": "",
+                  "website": "",
+                  "twitter": "",
+                  "facebook": "",
+                  "collections": []
+                }
+        404:
+          body:
+            application/json:
+              example: |
+              {
+              
+              }
     /featured:
       get:
     /articles:

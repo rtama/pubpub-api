@@ -29,15 +29,13 @@ exports.findAllJournals = function(db, callback) {
   });
 }
 exports.findJournalBySlug = function(slug, callback) {
-  // Get the documents collection
-  // Find some documents
-  journals.findOne({slug: slug}, function(err, journal) {
+  journals.findOne({slug: slug}, ['journalName', 'description', 'collections', 'about', 'website', 'twitter', 'facebook', '-_id'], function(err, journal) {
     if (err){
-      console.log("Dammit an error")
+      console.log("Dammit an error " +err)
+      callback(err)
     }
+    console.log("Found a journal " + JSON.stringify(journal))
 
-    console.log("Found the following records: " + journal);
-
-    callback(journal);
+    callback(null, journal);
   });
 };

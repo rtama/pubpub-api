@@ -58,10 +58,17 @@ osprey.loadFile(path)
 
   app.get('/journal/:slug', function (req, res, next) {
     res.setHeader('Content-Type', 'application/json')
-    dbcalls.findJournalBySlug(function(journal){
-      console.log("A journal " + journal)
+    dbcalls.findJournalBySlug(req.params.slug, function(err, journal){
+      console.log("A journal " + journal + " err? " + err)
+      if (err || !journal){
+        console.log("An err")
+        res.send(404)
+      } else {
+
+        res.send(journal)
+      }
     })
-    res.send('{ "Yo" : "yoo"}')
+    // res.send('{ "Yo" : "yoo"}')
     // req.form.on('error', next)
   })
 
