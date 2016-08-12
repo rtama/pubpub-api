@@ -1,3 +1,10 @@
+### TO-DO
+
+Determine best format for responding with errors
+
+### INfo
+
+
 To generate documentation run
 
 raml2html -t template/template.nunjucks api.raml > index.html

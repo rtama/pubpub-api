@@ -176,7 +176,7 @@
         <div class="col-sm-3 hidden-xs">
           <div id="sidebar" class="hidden-print affix" role="complementary">
             <div class="logo-header">
-              <a href="https://officernd.com" class="brand-logo">
+              <a href="https://pubpub.org" class="brand-logo">
                   <img src="https://jake.pubpub.org/unsafe/150x150/https://s3.amazonaws.com/pubpub-upload/users/1451933144166.jpg" alt="OfficeR&amp;D">
               </a>
               <a href="#"><h3 class="api-header">API</h3></a>

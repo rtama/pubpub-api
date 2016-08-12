@@ -2,8 +2,12 @@ require('./config.js');
 
 // const MongoClient = require('mongodb').MongoClient
 
-const db = require('monk')(process.env.MONGO_URI)
-const journals = db.get('journals')
+// const db = require('monk')()
+const mongoose = require('mongoose');
+mongoose.connect(process.env.MONGO_URI);
+const Journal = require('./models').Journal;
+
+// const journals = db.get('journals')
 
 //
 // MongoClient.connect(, function(err, db) {
