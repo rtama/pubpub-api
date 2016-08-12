@@ -62,7 +62,7 @@ osprey.loadFile(path)
       console.log("A journal " + journal + " err? " + err)
       if (err || !journal){
         console.log("An err")
-        res.send(404)
+        res.status(404).send({error:"Journal with given slug not found"});
       } else {
 
         res.send(journal)
