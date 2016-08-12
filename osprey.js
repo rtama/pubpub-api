@@ -58,19 +58,27 @@ osprey.loadFile(path)
 
   app.get('/journal/:slug', function (req, res, next) {
     res.setHeader('Content-Type', 'application/json')
-    dbcalls.findJournalBySlug(req.params.slug, function(err, journal){
+    dbcalls.findJournal(req.params.slug, function(err, journal){
       console.log("A journal " + journal + " err? " + err)
       if (err || !journal){
         console.log("An err")
-        res.status(404).send({error:"Journal with given slug not found"});
+        res.status(404).send({error: err || "Not found"});
       } else {
-
         res.send(journal)
       }
     })
-    // res.send('{ "Yo" : "yoo"}')
-    // req.form.on('error', next)
   })
+
+    app.get('/journal/:slug/collections/', function (req, res, next) {
+      res.setHeader('Content-Type', 'application/json')
+      dbcalls.findJournalCollections(req.params.slug, function(err, collections){
+        if (err || !collections){
+          res.status(404).send({error: err || "Not found"});
+        } else {
+          res.send(collections)
+        }
+      })
+    })
 
   app.listen(9876)
 })

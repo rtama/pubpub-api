@@ -33,13 +33,23 @@ const Journal = require('./models').Journal;
 //   });
 // }
 //'journalName, description, collections, about, website, twitter, facebook, -_id',
-exports.findJournalBySlug = function(slug, callback) {
+exports.findJournal = function(slug, callback) {
   Journal.findOne({slug: slug},  'journalName -_id description collections about website twitter facebook',function(err, journal) {
     if (err){
-      console.log("Dammit an error " +err)
       callback(err)
     }
-    console.log("Found a journal " + JSON.stringify(journal))
+
+    callback(null, journal);
+  });
+};
+
+exports.findJournalCollections = function(slug, callback) {
+  Journal.findOne({slug: slug})
+  .populate({path: 'collections'}) //, select: 'name firstName lastName username thumbnail'
+  .exec(function(err, journal) {
+    if (err){
+      callback(err)
+    }
 
     callback(null, journal);
   });

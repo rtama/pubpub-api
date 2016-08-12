@@ -2,8 +2,7 @@
 
 Determine best format for responding with errors
 
-### INfo
-
+### Info
 
 To generate documentation run
 
@@ -11,6 +10,9 @@ raml2html -t template/template.nunjucks api.raml > index.html
 
 This is dependent on raml2html which can be installed with homebrew.
 
+Abao is pretty cool for testing
+
+https://github.com/cybertk/abao
 
 One example request:
 

@@ -76,10 +76,20 @@ mediaType: application/json
             application/json:
               example: |
                 {
-                  "error" : "Journal with given slug not found"
+                  "error" : "Not found"
                 }
     /featured:
       get:
+        description: |
+          returns the featured pubs of a journal.
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  {
+                    "idktbh" :""
+                  }
     /articles:
       get:
     /collections:
