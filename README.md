@@ -27,8 +27,8 @@ application/json:
 
 Automatically generates the documentation from the raml and the template whenever the template is edited.
 
-fswatch -0 template/template.nunjucks  | (xargs -0 -n1 -I{} raml2html -t template/template.nunjucks api.raml -o index.html)
-
+fswatch -0 api.raml template/template.nunjucks   | (xargs -0 -n1 -I{} raml2html -t template/template.nunjucks api.raml -o index.html)
+  
 ### Useful resources
 
 https://github.com/raml2html/raml2html/blob/master/examples/github.raml

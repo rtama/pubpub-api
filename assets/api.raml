@@ -9,7 +9,11 @@ protocols: [ HTTP ]
 baseUri: http://localhost:9876
 mediaType: application/json
 /users:
+  description: |
+    get all the users bro
   get:
+    description: |
+      no rly
   /{id}:
     put:
     post:
@@ -27,8 +31,19 @@ mediaType: application/json
           type: string
         id:
           type: integer
-/lists:
-  get:
-  put:
-  post:
-  delete:
+
+/journals:
+  description: |
+    Journals API description
+  /{slug}:
+    get:
+      # should return journal details
+    /featured:
+      get:
+    /articles:
+      get:
+    /collections:
+      get:
+    /collection:
+      /{id}:
+        get:

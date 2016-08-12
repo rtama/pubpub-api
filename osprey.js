@@ -31,7 +31,7 @@ osprey.loadFile(path)
 
   app.get('/users/', function (req, res, next) {
     res.setHeader('Content-Type', 'application/json')
-    res.send('{ "Yo" : "' + users[0] + '"}')
+    res.send('{ "Yo" : "' + users + '"}')
     // req.form.on('error', next)
   })
 
