@@ -101,8 +101,6 @@
         padding: 10px;
       }
 
-      .top-resource-description {
-      }
 
       .resource-description {
         margin-bottom: 15px;

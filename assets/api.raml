@@ -32,26 +32,7 @@ mediaType: application/json
           type: string
         id:
           type: integer
-/journals:
-  /get:
-    description: |
-      Returns all journals
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                {
-                  {
-                    "slug": "",
-                    "name": ""
-                  },
-                  {
-                    "slug": "",
-                    "name": ""
-                  },
-                }
+
 /journal:
   /{slug}:
     get:
@@ -97,3 +78,25 @@ mediaType: application/json
     /collection:
       /{id}:
         get:
+/journals:
+  description: |
+    Hi
+
+  get:
+    description: |
+      Returns all journals
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                {
+                  "slug": "",
+                  "name": ""
+                },
+                {
+                  "slug": "",
+                  "name": ""
+                },
+              }

@@ -45,7 +45,7 @@ exports.findJournal = function(slug, callback) {
 
 exports.findJournalCollections = function(slug, callback) {
   Journal.findOne({slug: slug})
-  .populate({path: 'collections'}) //, select: 'name firstName lastName username thumbnail'
+  .populate({path: 'collections', select: 'title '})
   .exec(function(err, journal) {
     if (err){
       callback(err)
