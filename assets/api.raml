@@ -4,9 +4,9 @@ documentation:
   - title: Introduction
     content: |
       This is the introduction PubPub API
-version: v1.0
+version: v1
 protocols: [ HTTP ]
-baseUri: http://localhost:9876
+baseUri: http://localhost:9876/{version}
 mediaType: application/json
 /users:
   description: |
@@ -32,8 +32,26 @@ mediaType: application/json
         id:
           type: integer
 /journals:
-  description: |
-    Journals API description
+  /get:
+    description: |
+      Returns all journals
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  {
+                    "slug": "",
+                    "name": ""
+                  },
+                  {
+                    "slug": "",
+                    "name": ""
+                  },
+                }
+/journal:
   /{slug}:
     get:
       # should return journal details

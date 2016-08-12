@@ -3,7 +3,7 @@ const express = require('express')
 const join = require('path').join
 const app = express()
 
-const dbcalls = require('dbcalls')
+const dbcalls = require('./dbcalls')
 
 const path = join(__dirname, 'assets', 'api.raml')
 
@@ -21,9 +21,9 @@ osprey.loadFile(path)
     next();
   })
 
-  app.post('/users/{id}/', function (req, res, next) {
-    console.log("Got a hit son " + req.body.name)
-
+  app.get('/users/:id/', function (req, res, next) {
+    // console.log("Got a hit son " + req.body.name)
+    console.log("ID: " + req.params.id)
     // console.log(req.body.)
 
     // req.body.on('error', next)
@@ -53,6 +53,15 @@ osprey.loadFile(path)
 
     })
     res.send('{ "Yo" : "' + users + '"}')
+    // req.form.on('error', next)
+  })
+
+  app.get('/journal/:slug', function (req, res, next) {
+    res.setHeader('Content-Type', 'application/json')
+    dbcalls.findJournalBySlug(function(journal){
+      console.log("A journal " + journal)
+    })
+    res.send('{ "Yo" : "yoo"}')
     // req.form.on('error', next)
   })
 
