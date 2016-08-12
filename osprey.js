@@ -1,16 +1,18 @@
-var osprey = require('osprey')
-var express = require('express')
-var join = require('path').join
-var app = express()
+const osprey = require('osprey')
+const express = require('express')
+const join = require('path').join
+const app = express()
 
-var path = join(__dirname, 'assets', 'api.raml')
+const dbcalls = require('dbcalls')
+
+const path = join(__dirname, 'assets', 'api.raml')
 
 let users = ['hassan' , 'john']
 
-// Be careful, this uses all middleware functions by default. You might just
-// want to use each one separately instead - `osprey.server`, etc.
+
 osprey.loadFile(path)
 .then(function (middleware) {
+
   app.use(middleware)
 
   app.use(function (err, req, res, next) {
@@ -43,6 +45,15 @@ osprey.loadFile(path)
     // req.body.on('error', next)
 
     // req.pipe(req.form)
+  })
+
+  app.get('/journals/', function (req, res, next) {
+    res.setHeader('Content-Type', 'application/json')
+    dbcalls.findAllJournals(function(){
+
+    })
+    res.send('{ "Yo" : "' + users + '"}')
+    // req.form.on('error', next)
   })
 
   app.listen(9876)
