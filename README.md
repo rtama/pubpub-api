@@ -14,7 +14,6 @@ Then run:
 npm install
 npm run start
 npm run build-docs
-
 ```
 `npm run buid-docs` will need to be run each time the template or api.raml is changed.
 

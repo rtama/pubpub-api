@@ -3,37 +3,82 @@ title: PubPub
 documentation:
   - title: Introduction
     content: |
-      This is the introduction PubPub API
+      The goal of this API is to give access to all of the publicly available resources on PubPub. Accessing resources or actions that require authentication will be supported soon.
 version: v1
 protocols: [ HTTPS ]
 baseUri: https://api.pubpub.org
 mediaType: application/json
 
-/users:
+/user:
   description: |
-    get all the users bro
-  get:
-    description: |
-      no rly
-  /{id}:
-    put:
-    post:
-    delete:
+    Routes to access data about PubPub Users
+  /{username}:
     get:
       description: |
-        get the user you deserve
-      queryParameters:
-        name:
-          type: string
-  /new:
-    post:
-      queryParameters:
-        name:
-          type: string
-        id:
-          type: integer
+        Get user by username. Returns same content as /user/{id}.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "_id": "980ca098189",
+                  "username": "username",
+                  "firstName": "Jane",
+                  "lastName": "Doe",
+                  "name": "Jane Doe",
+                  "image": "https://assets.pubpub.org/picture.jpg",
+                  "bio": "I am a porcupine",
+                  "publicEmail": "jane@doe.com",
+                  "github": "janeCodes",
+                  "orcid": "123-123-123-123",
+                  "twitter": "janedoe",
+                  "website": "http://www.example.com",
+                  "googleScholar": "janesGoogleURI",
+                }
+        404:
+          body:
+            application/json:
+              example: |
+                {
+                  "error" : "User not found"
+                }
+  /{id}:
+    get:
+      description: |
+        Get user by id. Returns same content as /user/{username}.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "_id": "980ca098189",
+                  "username": "username",
+                  "firstName": "Jane",
+                  "lastName": "Doe",
+                  "name": "Jane Doe",
+                  "image": "https://assets.pubpub.org/picture.jpg",
+                  "bio": "I am a porcupine",
+                  "publicEmail": "jane@doe.com",
+                  "github": "janeCodes",
+                  "orcid": "123-123-123-123",
+                  "twitter": "janedoe",
+                  "website": "http://www.example.com",
+                  "googleScholar": "janesGoogleURI",
+                }
+        404:
+          body:
+            application/json:
+              example: |
+                {
+                  "error" : "User not found"
+                }
+
 
 /journal:
+  description: |
+    Routes to access data about PubPub Journals
   /{slug}:
     get:
       description: |
@@ -78,25 +123,3 @@ mediaType: application/json
     /collection:
       /{id}:
         get:
-/journals:
-  description: |
-    Hi
-
-  get:
-    description: |
-      Returns all journals
-    responses:
-      200:
-        body:
-          application/json:
-            example: |
-              {
-                {
-                  "slug": "",
-                  "name": ""
-                },
-                {
-                  "slug": "",
-                  "name": ""
-                },
-              }

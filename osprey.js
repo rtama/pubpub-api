@@ -1,3 +1,4 @@
+require('./config.js');
 const osprey = require('osprey')
 const express = require('express')
 const join = require('path').join
@@ -5,10 +6,13 @@ const app = express()
 
 const dbcalls = require('./dbcalls')
 
-const path = join(__dirname, 'assets', 'api.raml')
+const path = join(__dirname, 'api.raml')
 
-let users = ['hassan' , 'john']
-
+const mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
+mongoose.connect(process.env.MONGO_URI);
+const Journal = require('./models').Journal;
+const User = require('./models').User;
 
 osprey.loadFile(path)
 .then(function (middleware) {
@@ -21,14 +25,24 @@ osprey.loadFile(path)
     next();
   })
 
-  app.get('/users/:id/', function (req, res, next) {
-    // console.log("Got a hit son " + req.body.name)
-    console.log("ID: " + req.params.id)
-    // console.log(req.body.)
-
-    // req.body.on('error', next)
-
-    // req.pipe(req.form)
+  app.get('/user/:id/', function (req, res, next) {
+    // Set the query based on whether the params.id is a valid ObjectID;
+    const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
+    const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'username': req.params.id} ]} : { 'username': req.params.id };
+    
+    // Set the parameters we'd like to return
+    const select = {_id: 1, username: 1, firstName: 1, lastName: 1, name: 1, image: 1, bio: 1, publicEmail: 1, github: 1, orcid: 1, twitter: 1, website: 1, googleScholar: 1};
+    
+    // Make db call
+    User.findOne(query, select).lean().exec()
+    .then(function(userResult) {
+      if (!userResult) { throw new Error('User not found'); }
+      
+      return res.status(200).json(userResult);
+    })
+    .catch(function(error) {
+      return res.status(404).json('User not found');
+    });
   })
 
   app.get('/users/', function (req, res, next) {
