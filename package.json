@@ -5,7 +5,8 @@
   "main": "osprey.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node osprey.js"
+    "start": "node osprey.js",
+    "build-docs": "raml2html -t template/template.nunjucks api.raml > index.html"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
     "mongodb": "^2.2.5",
     "mongoose": "^4.5.8",
     "osprey": "^0.3.2",
-    "passport-local-mongoose": "^4.0.0"
+    "passport-local-mongoose": "^4.0.0",
+    "raml2html": "^3.0.0"
   }
 }

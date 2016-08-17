@@ -17,7 +17,7 @@ osprey.loadFile(path)
 
   app.use(function (err, req, res, next) {
     // Handle errors.
-    console.log("An error oh noee " +err + ", " +next)
+    console.log("Error! " + err + ", " + next)
     next();
   })
 

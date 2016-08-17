@@ -1,14 +1,29 @@
+# Introduction
+
+The goal of this API is to give access to all of the publicly available resources on PubPub.
+
+Accessing resources or actions that require authentication will be supported soon.
+
+# Running Locally
+
+First, create a `config.js` file to configure the MongoDB URI. See `config.sample.js` for an example.
+
+Then run:
+
+```
+npm install
+npm run start
+npm run build-docs
+
+```
+`npm run buid-docs` will need to be run each time the template or api.raml is changed.
+
+
 ### TO-DO
 
 Determine best format for responding with errors
 
 ### Info
-
-To generate documentation run
-
-raml2html -t template/template.nunjucks api.raml > index.html
-
-This is dependent on raml2html which can be installed with homebrew.
 
 Abao is pretty cool for testing
 
