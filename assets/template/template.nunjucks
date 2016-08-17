@@ -61,6 +61,9 @@
         float: none;
         margin-right: 6px;
       }
+      .panel {
+        border-radius: 1px;
+      }
       .panel-title > .methods {
         float: right;
       }
@@ -167,16 +170,28 @@
         word-wrap: normal;
         white-space: pre;
       }
+      .nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus {
+        background-color: #2C2A2B;
+      }
+      .nav>li>a {
+        border-radius: 1px;
+        padding: 5px 15px;
+      }
+      a {
+        color: #2C2A2B;
+      }
+      .alert-info {
+        background-color: #F3F3F4;
+        border-color: #BBBDC0;
+        color: #363736;
+        border-radius: 1px;
+      }
     </style>
   </head>
 
   <body data-spy="scroll" data-target="#sidebar">
     <div class="container">
       <div class="row">
-			HASSANSHASSANSHAS
-      sweet
-
-
 
         <div class="col-md-9" role="main">
           <div class="page-header">
@@ -185,9 +200,9 @@
 
             {% for chapter in documentation %}
               <h3 id="{{ chapter.uniqueId }}"><a href="#{{ chapter.uniqueId }}">{{ chapter.title }}</a></h3>
-{% markdown %}
-{{ chapter.content }}
-{% endmarkdown %}
+              {% markdown %}
+              {{ chapter.content }}
+              {% endmarkdown %}
             {% endfor %}
           </div>
 
@@ -200,9 +215,9 @@
               <div class="panel-body">
                 {% if resource.description %}
                   <div class="top-resource-description">
-{% markdown %}
-{{ resource.description }}
-{% endmarkdown %}
+                  {% markdown %}
+                  {{ resource.description }}
+                  {% endmarkdown %}
                   </div>
                 {% endif %}
 
