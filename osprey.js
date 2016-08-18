@@ -1,5 +1,3 @@
-require('babel-register');
-
 if (process.env.NODE_ENV !== 'production') {
 	require('./config.js');
 }
@@ -34,6 +32,8 @@ osprey.loadFile(path)
 	/* /user/{username}  */
 	/* /user/{id}        */
 	app.get('/user/:id/', function (req, res, next) {
+		const x = {fish: 5};
+		const y = {...x};
 		// Set the query based on whether the params.id is a valid ObjectID;
 		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
 		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'username': req.params.id} ]} : { 'username': req.params.id };
