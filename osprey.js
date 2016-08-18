@@ -1,6 +1,6 @@
 require('babel-register');
 
-if (process.env.NODE_ENV !== 'production' && !process.env.TESTING) {
+if (process.env.NODE_ENV !== 'production') {
 	require('./config.js');
 }
 
