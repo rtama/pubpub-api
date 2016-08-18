@@ -76,39 +76,6 @@ mediaType: application/json
                 {
                   "error" : "Journal not found"
                 }
-    /collections:
-      get:
-        description: |
-          Get journal collection data by id. The Journal's _id can alternatively be used instead of the slug.
-        responses:
-          200:
-            body:
-              application/json:
-                example: |
-                  {
-                    "_id": "980ca098189",
-                    "journalName": "Super Journal",
-                    "slug": "superjournal",
-                    "collections": [
-                      {
-                        "_id": "980ca098188",
-                        title: "My Collection",
-                        createDate: "2016-08-08T14:21:32.977Z"
-                      },
-                      {
-                        "_id": "980ca098187",
-                        title: "Another Collection",
-                        createDate: "2016-07-08T14:21:31.977Z"
-                      }
-                    ]
-                  }
-          404:
-            body:
-              application/json:
-                example: |
-                  {
-                    "error" : "Journal not found"
-                  }
     /featured:
       get:
         description: |
@@ -118,29 +85,20 @@ mediaType: application/json
             body:
               application/json:
                 example: |
-                  {
-                    "_id": "980ca098189",
-                    "journalName": "Super Journal",
-                    "slug": "superjournal",
-                    "featured": [
-                      {
-                        "_id": "980ca098188",
-                        createDate: "Date atom was featured."
-                        metadata.collections: ["Array of collections this atom has been added to"]
-                        atom: {
-                          _id: "56964b73849fe43d00b7d080",
-                          slug: "myDocument",
-                          title: "Awesome document",
-                          description: "Description of awesome document",
-                          previewImage: "https://assets.pubpub.org/_site/pub.png",
-                          type: "document",
-                          createDate: "2016-01-13T13:04:51.764Z",
-                          lastUpdated: "2016-02-23T03:55:44.231Z"
-
-                        }
-                      }
-                    ]
-                  }
+                  [
+                    {
+                      _id: "56964b73849fe43d00b7d080",
+                      slug: "myDocument",
+                      title: "Awesome document",
+                      description: "Description of awesome document",
+                      previewImage: "https://assets.pubpub.org/_site/pub.png",
+                      type: "document",
+                      createDate: "2016-01-13T13:04:51.764Z",
+                      lastUpdated: "2016-02-23T03:55:44.231Z",
+                      featureDate: "Date atom was featured."
+                      collections: ["Array of collections this atom has been added to"]
+                    }
+                  ]
           404:
             body:
               application/json:
@@ -148,3 +106,60 @@ mediaType: application/json
                   {
                     "error" : "Journal not found"
                   }
+    /collections:
+      get:
+        description: |
+          Get journal collection data by id. The Journal's _id can alternatively be used instead of the slug.
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  [
+                    {
+                      "_id": "980ca098188",
+                      title: "My Collection",
+                      createDate: "2016-08-08T14:21:32.977Z"
+                    },
+                    {
+                      "_id": "980ca098187",
+                      title: "Another Collection",
+                      createDate: "2016-07-08T14:21:31.977Z"
+                    }
+                  ]
+          404:
+            body:
+              application/json:
+                example: |
+                  {
+                    "error" : "Journal not found"
+                  }
+    /collection/{collectionID}:
+      get:
+        description: |
+          Get data for all atoms in a specific collection. The Journal's _id can alternatively be used instead of the slug.
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  [
+                    {
+                      _id: "56964b73849fe43d00b7d080",
+                      slug: "myDocument",
+                      title: "Awesome document",
+                      description: "Description of awesome document",
+                      previewImage: "https://assets.pubpub.org/_site/pub.png",
+                      type: "document",
+                      createDate: "2016-01-13T13:04:51.764Z",
+                      lastUpdated: "2016-02-23T03:55:44.231Z"
+                    }
+                  ]
+          404:
+            body:
+              application/json:
+                example: |
+                  {
+                    "error" : "Journal not found"
+                  }
+    

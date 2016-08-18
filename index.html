@@ -204,49 +204,51 @@
 </code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
   "error" : "Journal not found"
 }
-</code></pre></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_journal__slug__collections"><span class="parent">/journal/{slug}</span>/collections</a> <span class="methods"><a href="#journal__slug__collections_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_journal__slug__collections" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#journal__slug__collections_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get journal collection data by id. The Journal&#39;s _id can alternatively be used instead of the slug.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="journal__slug__collections_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/journal/{slug}</span>/collections</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get journal collection data by id. The Journal&#39;s _id can alternatively be used instead of the slug.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#journal__slug__collections_get_request" data-toggle="tab">Request</a></li><li><a href="#journal__slug__collections_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="journal__slug__collections_get_request"><h3>URI Parameters</h3><ul><li><strong>slug</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="journal__slug__collections_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  "_id": "980ca098189",
-  "journalName": "Super Journal",
-  "slug": "superjournal",
-  "collections": [
-    {
-      "_id": "980ca098188",
-      title: "My Collection",
-      createDate: "2016-08-08T14:21:32.977Z"
-    },
-    {
-      "_id": "980ca098187",
-      title: "Another Collection",
-      createDate: "2016-07-08T14:21:31.977Z"
-    }
-  ]
-}
+</code></pre></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_journal__slug__featured"><span class="parent">/journal/{slug}</span>/featured</a> <span class="methods"><a href="#journal__slug__featured_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_journal__slug__featured" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#journal__slug__featured_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get data for all atoms featured by the journal. The Journal&#39;s _id can alternatively be used instead of the slug.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="journal__slug__featured_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/journal/{slug}</span>/featured</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get data for all atoms featured by the journal. The Journal&#39;s _id can alternatively be used instead of the slug.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#journal__slug__featured_get_request" data-toggle="tab">Request</a></li><li><a href="#journal__slug__featured_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="journal__slug__featured_get_request"><h3>URI Parameters</h3><ul><li><strong>slug</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="journal__slug__featured_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>[
+  {
+    _id: "56964b73849fe43d00b7d080",
+    slug: "myDocument",
+    title: "Awesome document",
+    description: "Description of awesome document",
+    previewImage: "https://assets.pubpub.org/_site/pub.png",
+    type: "document",
+    createDate: "2016-01-13T13:04:51.764Z",
+    lastUpdated: "2016-02-23T03:55:44.231Z",
+    featureDate: "Date atom was featured."
+    collections: ["Array of collections this atom has been added to"]
+  }
+]
 </code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
   "error" : "Journal not found"
 }
-</code></pre></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_journal__slug__featured"><span class="parent">/journal/{slug}</span>/featured</a> <span class="methods"><a href="#journal__slug__featured_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_journal__slug__featured" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#journal__slug__featured_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get data for all atoms featured by the journal. The Journal&#39;s _id can alternatively be used instead of the slug.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="journal__slug__featured_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/journal/{slug}</span>/featured</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get data for all atoms featured by the journal. The Journal&#39;s _id can alternatively be used instead of the slug.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#journal__slug__featured_get_request" data-toggle="tab">Request</a></li><li><a href="#journal__slug__featured_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="journal__slug__featured_get_request"><h3>URI Parameters</h3><ul><li><strong>slug</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="journal__slug__featured_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  "_id": "980ca098189",
-  "journalName": "Super Journal",
-  "slug": "superjournal",
-  "featured": [
-    {
-      "_id": "980ca098188",
-      createDate: "Date atom was featured."
-      metadata.collections: ["Array of collections this atom has been added to"]
-      atom: {
-        _id: "56964b73849fe43d00b7d080",
-        slug: "myDocument",
-        title: "Awesome document",
-        description: "Description of awesome document",
-        previewImage: "https://assets.pubpub.org/_site/pub.png",
-        type: "document",
-        createDate: "2016-01-13T13:04:51.764Z",
-        lastUpdated: "2016-02-23T03:55:44.231Z"
-
-      }
-    }
-  ]
-}
+</code></pre></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_journal__slug__collections"><span class="parent">/journal/{slug}</span>/collections</a> <span class="methods"><a href="#journal__slug__collections_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_journal__slug__collections" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#journal__slug__collections_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get journal collection data by id. The Journal&#39;s _id can alternatively be used instead of the slug.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="journal__slug__collections_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/journal/{slug}</span>/collections</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get journal collection data by id. The Journal&#39;s _id can alternatively be used instead of the slug.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#journal__slug__collections_get_request" data-toggle="tab">Request</a></li><li><a href="#journal__slug__collections_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="journal__slug__collections_get_request"><h3>URI Parameters</h3><ul><li><strong>slug</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="journal__slug__collections_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>[
+  {
+    "_id": "980ca098188",
+    title: "My Collection",
+    createDate: "2016-08-08T14:21:32.977Z"
+  },
+  {
+    "_id": "980ca098187",
+    title: "Another Collection",
+    createDate: "2016-07-08T14:21:31.977Z"
+  }
+]
 </code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
   "error" : "Journal not found"
-}</code></pre></div></div></div></div></div></div></div></div></div></div></div><div class="col-md-3"><div id="sidebar" class="hidden-print affix" role="complementary"><ul class="nav nav-pills nav-stacked"><li><a href="#user">/user</a></li><li><a href="#journal">/journal</a></li></ul></div></div></div></div></body></html>
+}
+</code></pre></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_journal__slug__collection__collectionID_"><span class="parent">/journal/{slug}</span>/collection/{collectionID}</a> <span class="methods"><a href="#journal__slug__collection__collectionID__get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_journal__slug__collection__collectionID_" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#journal__slug__collection__collectionID__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get data for all atoms in a specific collection. The Journal&#39;s _id can alternatively be used instead of the slug.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="journal__slug__collection__collectionID__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/journal/{slug}</span>/collection/{collectionID}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get data for all atoms in a specific collection. The Journal&#39;s _id can alternatively be used instead of the slug.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#journal__slug__collection__collectionID__get_request" data-toggle="tab">Request</a></li><li><a href="#journal__slug__collection__collectionID__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="journal__slug__collection__collectionID__get_request"><h3>URI Parameters</h3><ul><li><strong>slug</strong>: <em>required (string)</em></li><li><strong>collectionID</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="journal__slug__collection__collectionID__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>[
+  {
+    _id: "56964b73849fe43d00b7d080",
+    slug: "myDocument",
+    title: "Awesome document",
+    description: "Description of awesome document",
+    previewImage: "https://assets.pubpub.org/_site/pub.png",
+    type: "document",
+    createDate: "2016-01-13T13:04:51.764Z",
+    lastUpdated: "2016-02-23T03:55:44.231Z"
+  }
+]
+</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  "error" : "Journal not found"
+}
+</code></pre></div></div></div></div></div></div></div></div></div></div></div><div class="col-md-3"><div id="sidebar" class="hidden-print affix" role="complementary"><ul class="nav nav-pills nav-stacked"><li><a href="#user">/user</a></li><li><a href="#journal">/journal</a></li></ul></div></div></div></div></body></html>

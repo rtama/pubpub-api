@@ -74,29 +74,6 @@ osprey.loadFile(path)
 		});
 	});
 
-	/* Route for                    */
-	/* /journal/{slug}/collections  */
-	/* /journal/{id}/collections    */
-	app.get('/journal/:id/collections/', function (req, res, next) {
-		// Set the query based on whether the params.id is a valid ObjectID;
-		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
-		
-		// Set the parameters we'd like to return
-		const select = {_id: 1, journalName: 1, slug: 1, collections: 1};
-		
-		// Make db call
-		Journal.findOne(query, select).populate({path: 'collections', select: 'title createDate'}).lean().exec()
-		.then(function(journalResult) {
-			if (!journalResult) { throw new Error('Journal not found'); }
-
-			return res.status(200).json(journalResult);
-		})
-		.catch(function(error) {
-			return res.status(404).json('Journal not found');
-		});
-	});
-
 	/* Route for                 */
 	/* /journal/{slug}/featured  */
 	/* /journal/{id}/featured    */
@@ -118,17 +95,82 @@ osprey.loadFile(path)
 				model: Atom,
 				select: 'title slug description previewImage type customAuthorString createDate lastUpdated isPublished',
 			}).lean().exec();
-			return [journalResult, findFeaturedLinks];
+			return findFeaturedLinks;
 		})
-		.spread(function(journalResult, featuredLinks) {
-			const output = journalResult;
-			output.featured = featuredLinks.filter((link)=> {
+		.then(function(featuredLinks) {
+			const output = featuredLinks.filter((link)=> {
 				return link.destination.isPublished;
 			}).map((link)=> {
-				link.atom = link.destination;
-				delete link.atom.isPublished;
-				delete link.destination;
-				return link;
+				const output = link.destination;
+				output.collections = link.metadata.collections;
+				output.featureDate = link.createDate
+				delete output.isPublished;
+				return output;
+			});
+
+			return res.status(200).json(output);
+		})
+		.catch(function(error) {
+			console.log(error);
+			return res.status(404).json('Journal not found');
+		});
+	});
+
+	/* Route for                    */
+	/* /journal/{slug}/collections  */
+	/* /journal/{id}/collections    */
+	app.get('/journal/:id/collections/', function (req, res, next) {
+		// Set the query based on whether the params.id is a valid ObjectID;
+		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
+		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
+		
+		// Set the parameters we'd like to return
+		const select = {_id: 1, collections: 1};
+		
+		// Make db call
+		Journal.findOne(query, select).populate({path: 'collections', select: 'title createDate'}).lean().exec()
+		.then(function(journalResult) {
+			if (!journalResult) { throw new Error('Journal not found'); }
+
+			return res.status(200).json(journalResult.collections);
+		})
+		.catch(function(error) {
+			return res.status(404).json('Journal not found');
+		});
+	});
+
+	/* Route for                    */
+	/* /journal/{slug}/collection/{collectionID}  */
+	/* /journal/{id}/collection/{collectionID}    */
+	app.get('/journal/:id/collection/:collectionID', function (req, res, next) {
+		// Set the query based on whether the params.id is a valid ObjectID;
+		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
+		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
+		
+		// Set the parameters we'd like to return
+		const select = {_id: 1, journalName: 1, slug: 1};
+		
+		// Make db call
+		Journal.findOne(query, select).populate({path: 'collections', select: 'title createDate'}).lean().exec()
+		.then(function(journalResult) {
+			if (!journalResult) { throw new Error('Journal not found'); }
+		  
+			const findFeaturedLinks = Link.find({source: journalResult._id, type: 'featured', 'metadata.collections': req.params.collectionID}, {_id: 1, destination: 1, createDate: 1, 'metadata.collections': 1}).populate({
+				path: 'destination',
+				model: Atom,
+				select: 'title slug description previewImage type customAuthorString createDate lastUpdated isPublished',
+			}).lean().exec();
+			return findFeaturedLinks;
+		})
+		.then(function(featuredLinks) {
+			const output = featuredLinks.filter((link)=> {
+				return link.destination.isPublished;
+			}).map((link)=> {
+				const output = link.destination;
+				output.collections = link.metadata.collections;
+				output.featureDate = link.createDate
+				delete output.isPublished;
+				return output;
 			});
 
 			return res.status(200).json(output);
