@@ -15,7 +15,7 @@ mediaType: application/json
   /{username}:
     get:
       description: |
-        Get user by username. Returns same content as /user/{id}.
+        Get user data by username. The User's _id can alternatively be used instead of the username.
       responses:
         200:
           body:
@@ -42,39 +42,6 @@ mediaType: application/json
               example: |
                 {
                   "error" : "User not found"
-                }
-  /{id}:
-    get:
-      description: |
-        Get user by id. Returns same content as /user/{username}.
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                {
-                  "_id": "980ca098189",
-                  "username": "username",
-                  "firstName": "Jane",
-                  "lastName": "Doe",
-                  "name": "Jane Doe",
-                  "image": "https://assets.pubpub.org/picture.jpg",
-                  "bio": "I am a porcupine",
-                  "publicEmail": "jane@doe.com",
-                  "github": "janeCodes",
-                  "orcid": "123-123-123-123",
-                  "twitter": "janedoe",
-                  "website": "http://www.example.com",
-                  "googleScholar": "janesGoogleURI",
-                }
-        404:
-          body:
-            application/json:
-              example: |
-                {
-                  "error" : "User not found"
-                }
-
 
 /journal:
   description: |
@@ -82,44 +49,102 @@ mediaType: application/json
   /{slug}:
     get:
       description: |
-        returns information about the journal with the given slug
+        Get journal data by slug. The Journal's _id can alternatively be used instead of the slug.
       responses:
         200:
           body:
             application/json:
               example: |
                 {
-                  "journalName": "",
-                  "description": "",
-                  "about": "",
-                  "website": "",
-                  "twitter": "",
-                  "facebook": "",
-                  "collections": []
+                  "_id": "980ca098189",
+                  "journalName": "Super Journal",
+                  "slug": "superjournal",
+                  "description": "This is some description of my journal",
+                  "logo": "https://assets.pubpub.org/picture.jpg",
+                  "icon": "https://assets.pubpub.org/picture2.jpg",
+                  "about": "This is a long-form description about the journal",
+                  "website": "www.superjournal.com",
+                  "twitter": "superJournal",
+                  "facebook": "facebookSuperJournal",
+                  "headerColor": "#ff0",
+                  "headerImage": "https://assets.pubpub.org/picture3.jpg",
                 }
         404:
           body:
             application/json:
               example: |
                 {
-                  "error" : "Not found"
+                  "error" : "Journal not found"
                 }
-    /featured:
+    /collections:
       get:
         description: |
-          returns the featured pubs of a journal.
+          Get journal collection data by id. The Journal's _id can alternatively be used instead of the slug.
         responses:
           200:
             body:
               application/json:
                 example: |
                   {
-                    "idktbh" :""
+                    "_id": "980ca098189",
+                    "journalName": "Super Journal",
+                    "slug": "superjournal",
+                    "collections": [
+                      {
+                        "_id": "980ca098188",
+                        title: "My Collection",
+                        createDate: "2016-08-08T14:21:32.977Z"
+                      },
+                      {
+                        "_id": "980ca098187",
+                        title: "Another Collection",
+                        createDate: "2016-07-08T14:21:31.977Z"
+                      }
+                    ]
                   }
-    /articles:
+          404:
+            body:
+              application/json:
+                example: |
+                  {
+                    "error" : "Journal not found"
+                  }
+    /featured:
       get:
-    /collections:
-      get:
-    /collection:
-      /{id}:
-        get:
+        description: |
+          Get data for all atoms featured by the journal. The Journal's _id can alternatively be used instead of the slug.
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  {
+                    "_id": "980ca098189",
+                    "journalName": "Super Journal",
+                    "slug": "superjournal",
+                    "featured": [
+                      {
+                        "_id": "980ca098188",
+                        createDate: "Date atom was featured."
+                        metadata.collections: ["Array of collections this atom has been added to"]
+                        atom: {
+                          _id: "56964b73849fe43d00b7d080",
+                          slug: "myDocument",
+                          title: "Awesome document",
+                          description: "Description of awesome document",
+                          previewImage: "https://assets.pubpub.org/_site/pub.png",
+                          type: "document",
+                          createDate: "2016-01-13T13:04:51.764Z",
+                          lastUpdated: "2016-02-23T03:55:44.231Z"
+
+                        }
+                      }
+                    ]
+                  }
+          404:
+            body:
+              application/json:
+                example: |
+                  {
+                    "error" : "Journal not found"
+                  }
