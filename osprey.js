@@ -1,6 +1,9 @@
 require('babel-register');
 
-require('./config.js');
+if (process.env.NODE_ENV !== 'production' && !process.env.TESTING) {
+	require('./config.js');
+}
+
 const osprey = require('osprey');
 const express = require('express');
 const join = require('path').join;
@@ -139,7 +142,7 @@ osprey.loadFile(path)
 		});
 	});
 
-	/* Route for                    */
+	/* Route for                                  */
 	/* /journal/{slug}/collection/{collectionID}  */
 	/* /journal/{id}/collection/{collectionID}    */
 	app.get('/journal/:id/collection/:collectionID', function (req, res, next) {
