@@ -185,6 +185,6 @@ osprey.loadFile(path)
 	});
 
 
-	app.listen(9876);
+	app.listen(process.env.PORT || 9876);
 })
 .catch(function(e) { console.error("Error: %s", e.message); });
