@@ -1,7 +1,6 @@
 module.exports = {};
 
 module.exports.Atom = require('./models/atom-model');
-module.exports.Group = require('./models/group-model');
 module.exports.Journal = require('./models/journal-model');
 module.exports.Link = require('./models/link-model');
 module.exports.Notification = require('./models/notification-model');
