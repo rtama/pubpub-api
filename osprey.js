@@ -54,6 +54,9 @@ osprey.loadFile(path)
 		.then(function(userResult) {
 			if (!userResult) { throw new Error('User not found'); }
 			
+			userResult.userID = userResult._id;
+			delete userResult._id;
+
 			return res.status(200).json(userResult);
 		})
 		.catch(function(error) {
@@ -78,6 +81,9 @@ osprey.loadFile(path)
 		.then(function(journalResult) {
 			if (!journalResult) { throw new Error('Journal not found'); }
 			
+			journalResult.journalID = journalResult._id;
+			delete journalResult._id;
+
 			return res.status(200).json(journalResult);
 		})
 		.catch(function(error) {
@@ -106,18 +112,28 @@ osprey.loadFile(path)
 				model: Atom,
 				select: 'title slug description previewImage type customAuthorString createDate lastUpdated isPublished',
 			}).lean().exec();
-			return findFeaturedLinks;
+			return [journalResult, findFeaturedLinks];
 		})
-		.then(function(featuredLinks) {
-			const output = featuredLinks.filter((link)=> {
+		.spread(function(journalResult, featuredLinks) {
+			const atoms = featuredLinks.filter((link)=> {
 				return link.destination.isPublished;
 			}).map((link)=> {
 				const output = link.destination;
 				output.collections = link.metadata.collections;
 				output.featureDate = link.createDate
 				delete output.isPublished;
+				output.atomID = output._id;
+				delete output._id;
+
 				return output;
 			});
+
+			const output = {
+				journalID: journalResult._id,
+				journalName: journalResult.journalName,
+				slug: journalResult.slug,
+				atoms: atoms,
+			};
 
 			return res.status(200).json(output);
 		})
@@ -136,14 +152,24 @@ osprey.loadFile(path)
 		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
 		
 		// Set the parameters we'd like to return
-		const select = {_id: 1, collections: 1};
+		const select = {_id: 1, collections: 1, journalName: 1, slug: 1};
 		
 		// Make db call
 		Journal.findOne(query, select).populate({path: 'collections', select: 'title createDate'}).lean().exec()
 		.then(function(journalResult) {
 			if (!journalResult) { throw new Error('Journal not found'); }
 
-			return res.status(200).json(journalResult.collections);
+			const output = {
+				journalID: journalResult._id,
+                journalName: journalResult.journalName,
+                slug: journalResult.slug,
+                collections: journalResult.collections.map((collection)=> {
+                	collection.collectionID = collection._id;
+                	delete collection._id;
+                	return collection;
+                })
+			}
+			return res.status(200).json(output);
 		})
 		.catch(function(error) {
 			return res.status(404).json('Journal not found');
@@ -159,7 +185,7 @@ osprey.loadFile(path)
 		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
 		
 		// Set the parameters we'd like to return
-		const select = {_id: 1, journalName: 1, slug: 1};
+		const select = {_id: 1, journalName: 1, slug: 1, collections: 1};
 		
 		// Make db call
 		Journal.findOne(query, select).populate({path: 'collections', select: 'title createDate'}).lean().exec()
@@ -171,24 +197,45 @@ osprey.loadFile(path)
 				model: Atom,
 				select: 'title slug description previewImage type customAuthorString createDate lastUpdated isPublished',
 			}).lean().exec();
-			return findFeaturedLinks;
+			return [journalResult, findFeaturedLinks];
 		})
-		.then(function(featuredLinks) {
-			const output = featuredLinks.filter((link)=> {
+		.spread(function(journalResult, featuredLinks) {
+			const atoms = featuredLinks.filter((link)=> {
 				return link.destination.isPublished;
 			}).map((link)=> {
 				const output = link.destination;
 				output.collections = link.metadata.collections;
 				output.featureDate = link.createDate
 				delete output.isPublished;
+				output.atomID = output._id;
+				delete output._id;
+
 				return output;
 			});
 
+			let collectionID;
+			let collectionTitle;
+			let collectionCreateDate;
+			const collections = journalResult.collections || [];
+			collections.map((item)=> {
+				if (String(item._id) === String(req.params.collectionID)) {
+					collectionID = item._id;
+					collectionTitle = item.title;
+					collectionCreateDate = item.createDate;
+				}
+			});
+
+			const output = {
+				collectionID: collectionID,
+				title: collectionTitle,
+				createDate: collectionCreateDate,
+				atoms: atoms,
+			};
 			return res.status(200).json(output);
 		})
 		.catch(function(error) {
 			console.log(error);
-			return res.status(404).json('Journal not found');
+			return res.status(404).json('Collection not found');
 		});
 	});
 
