@@ -14,12 +14,18 @@ script:
 
   rm -rf node_modules
   rm -rf models
-  rm *.js
-  rm *.json
   rm .babelrc
-  rm -r template
   rm .gitignore
-  rm *.md
+  rm .travis.yml
+  rm api.js
+  rm api.raml
+  rm osprey.js
+  rm package.json
+  rm -r template
+  rm README.md
+
+  git add .
+  git commit -m 'Some bs'
 
 deploy:
   provider: s3
