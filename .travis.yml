@@ -19,3 +19,4 @@ deploy:
   acl: public_read
   file:
     - "index.html"
+    
