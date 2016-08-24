@@ -58,4 +58,4 @@ https://github.com/raml2html/raml2html/blob/master/examples/github.raml
 
 ### Acknowledgements
 
-Thanks to https://gitlab.com/officernd/officernd.gitlab.io/tree/master for their raml2html template. : )
+Thanks to https://gitlab.com/officernd/officernd.gitlab.io/tree/master for their raml2html template. 
