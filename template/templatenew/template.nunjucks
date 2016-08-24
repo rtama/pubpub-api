@@ -52,9 +52,18 @@
     <div role='flatdoc-content' class='content fade-in two'>
 
       <h1 id="pubpub-design-guide">PubPub API</h1>
-      <p>Description heh heh</p>
-      <h2 id="pubpub-design-guide-introduction">Introduction</h2>
-      Hello
+      <p>Version {{ version }}
+        </br>
+        {{ baseUri }}
+      </p>
+      {% for chapter in documentation %}
+        <h2 id="pubpub-design-guide-{{ chapter.uniqueId }}">
+          {{ chapter.title }}
+        </h2>
+        {% markdown %}
+        {{ chapter.content }}
+        {% endmarkdown %}
+      {% endfor %}
     </div>
   </div>
 </body>
