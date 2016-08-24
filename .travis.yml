@@ -18,7 +18,6 @@ script:
   rm .gitignore
   rm .travis.yml
   rm api.js
-  rm api.raml
   rm config.sample.js
   rm models.js
   rm osprey.js
