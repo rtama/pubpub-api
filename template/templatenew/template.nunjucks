@@ -60,10 +60,59 @@
         <h2 id="pubpub-design-guide-{{ chapter.uniqueId }}">
           {{ chapter.title }}
         </h2>
-        {% markdown %}
-        {{ chapter.content }}
-        {% endmarkdown %}
+        <div class="overview">
+
+          {% markdown %}
+          {{ chapter.content }}
+          {% endmarkdown %}
+        </div>
       {% endfor %}
+      <h2 id="pubpub-design-guide-typography">Routes</h2>
+
+      {# Loop through Journals, Users, other resources, etc #}
+      {% for resource in resources %}
+
+        {# Header for each resource i.e Users #}
+        <h3 id="{{ resource.uniqueId }}" class="panel-title">
+          {% if resource.displayName %}
+            {{ resource.displayName}}
+          {% else %}
+            Resource needs a display name.
+          {% endif %}
+        </h3>
+
+        {# Description #}
+        {% if resource.description %}
+          <p>
+            {% markdown %}
+            {{ resource.description }}
+            {% endmarkdown %}
+          </p>
+        {% endif %}
+
+        parent: {{ resource.parentUrl }}
+        </br>
+        relative: {{ resource.relativeUri }}
+        </br>
+
+        {# For each HTTP method #}
+        {% for method in resource.methods %}
+         a method yay : D
+          {{ resource.uniqueId }}
+            {{ method.method }}
+            {% if method.securedBy.length %}
+              Auth required lol
+            {% endif %}
+        {% endfor %}
+      </br>
+
+      {% for item in resource.allUriParameters %}
+        {% include "./item.nunjucks" %}
+      {% endfor %}
+
+
+      {% endfor %}
+
     </div>
   </div>
 </body>

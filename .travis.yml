@@ -1,0 +1,20 @@
+language: node_js
+
+node_js:
+  - "6.1.0"
+
+sudo: false
+
+before_script:
+  npm i -g raml2html
+
+script:
+  raml2html -t template/templatenew/template.nunjucks api.raml -o index.html
+
+deploy:
+  provider: s3
+  access_key_id: AWS_ACCESS_KEY_ID
+  secret_access_key: AWS_SECRET_ACCESS_KEY
+  bucket: "docs.pubpub.org"
+  acl: public_read
+  file: 'index.html'
