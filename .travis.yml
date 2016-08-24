@@ -24,8 +24,6 @@ script:
   rm -r template
   rm README.md
 
-  git add .
-  git commit -m 'Some bs'
 
 deploy:
   provider: s3
