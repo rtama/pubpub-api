@@ -10,6 +10,16 @@ before_script:
 
 script:
   raml2html -t template/templatenew/template.nunjucks api.raml -o index.html
+  mv template/templatenew/* .
+
+  rm -rf node_modules
+  rm -rf models
+  rm *.js
+  rm *.json
+  rm .babelrc
+  rm -r template
+  rm .gitignore
+  rm *.md
 
 deploy:
   provider: s3
@@ -17,8 +27,8 @@ deploy:
   secret_access_key: $AWS_SECRET_ACCESS_KEY
   bucket: "docs.pubpub.org"
   acl: public_read
-  
+
   detect_encoding: true
   skip_cleanup: true
   file:
-    - "index.html"
+    "index.html"
