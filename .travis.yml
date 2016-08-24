@@ -8,9 +8,11 @@ sudo: false
 before_script:
   npm i -g raml2html
   mkdir build
+  pwd
 
 
 script:
+  pwd
   raml2html -t template/templatenew/template.nunjucks api.raml -o build/index.html
   mv template/templatenew/* build/
 
