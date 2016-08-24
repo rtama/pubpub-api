@@ -7,32 +7,23 @@ sudo: false
 
 before_script:
   npm i -g raml2html
+  mkdir build
+  mv template/templatenew/* build/
+
 
 script:
-  raml2html -t template/templatenew/template.nunjucks api.raml -o index.html
-  mv template/templatenew/* .
+  raml2html -t template/templatenew/template.nunjucks api.raml -o build/index.html
 
-  rm -rf node_modules
-  rm -rf models
-  rm .babelrc
-  rm .gitignore
-  rm .travis.yml
-  rm api.js
-  rm config.sample.js
-  rm models.js
-  rm osprey.js
-  rm package.json
-  rm -r template
-  rm README.md
 
 deploy:
   provider: s3
   access_key_id: $AWS_ACCESS_KEY_ID
   secret_access_key: $AWS_SECRET_ACCESS_KEY
-  bucket: "docs.pubpub.org/api"
+  bucket: "docs.pubpub.org"
   acl: public_read
   detect_encoding: true
   upload-dir: "api"
   skip_cleanup: true
+  local_dir: build
   file:
     "index.html"
