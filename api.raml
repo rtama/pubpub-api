@@ -12,6 +12,7 @@ mediaType: application/json
 /user:
   description: |
     Routes to access data about PubPub Users
+  displayName: User
   /{username}:
     get:
       description: |
@@ -46,6 +47,7 @@ mediaType: application/json
 /journal:
   description: |
     Routes to access data about PubPub Journals
+  displayName: Journal
   /{slug}:
     get:
       description: |
@@ -177,4 +179,3 @@ mediaType: application/json
                   {
                     error : "Collection not found"
                   }
-    

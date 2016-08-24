@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width">
+
+  <title>PubPub Style Guide</title>
+
+  <!-- Flatdoc -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src='flatdoc.js'></script>
+  <script src='flatdoc_theme.js'></script>
+
+  <!-- Flatdoc theme -->
+  <link href='styles.css' rel='stylesheet'>
+  <link href='https://fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Merriweather:400italic' rel='stylesheet' type='text/css'>
+
+  <!-- Meta -->
+  <meta content="PubPub" property="og:title">
+
+  <!-- Initializer -->
+  <script>
+    // Flatdoc.run({
+    //   fetcher: Flatdoc.file('docs/doc.md')
+    // });
+  </script>
+</head>
+
+<body role='flatdoc' class="language-css">
+  <div class='content-root'>
+    <div class='menubar fade-in'>
+      <div class='menu section' role='flatdoc-menu'>
+        <a id="pubpub-design-guide-link" href="#pubpub-design-guide" class="level-1">PubPub API</a>
+        <ul class="level-2" id="pubpub-design-guide-list">
+
+        {% for resource in resources %}
+          <li id="pubpub-design-guide-{{ resource.displayName}}-item" class="level-2">
+            <a id="pubpub-design-guide-{{ resource.displayName}}-link" class="level-2" href="#{{ resource.uniqueId}}">
+              {% if resource.displayName %}
+                 {{ resource.displayName}}
+              {% else %}
+                Resource needs a displayName {{ resource.relativeUri }}
+              {% endif %}
+            </a>
+          </li>
+        {% endfor %}
+
+      </div>
+    </div>
+    <div role='flatdoc-content' class='content fade-in two'>
+
+      <h1 id="pubpub-design-guide">PubPub API</h1>
+      <p>Description heh heh</p>
+      <h2 id="pubpub-design-guide-introduction">Introduction</h2>
+      Hello
+    </div>
+  </div>
+</body>
+</html>

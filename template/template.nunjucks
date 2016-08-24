@@ -57,6 +57,112 @@
     </script>
 
     <style>
+    @font-face {
+        font-family: 'yrsaregular';
+        src: url('fonts/yrsa-regular-webfont.eot');
+        src: url('fonts/yrsa-regular-webfont.eot?#iefix') format('embedded-opentype'),
+             url('fonts/yrsa-regular-webfont.woff2') format('woff2'),
+             url('fonts/yrsa-regular-webfont.woff') format('woff'),
+             url('fonts/yrsa-regular-webfont.ttf') format('truetype'),
+             url('fonts/yrsa-regular-webfont.svg#yrsaregular') format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'yrsabold';
+        src: url('fonts/yrsa-bold-webfont.eot');
+        src: url('fonts/yrsa-bold-webfont.eot?#iefix') format('embedded-opentype'),
+             url('fonts/yrsa-bold-webfont.woff2') format('woff2'),
+             url('fonts/yrsa-bold-webfont.woff') format('woff'),
+             url('fonts/yrsa-bold-webfont.ttf') format('truetype'),
+             url('fonts/yrsa-bold-webfont.svg#yrsabold') format('svg');
+        font-weight: normal;
+        font-style: normal;
+
+    }
+
+    @font-face {
+        font-family: 'yrsasemibold';
+        src: url('fonts/yrsa-semibold-webfont.eot');
+        src: url('fonts/yrsa-semibold-webfont.eot?#iefix') format('embedded-opentype'),
+             url('fonts/yrsa-semibold-webfont.woff2') format('woff2'),
+             url('fonts/yrsa-semibold-webfont.woff') format('woff'),
+             url('fonts/yrsa-semibold-webfont.ttf') format('truetype'),
+             url('fonts/yrsa-semibold-webfont.svg#yrsasemibold') format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'clearsans_bold';
+        src: url('fonts/clearsans-bold-webfont.eot');
+        src: url('fonts/clearsans-bold-webfont.eot?#iefix') format('embedded-opentype'),
+             url('fonts/clearsans-bold-webfont.woff2') format('woff2'),
+             url('fonts/clearsans-bold-webfont.woff') format('woff'),
+             url('fonts/clearsans-bold-webfont.ttf') format('truetype'),
+             url('fonts/clearsans-bold-webfont.svg#clear_sansbold') format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'clear_sansbold_italic';
+        src: url('fonts/clearsans-bolditalic-webfont.eot');
+        src: url('fonts/clearsans-bolditalic-webfont.eot?#iefix') format('embedded-opentype'),
+             url('fonts/clearsans-bolditalic-webfont.woff2') format('woff2'),
+             url('fonts/clearsans-bolditalic-webfont.woff') format('woff'),
+             url('fonts/clearsans-bolditalic-webfont.ttf') format('truetype'),
+             url('fonts/clearsans-bolditalic-webfont.svg#clear_sansbold_italic') format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'clear_sansitalic';
+        src: url('fonts/clearsans-italic-webfont.eot');
+        src: url('fonts/clearsans-italic-webfont.eot?#iefix') format('embedded-opentype'),
+             url('fonts/clearsans-italic-webfont.woff2') format('woff2'),
+             url('fonts/clearsans-italic-webfont.woff') format('woff'),
+             url('fonts/clearsans-italic-webfont.ttf') format('truetype'),
+             url('fonts/clearsans-italic-webfont.svg#clear_sansitalic') format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'clearsans_light';
+        src: url('fonts/clearsans-light-webfont.eot');
+        src: url('fonts/clearsans-light-webfont.eot?#iefix') format('embedded-opentype'),
+             url('fonts/clearsans-light-webfont.woff2') format('woff2'),
+             url('fonts/clearsans-light-webfont.woff') format('woff'),
+             url('fonts/clearsans-light-webfont.ttf') format('truetype'),
+             url('fonts/clearsans-light-webfont.svg#clear_sans_lightregular') format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'clearsans_regular';
+        src: url('fonts/clearsans-regular-webfont.eot');
+        src: url('fonts/clearsans-regular-webfont.eot?#iefix') format('embedded-opentype'),
+             url('fonts/clearsans-regular-webfont.woff2') format('woff2'),
+             url('fonts/clearsans-regular-webfont.woff') format('woff'),
+             url('fonts/clearsans-regular-webfont.ttf') format('truetype'),
+             url('fonts/clearsans-regular-webfont.svg#clear_sansregular') format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'clearsans_thin';
+        src: url('fonts/clearsans-thin-webfont.eot');
+        src: url('fonts/clearsans-thin-webfont.eot?#iefix') format('embedded-opentype'),
+             url('fonts/clearsans-thin-webfont.woff2') format('woff2'),
+             url('fonts/clearsans-thin-webfont.woff') format('woff'),
+             url('fonts/clearsans-thin-webfont.ttf') format('truetype'),
+             url('fonts/clearsans-thin-webfont.svg#clear_sans_thinregular') format('svg');
+        font-weight: normal;
+        font-style: normal;
+
+    }
+
+
+
+
       .hljs {
         background: transparent;
       }
@@ -191,25 +297,54 @@
         color: #363736;
         border-radius: 1px;
       }
-      @media (min-width:768) {
+      @media (max-width:768) {
         .sidebar {
-          margin-top: -80px;
+          display:none;
         }
-       }
+      }
+      .title {
+        font-family: 'yrsabold';
+        font-size: 3.5em;
+      }
+      h1 {
+        font-size: 2.2rem;
+        font-family: 'clearsans_light';
+      }
+      h2 {
+        font-size: 1.9rem;
+        font-family: 'clearsans_light';
+      }
+
+      .sidebar {
+        background-color: '#F3F3F4';
+        top:0;
+        left:0;
+        bottom: 0;
+      }
 
     </style>
   </head>
 
   <body data-spy="scroll" data-target="#sidebar">
-    <div class="container">
       <div class="row">
-        <div class="col-md-3 col-sm-0">
+
+        <div class="col-md-3 col-sm-0 sidebar">
+          <div id="sidebar" role="complementary">
+            <ul class="nav nav-pills nav-stacked">
+              {% for resource in resources %}
+                <li><a href="#{{ resource.uniqueId}}">{% if resource.displayName %}{{ resource.displayName}}{% else %}{{ resource.relativeUri }}{% endif %}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
         </div>
 
         <div class="col-md-9 col-sm-12">
 
           <div class="page-header">
-            <h1>{{ title }} API documentation{% if version %} <small>version {{ version }}</small>{% endif %}</h1>
+            <div class="title">{{ title }} API documentation{% if version %}
+            </div>
+            </br>
+            <h2>version {{ version }}</h2>{% endif %}
             <p>{{ baseUri }}</p>
 
             {% for chapter in documentation %}
@@ -219,18 +354,7 @@
               {% endmarkdown %}
             {% endfor %}
           </div>
-        </div>
 
-        <div class="col-md-3 col-sm-12 sidebar">
-          <div id="sidebar" role="complementary">
-            <ul class="nav nav-pills nav-stacked">
-              {% for resource in resources %}
-                <li><a href="#{{ resource.uniqueId}}">{% if resource.displayName %}{{ resource.displayName}}{% else %}{{ resource.relativeUri }}{% endif %}</a></li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-        <div class="col-md-9 col-sm-12" role="main">
 
           {% for resource in resources %}
             <div class="panel panel-default">
@@ -257,6 +381,5 @@
 
 
       </div>
-    </div>
   </body>
 </html>
