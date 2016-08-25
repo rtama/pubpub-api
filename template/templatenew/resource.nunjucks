@@ -53,11 +53,13 @@
 
       {% if method.queryParameters %}
         Query Parameters
-        <ul>
-          {% for key, item in method.queryParameters %}
-            {% include "./item.nunjucks" %}
-          {% endfor %}
-        </ul>
+        <div class="query-param-display">
+          <ul>
+            {% for key, item in method.queryParameters %}
+              {% include "./item.nunjucks" %}
+            {% endfor %}
+          </ul>
+        </div>
       {% endif %}
 
       {% if method.body %}
