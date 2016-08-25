@@ -697,8 +697,6 @@ code .comment {
   line-height: 1.5em;
   overflow: scroll;
   color: #999999;
-  max-height: 1.75em;
-  overflow: hidden;
   background-color: #F3F3F4;
   border: none;
   padding: 0;

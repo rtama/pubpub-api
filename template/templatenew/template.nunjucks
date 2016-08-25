@@ -5,15 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width">
 
-  <title>PubPub Style Guide</title>
-
+  <title>PubPub API</title>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src='flatdoc_theme.js'></script>
-
   <link href='styles.css' rel='stylesheet'>
   <link href='https://fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Merriweather:400italic' rel='stylesheet' type='text/css'>
-
   <!-- Meta -->
   <meta content="PubPub" property="og:title">
 
@@ -37,7 +34,6 @@
             </a>
           </li>
         {% endfor %}
-
       </div>
     </div>
     <div role='flatdoc-content' class='content fade-in two'>
@@ -46,6 +42,7 @@
         </br>
         {{ baseUri }}
       </p>
+
       {% for chapter in documentation %}
         <h2 id="pubpub-design-guide-{{ chapter.uniqueId }}">
           {{ chapter.title }}

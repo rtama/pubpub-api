@@ -1,5 +1,4 @@
 <li>
-  1
   {% if item.displayName %}
     <strong>{{ item.displayName }}</strong>:
   {% else %}
@@ -7,7 +6,6 @@
   {% endif %}
 
   <em>
-  2
     {%- if item.required -%}required {% endif -%}
     (
     {%- if item.enum -%}
@@ -15,7 +13,6 @@
     {%- else -%}
       {{ item.type }}
     {%- endif -%}
-3
     {%- if item.default or item.default == 0 or item.default == false %} - default: {{ item.default }}{%- endif -%}
     {%- if item.repeat %} - repeat: {{ item.repeat }}{%- endif -%}
     {%- if item.type == 'string' -%}
@@ -34,17 +31,16 @@
 {% endmarkdown %}
 
   {% if item.schema %}
-  4
     <p><strong>Schema</strong>:</p>
     <pre><code>{{ item.schema | escape }}</code></pre>
   {% endif %}
 
   {% if item.example %}
-  5
     <p><strong>Example</strong>:</p>
     {% if item.type == 'string' %}
       <pre>{{ item.example| escape }}</pre>
     {% else %}
+    hi
       <pre><code>{{ item.example | escape }}</code></pre>
     {% endif %}
   {% endif %}
