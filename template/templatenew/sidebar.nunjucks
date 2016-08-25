@@ -1,12 +1,12 @@
+{% if not resource.parentUrl %}
+  
+{% else %}
 <li id="pubpub-design-guide-{{ resource.displayName}}-item" class="level-2">
   <a id="pubpub-design-guide-{{ resource.displayName}}-link" class="level-2" href="#{{ resource.uniqueId }}">
-    {% if not resource.parentUrl %}
-      {{resource.displayName}}
-    {% else %}
       {{ resource.parentUrl }}{{ resource.relativeUri }}
-      {% endif %}
   </a>
 </li>
+{% endif %}
 
 {% for resource in resource.resources %}
   {% include "./sidebar.nunjucks" %}

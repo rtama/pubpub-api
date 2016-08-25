@@ -21,7 +21,16 @@
         <a id="pubpub-design-guide-link" href="#pubpub-design-guide" class="level-1">PubPub API</a>
         <ul class="level-2" id="pubpub-design-guide-list">
 
+        {% for chapter in documentation %}
+          <li id="pubpub-design-guide-{{ chapter.title}}-item" class="level-2">
+            <a id="pubpub-design-guide-{{ chapter.title}}-link" class="level-2" href="#{{ chapter.uniqueId }}">
+                {{ chapter.title }}
+            </a>
+          </li>
+        {% endfor %}
+
         {% for resource in resources %}
+
           {% include "./sidebar.nunjucks" %}
         {% endfor %}
 
@@ -37,7 +46,7 @@
 
 
       {% for chapter in documentation %}
-        <h2 id="pubpub-design-guide-{{ chapter.uniqueId }}">
+        <h2 id="{{ chapter.uniqueId }}">
           {{ chapter.title }}
         </h2>
         <div class="overview">
