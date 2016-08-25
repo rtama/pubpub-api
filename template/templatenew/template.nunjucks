@@ -4,7 +4,6 @@
   <meta charset='utf-8'>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width">
-
   <title>PubPub API</title>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src='flatdoc_theme.js'></script>
@@ -14,6 +13,7 @@
   <!-- Meta -->
   <meta content="PubPub" property="og:title">
   </head>
+
 
 <body role='flatdoc' class="language-css">
   <div class='content-root'>
@@ -52,7 +52,7 @@
           {% endmarkdown %}
         </div>
       {% endfor %}
-      <h2 id="pubpub-design-guide-typography">Routes</h2>
+      <!--h2 id="pubpub-design-guide-typography">Routes</h2-->
       {% for resource in resources %}
         {% include "./resource.nunjucks" %}
       {% endfor %}

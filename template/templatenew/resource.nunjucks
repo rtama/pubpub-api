@@ -1,5 +1,10 @@
+{# for User, Journal and each unique resource, give it a header #}
+{% if not resource.parentUrl %}
+  <h2>{{resource.displayName}}</h2>
+{% endif %}
+
 {% if (resource.methods or (resource.description and resource.parentUrl)) %}
-  <span class="parent">{{ resource.parentUrl }}</span>{{ resource.relativeUri }}
+  <h3><span class="parent">{{ resource.parentUrl }}</span>{{ resource.relativeUri }}</h3>
 
   {% if resource.parentUrl %}
     {% if resource.description %}
@@ -71,7 +76,7 @@
           {% endif %}
 
           {% if b.example %}
-            <p><strong>Example</strong>:</p>
+            <p><strong>Example Request</strong>:</p>
             <pre><code>{{ b.example | escape }}</code></pre>
           {% endif %}
         {% endfor %}
@@ -103,7 +108,7 @@
             {% endif %}
 
             {% if b.example %}
-              <p><strong>Example</strong>:</p>
+              <p><strong>Example Response</strong>:</p>
               <pre><code>{{ b.example | escape }}</code></pre>
             {% endif %}
           {% endfor %}

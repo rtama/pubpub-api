@@ -55,7 +55,3 @@ fswatch -0 api.raml template/template.nunjucks   | (xargs -0 -n1 -I{} raml2html 
 ### Useful resources
 
 https://github.com/raml2html/raml2html/blob/master/examples/github.raml
-
-### Acknowledgements
-
-Thanks to https://gitlab.com/officernd/officernd.gitlab.io/tree/master for their raml2html template. 
