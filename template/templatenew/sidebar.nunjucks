@@ -3,7 +3,7 @@
     {% if not resource.parentUrl %}
       {{resource.displayName}}
     {% else %}
-      {{ resource.parentUrl }} {{ resource.relativeUri }}
+      {{ resource.parentUrl }}{{ resource.relativeUri }}
       {% endif %}
   </a>
 </li>
