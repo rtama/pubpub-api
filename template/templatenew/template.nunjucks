@@ -12,7 +12,7 @@
   <link href='https://fonts.googleapis.com/css?family=Merriweather:400italic' rel='stylesheet' type='text/css'>
   <!-- Meta -->
   <meta content="PubPub" property="og:title">
-  </head>
+</head>
 
 <body role='flatdoc' class="language-css">
   <div class='content-root'>
@@ -40,9 +40,7 @@
           {{ chapter.title }}
         </h2>
         <div class="overview">
-          {% markdown %}
-          {{ chapter.content }}
-          {% endmarkdown %}
+            {{ chapter.content }}
         </div>
       {% endfor %}
       <!--h2 id="pubpub-design-guide-typography">Routes</h2-->

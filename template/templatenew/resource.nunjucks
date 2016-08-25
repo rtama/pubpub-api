@@ -1,8 +1,12 @@
 {# for User, Journal and each unique resource, give it a header #}
 {% if not resource.parentUrl %}
   <h2 id="{{resource.uniqueId}}">{{resource.displayName}}</h2>
+  <div class="overview">
+    {% markdown %}
+      {{ resource.description }}
+    {% endmarkdown %}
+  </div>
 {% endif %}
-
 
 {% if (resource.methods or (resource.description and resource.parentUrl)) %}
   <h3 id="{{ resource.uniqueId }}"><span class="parent">{{ resource.parentUrl }}</span>{{ resource.relativeUri }}</h3>
@@ -59,9 +63,9 @@
       {% endif %}
 
       {% if method.body %}
-        Body
         {% for key, b in method.body %}
-          <p><strong>Type: {{ key }}</strong></p>
+
+          {# <p><strong>Type: {{ key }}</strong></p> #}
           {% if b.formParameters %}
             <strong>Form Parameters</strong>
             <ul>
@@ -101,7 +105,7 @@
         {% if response.body %}
           Body
           {% for key, b in response.body %}
-            <p><strong>Type: {{ key }}</strong></p>
+            {# <p><strong>Type: {{ key }}</strong></p> #}
 
             {% if b.schema %}
               <p><strong>Schema</strong>:</p>
