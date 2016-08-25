@@ -8,6 +8,7 @@
 
         <span class="methods">
           {% for method in resource.methods %}
+          methods
             <a href="#{{ resource.uniqueId }}_{{ method.method }}"><!-- modal shown by hashchange event -->
               <span class="badge badge_{{ method.method }}">{{ method.method }}{% if method.securedBy.length %} <span class="glyphicon glyphicon-lock" title="Authentication required"></span>{% endif %}</span>
             </a>
@@ -30,6 +31,7 @@
 
         <div class="list-group">
           {% for method in resource.methods %}
+          methods again
             <div onclick="window.location.href = '#{{ resource.uniqueId }}_{{ method.method }}'" class="list-group-item">
               <span class="badge badge_{{ method.method }}">{{ method.method }}{% if method.securedBy.length %} <span class="glyphicon glyphicon-lock" title="Authentication required"></span>{% endif %}</span>
               <div class="method_description">
@@ -45,6 +47,7 @@
     </div>
 
     {% for method in resource.methods %}
+    methods...again
       <div class="modal fade" tabindex="0" id="{{ resource.uniqueId }}_{{ method.method }}">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -85,12 +88,14 @@
               <!-- Nav tabs -->
               <ul class="nav nav-tabs">
                 {% if method.allUriParameters.length or method.queryParameters or method.headers or method.body %}
+                method uri parameters headers body
                   <li class="active">
                     <a href="#{{ resource.uniqueId }}_{{ method.method }}_request" data-toggle="tab">Request</a>
                   </li>
                 {% endif %}
 
                 {% if method.responses %}
+                method responses
                   <li{%
                     if not method.allUriParameters.length and not method.queryParameters
                     and not method.headers and not method.body
@@ -102,6 +107,7 @@
                 {% endif %}
 
                 {% if method.securedBy.length %}
+                method secured by
                   <li>
                     <a href="#{{ resource.uniqueId }}_{{ method.method }}_securedby" data-toggle="tab">Security</a>
                   </li>
@@ -122,15 +128,18 @@
                     {% endif %}
 
                     {% if method.headers %}
+                    method headers
                       <h3>Headers</h3>
                       <ul>
                         {% for key, item in method.headers %}
+                        key, item in method headers
                           {% include "./item.nunjucks" %}
                         {% endfor %}
                       </ul>
                     {% endif %}
 
                     {% if method.queryParameters %}
+                    query parameters
                       <h3>Query Parameters</h3>
                       <ul>
                         {% for key, item in method.queryParameters %}
@@ -140,6 +149,7 @@
                     {% endif %}
 
                     {% if method.body %}
+                    method body
                       <h3>Body</h3>
                       {% for key, b in method.body %}
                         <p><strong>Type: {{ key }}</strong></p>
@@ -167,6 +177,7 @@
                 {% endif %}
 
                 {% if method.responses %}
+                method responses
                   <div class="tab-pane{%
                     if not method.allUriParameters.length and not method.queryParameters
                     and not method.headers and not method.body
@@ -180,6 +191,7 @@
 {% endmarkdown %}
 
                       {% if response.headers %}
+                      response headers
                         <h3>Headers</h3>
                         <ul>
                           {% for key, item in response.headers %}
@@ -189,6 +201,7 @@
                       {% endif %}
 
                       {% if response.body %}
+                      response body
                         <h3>Body</h3>
                         {% for key, b in response.body %}
                           <p><strong>Type: {{ key }}</strong></p>
@@ -229,6 +242,7 @@
 {{ response.description}}
 {% endmarkdown %}
                         {% if response.headers %}
+                        response headers
                           <h3>Headers</h3>
                           <ul>
                             {% for key, item in response.headers %}
@@ -251,5 +265,6 @@
 {% endif %}
 
 {% for resource in resource.resources %}
+ resources in resource.resources
   {% include "./resource.nunjucks" %}
 {% endfor %}
