@@ -12,60 +12,42 @@
     {% endfor %}
   </span>
 
-  <div id="panel_{{ resource.uniqueId }}" class="panel-collapse collapse">
+  {{ resource.uniqueId }}
 
     {% if resource.parentUrl %}
       {% if resource.description %}
-        <div class="resource-description">
 {% markdown %}
 {{ resource.description }}
 {% endmarkdown %}
-        </div>
       {% endif %}
     {% endif %}
 
-    <div class="list-group">
       {% for method in resource.methods %}
       methods again
-        <div onclick="window.location.href = '#{{ resource.uniqueId }}_{{ method.method }}'" class="list-group-item">
           <span class="badge badge_{{ method.method }}">{{ method.method }}{% if method.securedBy.length %} <span class="glyphicon glyphicon-lock" title="Authentication required"></span>{% endif %}</span>
-          <div class="method_description">
 {% markdown %}
 {{ method.description}}
 {% endmarkdown %}
-          </div>
-          <div class="clearfix"></div>
-        </div>
-      {% endfor %}
-    </div>
 
-  </div>
+      {% endfor %}
+
 
   {% for method in resource.methods %}
   methods...again
-    <div class="modal fade" tabindex="0" id="{{ resource.uniqueId }}_{{ method.method }}">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
             <h4 class="modal-title" id="myModalLabel">
               <span class="badge badge_{{ method.method }}">{{ method.method }}{% if method.securedBy.length %} <span class="glyphicon glyphicon-lock" title="Authentication required"></span>{% endif %}</span>
               <span class="parent">{{ resource.parentUrl }}</span>{{ resource.relativeUri }}
             </h4>
-          </div>
 
-          <div class="modal-body">
             {% if method.description %}
-              <div class="alert alert-info">
 {% markdown %}
 {{ method.description}}
 {% endmarkdown %}
-              </div>
             {% endif %}
 
             {% if method.securedBy.length %}
               {% for securedBy in method.securedBy %}
                 {% if securedBy %}
-                  <div class="alert alert-warning">
                     {% set securedByScopes = renderSecuredBy(securedBy) %}
                     <span class="glyphicon glyphicon-lock" title="Authentication required"></span> Secured by {{ securedByScopes }}
                     {% set securityScheme = securitySchemeWithName(securedBy) %}
@@ -74,7 +56,6 @@
 {{ securityScheme.description }}
 {% endmarkdown %}
                     {% endif %}
-                  </div>
                 {% endif %}
               {% endfor %}
             {% endif %}
@@ -109,9 +90,7 @@
             </ul>
 
             <!-- Tab panes -->
-            <div class="tab-content">
               {% if method.allUriParameters.length or method.queryParameters or method.headers or method.body %}
-                <div class="tab-pane active" id="{{ resource.uniqueId }}_{{ method.method }}_request">
                   {% if resource.allUriParameters.length %}
                     <h3>URI Parameters</h3>
                     <ul>
@@ -167,17 +146,11 @@
                       {% endif %}
                     {% endfor %}
                   {% endif %}
-                </div>
               {% endif %}
 
               {% if method.responses %}
               method responses
-                <div class="tab-pane{%
-                  if not method.allUriParameters.length and not method.queryParameters
-                  and not method.headers and not method.body
-                  %} active{%
-                  endif
-                  %}" id="{{ resource.uniqueId }}_{{ method.method }}_response">
+                
                   {% for key, response in method.responses %}
                     <h2>HTTP status code <a href="http://httpstatus.es/{{ key }}" target="_blank">{{ key }}</a></h2>
 {% markdown %}
@@ -212,11 +185,9 @@
                       {% endfor %}
                     {% endif %}
                   {% endfor %}
-                </div>
               {% endif %}
 
               {% if method.securedBy.length %}
-                <div class="tab-pane" id="{{ resource.uniqueId }}_{{ method.method }}_securedby">
                   {% for securedBy in method.securedBy %}
                     {% set securityScheme = securitySchemeWithName(securedBy) %}
                     <h1>Secured by {{ securedBy }}</h1>
@@ -247,13 +218,7 @@
                     {% endfor %}
 
                   {% endfor %}
-                </div>
               {% endif %}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   {% endfor %}
 {% endif %}
 

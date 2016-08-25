@@ -1,0 +1,248 @@
+<!DOCTYPE HTML><html><head><title>PubPub API documentation</title><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="generator" content="https://github.com/kevinrenskers/raml2html 3.0.0"><link rel="shortcut icon" type="image/png" href="https://s3.amazonaws.com/tw-desk/i/346753/docfavicon/225812.20160809072613033.225812.20160809072613033jIv7R.png"><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/styles/default.min.css"><script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script><script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/highlight.min.js"></script><script type="text/javascript">
+      $(document).ready(function() {
+        $('.page-header pre code, .top-resource-description pre code').each(function(i, block) {
+          hljs.highlightBlock(block);
+        });
+
+        $('[data-toggle]').click(function() {
+          var selector = $(this).data('target') + ' pre code';
+          $(selector).each(function(i, block) {
+            hljs.highlightBlock(block);
+          });
+        });
+
+        // open modal on hashes like #_action_get
+        $(window).bind('hashchange', function(e) {
+          var anchor_id = document.location.hash.substr(1); //strip #
+          var element = $('#' + anchor_id);
+
+          // do we have such element + is it a modal?  --> show it
+          if (element.length && element.hasClass('modal')) {
+            element.modal('show');
+          }
+        });
+
+        // execute hashchange on first page load
+        $(window).trigger('hashchange');
+
+        // remove url fragment on modal hide
+        $('.modal').on('hidden.bs.modal', function() {
+          try {
+            if (history && history.replaceState) {
+                history.replaceState({}, '', '#');
+            }
+          } catch(e) {}
+        });
+      });
+    </script><style>
+      .hljs {
+        background: transparent;
+      }
+      .parent {
+        color: #999;
+      }
+      .panel-title > .methods {
+        float: right;
+      }
+      .badge {
+        border-radius: 0;
+        text-transform: uppercase;
+        width: 70px;
+        font-weight: normal;
+        color: #f3f3f6;
+        line-height: normal;
+      }
+      .badge_get {
+        background-color: #63a8e2;
+      }
+      .badge_post {
+        background-color: #6cbd7d;
+      }
+      .badge_put {
+        background-color: #22bac4;
+      }
+      .badge_delete {
+        background-color: #d26460;
+      }
+      .badge_patch {
+        background-color: #ccc444;
+      }
+      .tab-pane ul {
+        padding-left: 2em;
+      }
+      .tab-pane h2 {
+        font-size: 1.2em;
+        padding-bottom: 4px;
+        border-bottom: 1px solid #ddd;
+      }
+      .tab-pane h3 {
+        font-size: 1.1em;
+      }
+      .tab-content {
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+      }
+
+
+      .resource-description {
+        margin-bottom: 15px;
+      }
+
+      .resource-description p:last-child {
+        margin: 0;
+      }
+
+      .method-description {
+        margin-top: 10px;
+      }
+
+      .site-header {
+        background-color: black;
+      }
+
+      .brand-logo {
+        padding-left: 15px;
+      }
+
+      .brand-logo img {
+        max-height: 60px;
+      }
+
+      .api-header {
+        display: inline;
+        margin-left: 10px;
+        line-height: 60px;
+        vertical-align: middle;
+      }
+
+      .nav-pills>li>a {
+        border-radius: 0;
+      }
+
+      .panel  {
+        box-shadow: none;
+      }
+
+      .resource-header {
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+      }
+
+      .logo-header {
+        white-space: nowrap;
+        border-bottom: 1px solid #eee;
+        padding-right: 15px;
+      }
+
+      #sidebar {
+        height: 100%;
+        border-right: 1px solid #eee;
+      }
+
+      #sidebar .nav {
+        overflow: auto;
+        position: absolute;
+        bottom: 0;
+        top: 80px;
+        left: 0;
+        right: 0;
+      }
+    </style></head><body data-spy="scroll" data-target="#sidebar"><div class="container-fluid"><div class="row"><div class="col-sm-3 hidden-xs"><div id="sidebar" class="hidden-print affix" role="complementary"><div class="logo-header"><a href="https://pubpub.org" class="brand-logo"><img src="https://jake.pubpub.org/unsafe/150x150/https://s3.amazonaws.com/pubpub-upload/users/1451933144166.jpg" alt="OfficeR&amp;D"></a> <a href="#"><h3 class="api-header">API</h3></a></div><ul class="nav nav-pills nav-stacked"><li><a href="#Introduction">Introduction</a></li><li><a href="#user">User</a></li><li><a href="#journal">Journal</a></li></ul></div></div><div class="col-sm-9" role="main"><div class="row"><div class="col-sm-8"><h1>API Reference <small>version v1</small></h1><p>https://api.pubpub.org</p><h3 id="Introduction"><a href="#Introduction">Introduction</a></h3><p>is API is to give access to all of the publicly available resources on PubPub. Accessing resources or actions that require authentication will be supported soon.</p></div></div><h2 class="resource-header" id="user">User</h2><div class="top-resource-description"><p>data about PubPub Users</p></div><div><h3><span class="parent">/user</span>/{username}</h3><div class="row"><div class="col-md-6"><span class="badge badge_get">get</span><div class="method-description"><p>a by username. The User&#39;s ID can alternatively be used instead of the username.</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#user__username__get_request" data-toggle="tab">Request</a></li><li><a href="#user__username__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user__username__get_request"><h3>URI Parameters</h3><ul><li><strong>username</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="user__username__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  userID: "980ca098189",
+  username: "username",
+  firstName: "Jane",
+  lastName: "Doe",
+  name: "Jane Doe",
+  image: "https://assets.pubpub.org/picture.jpg",
+  bio: "I am a porcupine",
+  publicEmail: "jane@doe.com",
+  github: "janeCodes",
+  orcid: "123-123-123-123",
+  twitter: "janedoe",
+  website: "http://www.example.com",
+  googleScholar: "janesGoogleURI",
+}
+</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  error : "User not found"
+</code></pre></div></div></div></div></div><h2 class="resource-header" id="journal">Journal</h2><div class="top-resource-description"><p>data about PubPub Journals</p></div><div><h3><span class="parent">/journal</span>/{slug}</h3><div class="row"><div class="col-md-6"><span class="badge badge_get">get</span><div class="method-description"><p>data by slug. The Journal&#39;s ID can alternatively be used instead of the slug.</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#journal__slug__get_request" data-toggle="tab">Request</a></li><li><a href="#journal__slug__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="journal__slug__get_request"><h3>URI Parameters</h3><ul><li><strong>slug</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="journal__slug__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  journalID: "980ca098189",
+  journalName: "Super Journal",
+  slug: "superjournal",
+  description: "This is some description of my journal",
+  logo: "https://assets.pubpub.org/picture.jpg",
+  icon: "https://assets.pubpub.org/picture2.jpg",
+  about: "This is a long-form description about the journal",
+  website: "www.superjournal.com",
+  twitter: "superJournal",
+  facebook: "facebookSuperJournal",
+  headerColor: "#ff0",
+  headerImage: "https://assets.pubpub.org/picture3.jpg",
+}
+</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  error : "Journal not found"
+}
+</code></pre></div></div></div></div></div><div><h3><span class="parent">/journal/{slug}</span>/featured</h3><div class="row"><div class="col-md-6"><span class="badge badge_get">get</span><div class="method-description"><p>all atoms featured by the journal. The Journal&#39;s ID can alternatively be used instead of the slug.</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#journal__slug__featured_get_request" data-toggle="tab">Request</a></li><li><a href="#journal__slug__featured_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="journal__slug__featured_get_request"><h3>URI Parameters</h3><ul><li><strong>slug</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="journal__slug__featured_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  journalID: "980ca098189",
+  journalName: "Super Journal",
+  slug: "superjournal",
+  atoms: [
+    {
+      atomID: "56964b73849fe43d00b7d080",
+      slug: "myDocument",
+      title: "Awesome document",
+      description: "Description of awesome document",
+      previewImage: "https://assets.pubpub.org/_site/pub.png",
+      type: "document",
+      createDate: "2016-01-13T13:04:51.764Z",
+      lastUpdated: "2016-02-23T03:55:44.231Z",
+      featureDate: "Date atom was featured."
+      collections: ["Array of collections this atom has been added to"]
+    }
+  ]
+}
+</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  error : "Journal not found"
+}
+</code></pre></div></div></div></div></div><div><h3><span class="parent">/journal/{slug}</span>/collections</h3><div class="row"><div class="col-md-6"><span class="badge badge_get">get</span><div class="method-description"><p>collection data by id. The Journal&#39;s ID can alternatively be used instead of the slug.</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#journal__slug__collections_get_request" data-toggle="tab">Request</a></li><li><a href="#journal__slug__collections_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="journal__slug__collections_get_request"><h3>URI Parameters</h3><ul><li><strong>slug</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="journal__slug__collections_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  journalID: "980ca098189",
+  journalName: "Super Journal",
+  slug: "superjournal",
+  collections: [
+    {
+      collectionID: "980ca098188",
+      title: "My Collection",
+      createDate: "2016-08-08T14:21:32.977Z"
+    },
+    {
+      collectionID: "980ca098187",
+      title: "Another Collection",
+      createDate: "2016-07-08T14:21:31.977Z"
+    }
+  ]
+}
+</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  error : "Journal not found"
+}
+</code></pre></div></div></div></div></div><div><h3><span class="parent">/journal/{slug}</span>/collection/{collectionID}</h3><div class="row"><div class="col-md-6"><span class="badge badge_get">get</span><div class="method-description"><p>all atoms in a specific collection. The Journal&#39;s ID can alternatively be used instead of the slug.</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#journal__slug__collection__collectionID__get_request" data-toggle="tab">Request</a></li><li><a href="#journal__slug__collection__collectionID__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="journal__slug__collection__collectionID__get_request"><h3>URI Parameters</h3><ul><li><strong>slug</strong>: <em>required (string)</em></li><li><strong>collectionID</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="journal__slug__collection__collectionID__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  collectionID: "56962b72849fe43d00b7d080",
+  title: "Another Collection",
+  createDate: "2016-07-08T14:21:31.977Z",
+  atoms: [
+    {
+      atomID: "56964b73849fe43d00b7d080",
+      slug: "myDocument",
+      title: "Awesome document",
+      description: "Description of awesome document",
+      previewImage: "https://assets.pubpub.org/_site/pub.png",
+      type: "document",
+      createDate: "2016-01-13T13:04:51.764Z",
+      lastUpdated: "2016-02-23T03:55:44.231Z"
+    }
+  ]
+}
+</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  error : "Collection not found"
+}
+</code></pre></div></div></div></div></div></div></div></div></body></html>

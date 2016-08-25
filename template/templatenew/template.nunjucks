@@ -41,7 +41,6 @@
       </div>
     </div>
     <div role='flatdoc-content' class='content fade-in two'>
-
       <h1 id="pubpub-design-guide">PubPub API</h1>
       <p>Version {{ version }}
         </br>
