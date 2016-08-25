@@ -1,11 +1,14 @@
 {% if not resource.parentUrl %}
-  
+
 {% else %}
-<li id="pubpub-design-guide-{{ resource.displayName}}-item" class="level-2">
-  <a id="pubpub-design-guide-{{ resource.displayName}}-link" class="level-2" href="#{{ resource.uniqueId }}">
-      {{ resource.parentUrl }}{{ resource.relativeUri }}
-  </a>
-</li>
+
+  {% for method in resource.methods %}
+  <li id="pubpub-design-guide-{{ resource.displayName}}-item" class="level-2">
+    <a id="pubpub-design-guide-{{ resource.displayName}}-link" class="level-2" href="#{{ resource.uniqueId }}">
+        {{method.method}} {{ resource.parentUrl }}{{ resource.relativeUri }}
+    </a>
+  </li>
+  {% endfor %}
 {% endif %}
 
 {% for resource in resource.resources %}

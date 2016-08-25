@@ -30,11 +30,8 @@
         {% endfor %}
 
         {% for resource in resources %}
-
           {% include "./sidebar.nunjucks" %}
         {% endfor %}
-
-
       </div>
     </div>
     <div role='flatdoc-content' class='content fade-in two'>
@@ -43,8 +40,6 @@
         </br>
         {{ baseUri }}
       </p>
-
-
       {% for chapter in documentation %}
         <h2 id="{{ chapter.uniqueId }}">
           {{ chapter.title }}

@@ -3,15 +3,14 @@ title: PubPub
 documentation:
   - title: Introduction
     content: |
-      The goal of this API is to give access to all of the publicly available resources on PubPub. Accessing resources or actions that require authentication will be supported soon. All requests and responses are in the form of application/json.
+      The goal of this API is to give access to all of the publicly available resources on PubPub. Accessing resources or actions that require authentication will be supported soon.
+      All requests and responses are in the form of application/json.
+
 version: v1
 protocols: [ HTTPS ]
 baseUri: https://api.pubpub.org
 mediaType: application/json
-
 /user:
-  description: |
-    Routes to access data about PubPub Users
   displayName: User
   /{username}:
     get:
@@ -46,8 +45,6 @@ mediaType: application/json
                 }
 
 /journal:
-  description: |
-    Routes to access data about PubPub Journals
   displayName: Journal
   /{slug}:
     get:

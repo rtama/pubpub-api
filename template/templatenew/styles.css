@@ -509,7 +509,7 @@ h2:first-of-type {
   }
 }
 .menubar .section {
-  padding: 10%;
+  padding: 10% 0% 0% 10%;
 }
 .menubar .section + .section {
   border-top: solid 1px #dfe2e7;
@@ -1312,4 +1312,11 @@ input.input-error {
   padding: 5px 15px;
   display: inline-block;
   margin-top: 15px;
+}
+
+.uri-param-display {
+  padding: 10px;
+  border-radius: 3px;
+  background: #808284;
+  margin: 20px;
 }

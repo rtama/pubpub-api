@@ -15,7 +15,7 @@
 
   {% if resource.parentUrl %}
     {% if resource.description %}
-      {% markdown %}{{ resource.description }}{% endmarkdown %}
+      {{ resource.description }}
     {% endif %}
   {% endif %}
 
@@ -25,29 +25,19 @@
       <span class="glyphicon glyphicon-lock" title="Authentication required"></span>
     {% endif %}
   </span>
-    {% markdown %}{{ method.description}}{% endmarkdown %}
 
-  <!-- Nav tabs -->
-  {#
-    <ul class="nav nav-tabs">
-    {% if method.allUriParameters.length or method.queryParameters or method.headers or method.body %}
-          Request
-      {% endif %}
-
-      {% if method.responses %}
-          Response
-      {% endif %}
-    </ul>
-  #}
+    <p>{{ method.description}}</p>
 
     {% if method.allUriParameters.length or method.queryParameters or method.headers or method.body %}
       {% if resource.allUriParameters.length %}
-        URI Parameters
-        <ul>
-          {% for item in resource.allUriParameters %}
-            {% include "./item.nunjucks" %}
-          {% endfor %}
-        </ul>
+        URI Parameters:
+        <div class="uri-param-display">
+          <ul>
+            {% for item in resource.allUriParameters %}
+              {% include "./item.nunjucks" %}
+            {% endfor %}
+          </ul>
+        </div>
       {% endif %}
 
       {% if method.headers %}
@@ -97,7 +87,7 @@
     {% if method.responses %}
       {% for key, response in method.responses %}
         HTTP status code <a href="http://httpstatus.es/{{ key }}" target="_blank">{{ key }}</a>
-        {% markdown %}{{ response.description}}{% endmarkdown %}
+        {{ response.description}}
 
         {% if response.headers %}
           <ul>
