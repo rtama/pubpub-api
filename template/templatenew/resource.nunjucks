@@ -15,8 +15,7 @@
 
   {% if resource.parentUrl %}
     {% if resource.description %}
-    over over red rover
-      <div class="overview">{{ resource.description }}</div>
+      <p>{{ resource.description }}</p>
     {% endif %}
   {% endif %}
 
@@ -27,19 +26,21 @@
     {% endif %}
   </span>
 
-    <div class="overview">{{ method.description}}</div>
+    <p>{{ method.description}}</p>
 
     {% if method.allUriParameters.length or method.queryParameters or method.headers or method.body %}
-      {% if resource.allUriParameters.length %}
-        URI Parameters:
-        <div class="uri-param-display">
-          <ul>
-            {% for item in resource.allUriParameters %}
-              {% include "./item.nunjucks" %}
-            {% endfor %}
-          </ul>
-        </div>
-      {% endif %}
+      {#
+        {% if resource.allUriParameters.length %}
+          URI Parameters:
+          <div class="uri-param-display">
+            <ul>
+              {% for item in resource.allUriParameters %}
+                {% include "./item.nunjucks" %}
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      #}
 
       {% if method.headers %}
         Headers
