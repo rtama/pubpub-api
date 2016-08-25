@@ -4,7 +4,7 @@
 
 
 /* Custom Toggles to demonstrate designs */
-$document.on('flatdoc:ready', function() {
+$document.on('ready', function() {
 
   /* Toggle code blocks */
   // $( "pre" ).append("<div class='toggle'><span>+</span></div>");
@@ -30,7 +30,7 @@ $document.on('flatdoc:ready', function() {
   * Scrollspy.
   */
 
- $document.on('flatdoc:ready', function() {
+ $document.on('ready', function() {
     $("h2, h3").scrollagent(function(cid, pid, currentElement, previousElement) {
       if (pid) {
        $("[href='#"+pid+"']").removeClass('active');
@@ -45,7 +45,7 @@ $document.on('flatdoc:ready', function() {
   * Anchor jump links.
   */
 
- $document.on('flatdoc:ready', function() {
+ $document.on('ready', function() {
    $('.menu a').anchorjump();
  });
 

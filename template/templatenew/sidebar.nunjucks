@@ -1,9 +1,9 @@
 <li id="pubpub-design-guide-{{ resource.displayName}}-item" class="level-2">
-  <a id="pubpub-design-guide-{{ resource.displayName}}-link" class="level-2" href="#{{ resource.uniqueId}}">
+  <a id="pubpub-design-guide-{{ resource.displayName}}-link" class="level-2" href="#{{ resource.uniqueId }}">
     {% if not resource.parentUrl %}
       {{resource.displayName}}
     {% else %}
-      {{ resource.parentUrl }}{{ resource.relativeUri }}    
+      {{ resource.parentUrl }} {{ resource.relativeUri }}
       {% endif %}
   </a>
 </li>
