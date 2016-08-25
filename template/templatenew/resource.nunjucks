@@ -77,7 +77,7 @@
           {% endif %}
 
           {% if b.example %}
-            <p><strong>Example Request</strong>:</p>
+            <!--p><strong>Example Request</strong>:</p-->
             <pre><code>{{ b.example | escape }}</code></pre>
           {% endif %}
         {% endfor %}
@@ -107,7 +107,7 @@
             {% endif %}
 
             {% if b.example %}
-              <p><strong>Example Response</strong>:</p>
+              <!--p><strong>Example Response</strong>:</p-->
               <pre><code>{{ b.example | escape }}</code></pre>
             {% endif %}
           {% endfor %}
