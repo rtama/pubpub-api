@@ -1,6 +1,6 @@
 {# for User, Journal and each unique resource, give it a header #}
 {% if not resource.parentUrl %}
-  <h2>{{resource.displayName}}</h2>
+  <h2 id="{{resource.uniqueId}}">{{resource.displayName}}</h2>
 {% endif %}
 
 {% if (resource.methods or (resource.description and resource.parentUrl)) %}
