@@ -18,12 +18,16 @@
   {% endif %}
 
   {% for method in resource.methods %}
-  <span class="badge badge_{{ method.method }}">{{ method.method }}{% if method.securedBy.length %} <span class="glyphicon glyphicon-lock" title="Authentication required"></span>{% endif %}</span>
+  <span class="get-btn">{{ method.method }}
+    {% if method.securedBy.length %}
+      <span class="glyphicon glyphicon-lock" title="Authentication required"></span>
+    {% endif %}
+  </span>
     {% markdown %}{{ method.description}}{% endmarkdown %}
 
   <!-- Nav tabs -->
-  <ul class="nav nav-tabs">
   {#
+    <ul class="nav nav-tabs">
     {% if method.allUriParameters.length or method.queryParameters or method.headers or method.body %}
           Request
       {% endif %}
@@ -31,8 +35,8 @@
       {% if method.responses %}
           Response
       {% endif %}
-    #}
-  </ul>
+    </ul>
+  #}
 
     {% if method.allUriParameters.length or method.queryParameters or method.headers or method.body %}
       {% if resource.allUriParameters.length %}
@@ -94,7 +98,6 @@
         {% markdown %}{{ response.description}}{% endmarkdown %}
 
         {% if response.headers %}
-          Headers
           <ul>
             {% for key, item in response.headers %}
               {% include "./item.nunjucks" %}
@@ -103,7 +106,6 @@
         {% endif %}
 
         {% if response.body %}
-          Body
           {% for key, b in response.body %}
             {# <p><strong>Type: {{ key }}</strong></p> #}
 

@@ -1305,3 +1305,11 @@ input.input-error {
   -webkit-animation-delay: .44s;
   animation-delay: .44s
 }
+
+.get-btn {
+  background: #BBBDC0;
+  border-radius: 3px;
+  padding: 5px 15px;
+  display: inline-block;
+  margin-top: 15px;
+}
