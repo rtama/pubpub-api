@@ -2,6 +2,7 @@
 {% if not resource.parentUrl %}
   <h2 id="{{resource.uniqueId}}">{{resource.displayName}}</h2>
 {% endif %}
+  
 
 {% if (resource.methods or (resource.description and resource.parentUrl)) %}
   <h3><span class="parent">{{ resource.parentUrl }}</span>{{ resource.relativeUri }}</h3>

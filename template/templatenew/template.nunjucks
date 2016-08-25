@@ -23,16 +23,10 @@
         <ul class="level-2" id="pubpub-design-guide-list">
 
         {% for resource in resources %}
-          <li id="pubpub-design-guide-{{ resource.displayName}}-item" class="level-2">
-            <a id="pubpub-design-guide-{{ resource.displayName}}-link" class="level-2" href="#{{ resource.uniqueId}}">
-              {% if resource.displayName %}
-                 {{ resource.displayName}}
-              {% else %}
-                Resource needs a displayName {{ resource.relativeUri }}
-              {% endif %}
-            </a>
-          </li>
+          {% include "./sidebar.nunjucks" %}
         {% endfor %}
+
+
       </div>
     </div>
     <div role='flatdoc-content' class='content fade-in two'>
