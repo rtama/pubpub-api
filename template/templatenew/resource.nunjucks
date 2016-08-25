@@ -15,7 +15,8 @@
 
   {% if resource.parentUrl %}
     {% if resource.description %}
-      {{ resource.description }}
+    over over red rover
+      <div class="overview">{{ resource.description }}</div>
     {% endif %}
   {% endif %}
 
@@ -26,7 +27,7 @@
     {% endif %}
   </span>
 
-    <p>{{ method.description}}</p>
+    <div class="overview">{{ method.description}}</div>
 
     {% if method.allUriParameters.length or method.queryParameters or method.headers or method.body %}
       {% if resource.allUriParameters.length %}

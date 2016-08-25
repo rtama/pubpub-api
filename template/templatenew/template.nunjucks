@@ -47,6 +47,7 @@
         <div class="overview">
             {{ chapter.content }}
         </div>
+        
       {% endfor %}
       <!--h2 id="pubpub-design-guide-typography">Routes</h2-->
       {% for resource in resources %}
