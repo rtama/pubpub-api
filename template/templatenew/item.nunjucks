@@ -26,9 +26,9 @@
     )
   </em>
 
-{% markdown %}
-{{ item.description }}
-{% endmarkdown %}
+  {% markdown %}
+  {{ item.description }}
+  {% endmarkdown %}
 
   {% if item.schema %}
     <p><strong>Schema</strong>:</p>
@@ -40,7 +40,6 @@
     {% if item.type == 'string' %}
       <pre>{{ item.example| escape }}</pre>
     {% else %}
-    hi
       <pre><code>{{ item.example | escape }}</code></pre>
     {% endif %}
   {% endif %}
