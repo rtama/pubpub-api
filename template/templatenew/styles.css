@@ -631,7 +631,7 @@ h2:first-of-type {
   color: #2C2A2B;
 }
 .menu a.level-2 {
-  font-size: 1em;
+  font-size: .8em;
   margin: 1.2em 0 0 -.7em;
   padding: .2em .7em .22em .7em;
 }
