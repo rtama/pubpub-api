@@ -3,9 +3,7 @@
 {% if not resource.parentUrl %}
   <h2 id="{{resource.uniqueId}}">{{resource.displayName}}</h2>
   <div class="overview">
-    {% markdown %}
       {{ resource.description }}
-    {% endmarkdown %}
   </div>
 {% endif %}
 

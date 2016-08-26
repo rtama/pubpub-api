@@ -11,6 +11,8 @@ protocols: [ HTTPS ]
 baseUri: https://api.pubpub.org
 mediaType: application/json
 /user:
+  description: |
+    Routes to access data about PubPub Users
   displayName: User
   /{username}:
     get:
@@ -45,6 +47,8 @@ mediaType: application/json
                 }
 
 /journal:
+  description: |
+    Routes to access data about PubPub Journals
   displayName: Journal
   /{slug}:
     get:
