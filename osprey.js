@@ -249,8 +249,8 @@ osprey.loadFile(path)
 			const query = { $or:[ {'accessToken': req.body.accessToken}]};
 			// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
 			// const atomId = req.body.atomId;
-			const atomId = req.params.id;
-			const journalId = req.body.journalId;
+			const atomID = req.params.id;
+			const journalID = req.body.journalId;
 
 
 			let promises = [];
@@ -261,15 +261,24 @@ osprey.loadFile(path)
 					throw new Error('User not found');
 				}
 
+				const userID = userResult._id;
+				const inactiveNote = 'rejected';
+				// Check permission
+
+				// return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote)
+				// return Link.findOne('submitted', atomId, journalId, userResult._id, now);
+
+				return [Link.findOne({source: atomID, destination: journalID, type: 'submitted', inactive: {$ne: true}}), userID]
+			}).spread(function(linkData, userID){
+				console.log("Hello I have " + linkData)
+				if (linkData){
+					throw new Error('Pub already submitted to Journal');
+				}
 				const now = new Date().getTime();
 
-				// for (let i = 0; i < atomArray.length; i++){
-				// 	promises.push(Link.createLink('submitted', atomArray[i], journalId, userResult._id, now))
-				// }
-
-				// return Promise.all(promises);
-				return Link.createLink('submitted', atomId, journalId, userResult._id, now);
-			}).then(function(){
+				return Link.createLink('submitted', atomID, journalID, userID, now);
+			})
+			.then(function(){
 				return res.status(202).json('Success');
 			})
 			.catch(function(error){
