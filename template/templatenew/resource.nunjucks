@@ -18,11 +18,23 @@
   {% endif %}
 
   {% for method in resource.methods %}
-  <span class="get-btn">{{ method.method }}
-    {% if method.securedBy.length %}
-      <span class="glyphicon glyphicon-lock" title="Authentication required"></span>
-    {% endif %}
-  </span>
+  <span class="get-btn">{{ method.method }}</span>
+  {% if method.securedBy.length %}
+    {% for securedBy in method.securedBy %}
+      {% if securedBy %}
+        {% set securedByScopes = renderSecuredBy(securedBy) %}
+        </br>
+        <span class="glyphicon glyphicon-lock" title="Authentication required"></span> Secured by {{ securedByScopes }}
+        </br>
+        {% set securityScheme = securitySchemeWithName(securedBy) %}
+        {% if securityScheme.description %}
+          <small>{{ securityScheme.description }}</small>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+
 
     <p>{{ method.description}}</p>
 

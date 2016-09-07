@@ -5,11 +5,21 @@ documentation:
     content: |
       The goal of this API is to give access to all of the publicly available resources on PubPub. Accessing resources or actions that require authentication will be supported soon.
       All requests and responses are in the form of application/json.
-
 version: v1
 protocols: [ HTTPS ]
 baseUri: https://api.pubpub.org
 mediaType: application/json
+securitySchemes:
+  - Basic Authentication:
+      description:
+        Need an Access Token granted from PubPub (Settings page) to access this API endpoint.
+      describedBy:
+        queryParameters:
+           accessToken:
+             description: provide token
+             type: string
+             example: 764981a8f7cb64c55e6f99fa3cf14ac69e47ff466cfd5ab76ed1b1faea97c0ed2a0f395a4348074d4aec9f9b78e7e9f1
+      type: Basic Authentication
 /user:
   description: |
     Routes to access data about PubPub Users
@@ -181,3 +191,18 @@ mediaType: application/json
                   {
                     error : "Collection not found"
                   }
+/pubs:
+  description: |
+    Routes to access data about Pubs
+  displayName: Pubs
+  /submit:
+    post:
+      securedBy: [Basic Authentication]
+      description:
+        Submit multiple documents to a journal at once.
+      queryParameters:
+        journals:
+          description: |
+            string array ["documentId1","documentId2","documentId3","documentId4"...]
+          example: |
+            ["12o1241kf", "G124112o", "a123bdsd1231sad"]

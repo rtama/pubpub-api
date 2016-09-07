@@ -13,7 +13,6 @@
   <!-- Meta -->
   <meta content="PubPub" property="og:title">
 </head>
-
 <body role='flatdoc' class="language-css">
   <div class='content-root'>
     <div class='menubar fade-in'>
@@ -48,12 +47,12 @@
         <div class="overview">
             {{ chapter.content }}
         </div>
-
       {% endfor %}
       <!--h2 id="pubpub-design-guide-typography">Routes</h2-->
       {% for resource in resources %}
         {% include "./resource.nunjucks" %}
       {% endfor %}
+
     </div>
   </div>
 </body>

@@ -12,6 +12,7 @@
     &nbsp;
     <a id="pubpub-design-guide-{{ resource.displayName}}-link" class="level-2" href="#{{ resource.uniqueId }}">
         {{method.method}} {{ resource.parentUrl }}{{ resource.relativeUri }}
+        {% if method.securedBy.length %} <span class="glyphicon glyphicon-lock" title="Authentication required"></span>{% endif %}
     </a>
   </li>
   {% endfor %}

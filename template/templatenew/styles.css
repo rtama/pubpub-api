@@ -660,6 +660,9 @@ code .string,
 code .number {
   color: #2C2A2B;
 }
+small {
+  font-size: 80%;
+}
 code .init {
   color: #2C2A2B;
 }

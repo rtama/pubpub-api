@@ -6,6 +6,9 @@ const osprey = require('osprey');
 const express = require('express');
 const join = require('path').join;
 const app = express();
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+
 
 const path = join(__dirname, 'api.raml');
 
@@ -30,6 +33,7 @@ osprey.loadFile(path)
 		next();
 	});
 
+
 	app.use(function (err, req, res, next) {
 		// Handle errors.
 		console.log("Error! " + err + ", " + next)
@@ -45,15 +49,15 @@ osprey.loadFile(path)
 		// Set the query based on whether the params.id is a valid ObjectID;
 		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
 		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'username': req.params.id} ]} : { 'username': req.params.id };
-		
+
 		// Set the parameters we'd like to return
 		const select = {_id: 1, username: 1, firstName: 1, lastName: 1, name: 1, image: 1, bio: 1, publicEmail: 1, github: 1, orcid: 1, twitter: 1, website: 1, googleScholar: 1};
-		
+
 		// Make db call
 		User.findOne(query, select).lean().exec()
 		.then(function(userResult) {
 			if (!userResult) { throw new Error('User not found'); }
-			
+
 			userResult.userID = userResult._id;
 			delete userResult._id;
 
@@ -64,7 +68,6 @@ osprey.loadFile(path)
 		});
 	});
 
-
 	/* Route for         */
 	/* /journal/{slug}   */
 	/* /journal/{id}     */
@@ -72,15 +75,15 @@ osprey.loadFile(path)
 		// Set the query based on whether the params.id is a valid ObjectID;
 		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
 		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
-		
+
 		// Set the parameters we'd like to return
 		const select = {_id: 1, journalName: 1, slug: 1, description: 1, logo: 1, icon: 1, about: 1, website: 1, twitter: 1, facebook: 1, headerColor: 1, headerImage: 1};
-		
+
 		// Make db call
 		Journal.findOne(query, select).lean().exec()
 		.then(function(journalResult) {
 			if (!journalResult) { throw new Error('Journal not found'); }
-			
+
 			journalResult.journalID = journalResult._id;
 			delete journalResult._id;
 
@@ -98,15 +101,15 @@ osprey.loadFile(path)
 		// Set the query based on whether the params.id is a valid ObjectID;
 		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
 		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
-		
+
 		// Set the parameters we'd like to return
 		const select = {_id: 1, journalName: 1, slug: 1};
-		
+
 		// Make db call
 		Journal.findOne(query, select).populate({path: 'collections', select: 'title createDate'}).lean().exec()
 		.then(function(journalResult) {
 			if (!journalResult) { throw new Error('Journal not found'); }
-		  
+
 			const findFeaturedLinks = Link.find({source: journalResult._id, type: 'featured'}, {_id: 1, destination: 1, createDate: 1, 'metadata.collections': 1}).populate({
 				path: 'destination',
 				model: Atom,
@@ -150,10 +153,10 @@ osprey.loadFile(path)
 		// Set the query based on whether the params.id is a valid ObjectID;
 		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
 		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
-		
+
 		// Set the parameters we'd like to return
 		const select = {_id: 1, collections: 1, journalName: 1, slug: 1};
-		
+
 		// Make db call
 		Journal.findOne(query, select).populate({path: 'collections', select: 'title createDate'}).lean().exec()
 		.then(function(journalResult) {
@@ -183,15 +186,15 @@ osprey.loadFile(path)
 		// Set the query based on whether the params.id is a valid ObjectID;
 		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
 		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
-		
+
 		// Set the parameters we'd like to return
 		const select = {_id: 1, journalName: 1, slug: 1, collections: 1};
-		
+
 		// Make db call
 		Journal.findOne(query, select).populate({path: 'collections', select: 'title createDate'}).lean().exec()
 		.then(function(journalResult) {
 			if (!journalResult) { throw new Error('Journal not found'); }
-		  
+
 			const findFeaturedLinks = Link.find({source: journalResult._id, type: 'featured', 'metadata.collections': req.params.collectionID}, {_id: 1, destination: 1, createDate: 1, 'metadata.collections': 1}).populate({
 				path: 'destination',
 				model: Atom,
@@ -238,6 +241,31 @@ osprey.loadFile(path)
 			return res.status(404).json('Collection not found');
 		});
 	});
+
+		/* Route for  		*/
+		/* /pubs/submit 	*/
+		app.post('/pubs/submit', function (req, res, next) {
+			// const isValidObjectID = mongoose.Types.ObjectId.isValid(req.body.accessToken);
+			const query = { $or:[ {'accessToken': req.body.accessToken}]};
+			console.log(req.body.journals);
+			User.findOne(query).lean().exec()
+			.then(function(userResult) {
+				if (!userResult) {
+					throw new Error('User not found');
+				}
+				return Link.createLink('submitted', atomID, id, userID, now);
+
+
+			}).then(function(){
+				return res.status(202).json('Success');
+			})
+			.catch(function(){
+				return res.status(404).json('Error');
+
+			});
+			//see which user the API Key belongs to, if any
+			//if it's an invalid API key then respond with an error ? (How to protect against Brute forcing?)
+		});
 
 
 	app.listen(process.env.PORT || 9876);
