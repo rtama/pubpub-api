@@ -187,6 +187,7 @@ securitySchemes:
           404:
             body:
               application/json:
+
                 example: |
                   {
                     error : "Collection not found"
@@ -195,14 +196,12 @@ securitySchemes:
   description: |
     Routes to access data about Pubs
   displayName: Pubs
-  /submit:
-    post:
-      securedBy: [Basic Authentication]
-      description:
-        Submit multiple documents to a journal at once.
-      queryParameters:
-        journals:
-          description: |
-            string array ["documentId1","documentId2","documentId3","documentId4"...]
-          example: |
-            ["12o1241kf", "G124112o", "a123bdsd1231sad"]
+  /{id}:
+    /submit:
+      post:
+        securedBy: [Basic Authentication]
+        description:
+          Submit a document to a journal for review and publication.
+        queryParameters:
+          journalId:
+            type: string

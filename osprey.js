@@ -243,12 +243,13 @@ osprey.loadFile(path)
 
 		/* Route for  		*/
 		/* /pubs/submit 	*/
-		app.post('/pubs/submit', function (req, res, next) {
+		app.post('/pubs/:id/submit', function (req, res, next) {
 			// const isValidObjectID = mongoose.Types.ObjectId.isValid(req.body.accessToken);
 			// const isValidObjectID = mongoose.Types.ObjectId.isValid(req.body.journalId);
 			const query = { $or:[ {'accessToken': req.body.accessToken}]};
-			const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
-
+			// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
+			// const atomId = req.body.atomId;
+			const atomId = req.params.id;
 			const journalId = req.body.journalId;
 
 
@@ -262,12 +263,13 @@ osprey.loadFile(path)
 
 				const now = new Date().getTime();
 
-				for (let i = 0; i < atomArray.length; i++){
-					promises.push(Link.createLink('submitted', atomArray[i], journalId, userResult._id, now))
-				}
+				// for (let i = 0; i < atomArray.length; i++){
+				// 	promises.push(Link.createLink('submitted', atomArray[i], journalId, userResult._id, now))
+				// }
 
-				return Promise.all(promises);
-			}).then(function(idk){
+				// return Promise.all(promises);
+				return Link.createLink('submitted', atomId, journalId, userResult._id, now);
+			}).then(function(){
 				return res.status(202).json('Success');
 			})
 			.catch(function(error){
