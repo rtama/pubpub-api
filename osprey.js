@@ -9,7 +9,6 @@ const app = express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
-
 const path = join(__dirname, 'api.raml');
 
 const mongoose = require('mongoose');
@@ -246,21 +245,33 @@ osprey.loadFile(path)
 		/* /pubs/submit 	*/
 		app.post('/pubs/submit', function (req, res, next) {
 			// const isValidObjectID = mongoose.Types.ObjectId.isValid(req.body.accessToken);
+			// const isValidObjectID = mongoose.Types.ObjectId.isValid(req.body.journalId);
 			const query = { $or:[ {'accessToken': req.body.accessToken}]};
-			console.log(req.body.journals);
+			const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
+
+			const journalId = req.body.journalId;
+
+
+			let promises = [];
+
 			User.findOne(query).lean().exec()
 			.then(function(userResult) {
 				if (!userResult) {
 					throw new Error('User not found');
 				}
-				return Link.createLink('submitted', atomID, id, userID, now);
 
+				const now = new Date().getTime();
 
-			}).then(function(){
+				for (let i = 0; i < atomArray.length; i++){
+					promises.push(Link.createLink('submitted', atomArray[i], journalId, userResult._id, now))
+				}
+
+				return Promise.all(promises);
+			}).then(function(idk){
 				return res.status(202).json('Success');
 			})
-			.catch(function(){
-				return res.status(404).json('Error');
+			.catch(function(error){
+				return res.status(404).json('Error ' + error);
 
 			});
 			//see which user the API Key belongs to, if any
