@@ -106,14 +106,18 @@ osprey.loadFile(path)
 		//to-di: accept journalIds or slugs
 
 		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-		const journalQuery = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
 
-		const journalID = req.params.id;
+		// const journalID = req.params.id;
 		// const userQuery = { $or:[ ]};
 		const accessToken = req.query.accessToken;
 		User.findOne({'accessToken': accessToken}).lean().exec()
 		.then(function(userResult){
-			// console.log("user is " + JSON.stringify(userResult))
+			const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
+			const select = {_id: 1};
+
+			return [userResult, Journal.findOne(query, select).lean().exec() ]
+		})
+		.spread(function(userResult, journal){
 			if (!userResult) {
 				throw new Error('User not found');
 			}
@@ -122,19 +126,20 @@ osprey.loadFile(path)
 				throw new Error(ERROR.missingParam);
 			}
 
-			return Link.findOne({type: 'admin', destination: journalID, source: userResult._id, inactive: {$ne: true}}).lean().exec();
+			return Link.findOne({type: 'admin', destination: journal._id, source: userResult._id, inactive: {$ne: true}}).lean().exec();
 		})
 		.then(function(link){
 			if (!link){
 				throw new Error('You are not an admin of this journal')
 			}
+			return link;
 		})
-		.then(function(){
+		.then(function(link){
 
 			// Set the parameters we'd like to return
 			const select = {_id: 1, slug: 1, createDate: 1, source: 1};
 
-			return Link.find({destination: journalID, type: 'submitted', inactive: {$ne: true}}, select)
+			return Link.find({destination: link.destination, type: 'submitted', inactive: {$ne: true}}, select)
 			.populate({
 					path: 'source',
 					model: Atom,
