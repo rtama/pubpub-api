@@ -12,7 +12,7 @@ mediaType: application/json
 securitySchemes:
   - Basic Authentication:
       description:
-        Need an Access Token to access this API endpoint.
+        Need an Access Token to access this API endpoint. For post requests set accessToken in the body. For Get requests set it as a query parameter.
       describedBy:
         queryParameters:
            accessToken:
@@ -192,6 +192,43 @@ securitySchemes:
                   {
                     error : "Collection not found"
                   }
+    /submissions:
+      get:
+        description: |
+          Get the pubs submitted to a journal.
+        queryParameters:
+          accessToken:
+            type: string
+            required: true
+        responses:
+          200:
+
+            body:
+              application/json:
+                example: |
+                  [
+                    {
+                      "id": "577958fe9caas832001acd93",
+                      "slug": "The Anatomy of Absurdity",
+                      "title": "anatomy-absurd",
+                      "description": "The la la la",
+                      "createDate": "2016-09-08T17:45:25.006Z"
+                    },
+                    {
+                      "id": "576d814a2cbcc22c00dcaa1b",
+                      "slug": "consesuscats",
+                      "title": "Consensus Cats",
+                      "description": "Here our cats beleive",
+                      "createDate": "2016-09-08T17:45:13.503Z"
+                    },
+                    {
+                      "id": "578fa2ba9099de3700eba17d",
+                      "slug": "zeus",
+                      "title": "Zues and Mythology",
+                      "description": "An atom about zeus and mythology",
+                      "createDate": "2016-09-07T20:35:23.447Z"
+                    }
+                  ]
 /pubs:
   description: |
     Routes to access data about Pubs
@@ -203,5 +240,9 @@ securitySchemes:
         description:
           Submit a document to a journal for review and publication.
         queryParameters:
-          journalId:
+          journalID:
             type: string
+            required: true
+          accessToken:
+            type: string
+            required: true

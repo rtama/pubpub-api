@@ -8,6 +8,7 @@ const join = require('path').join;
 const app = express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 const path = join(__dirname, 'api.raml');
 
@@ -18,6 +19,10 @@ const Journal = require('./models').Journal;
 const User = require('./models').User;
 const Atom = require('./models').Atom;
 const Link = require('./models').Link;
+
+const ERROR = {
+	missingParam: 'Required parameter missing'
+}
 
 osprey.loadFile(path)
 .then(function (middleware) {
@@ -93,6 +98,60 @@ osprey.loadFile(path)
 		});
 	});
 
+	/* Route for                 		*/
+	/* /journal/{slug}/submissions  */
+	/* /journal/{id}/submissions    */
+	app.get('/journal/:id/submissions/', function (req, res, next) {
+		//to-do: make sure the user has ownership over the journal
+		//to-di: accept journalIds or slugs
+
+		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
+		const journalQuery = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
+
+		const journalID = req.params.id;
+		// const userQuery = { $or:[ ]};
+		const accessToken = req.query.accessToken;
+		User.findOne({'accessToken': accessToken}).lean().exec()
+		.then(function(userResult){
+			// console.log("user is " + JSON.stringify(userResult))
+			if (!userResult) {
+				throw new Error('User not found');
+			}
+
+			if (!req.params.id || !req.query.accessToken){
+				throw new Error(ERROR.missingParam);
+			}
+
+			return Link.findOne({type: 'admin', destination: journalID, source: userResult._id, inactive: {$ne: true}}).lean().exec();
+		})
+		.then(function(link){
+			if (!link){
+				throw new Error('You are not an admin of this journal')
+			}
+		})
+		.then(function(){
+
+			// Set the parameters we'd like to return
+			const select = {_id: 1, slug: 1, createDate: 1, source: 1};
+
+			return Link.find({destination: journalID, type: 'submitted', inactive: {$ne: true}}, select)
+			.populate({
+					path: 'source',
+					model: Atom,
+					select: 'title slug description',
+				}).exec();
+		}).then(function(links){
+			links = links.map(function(link){
+					return {id: link.source._id, slug: link.source.slug, title: link.source.title, description: link.source.description, createDate: link.createDate};
+				})
+			return res.status(202).json(links);
+		})
+		.catch(function(error){
+			return res.status(404).json(error);
+		});
+
+	});
+
 	/* Route for                 */
 	/* /journal/{slug}/featured  */
 	/* /journal/{id}/featured    */
@@ -140,7 +199,6 @@ osprey.loadFile(path)
 			return res.status(200).json(output);
 		})
 		.catch(function(error) {
-			console.log(error);
 			return res.status(404).json('Journal not found');
 		});
 	});
@@ -236,7 +294,6 @@ osprey.loadFile(path)
 			return res.status(200).json(output);
 		})
 		.catch(function(error) {
-			console.log(error);
 			return res.status(404).json('Collection not found');
 		});
 	});
@@ -250,15 +307,16 @@ osprey.loadFile(path)
 			// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
 			// const atomId = req.body.atomId;
 			const atomID = req.params.id;
-			const journalID = req.body.journalId;
-
-
-			let promises = [];
+			const journalID = req.body.journalID;
 
 			User.findOne(query).lean().exec()
 			.then(function(userResult) {
+
 				if (!userResult) {
 					throw new Error('User not found');
+				}
+				if (!req.body.accessToken || !req.params.id || !req.body.journalID){
+					throw new Error(ERROR.missingParam);
 				}
 
 				const userID = userResult._id;
@@ -270,7 +328,6 @@ osprey.loadFile(path)
 
 				return [Link.findOne({source: atomID, destination: journalID, type: 'submitted', inactive: {$ne: true}}), userID]
 			}).spread(function(linkData, userID){
-				console.log("Hello I have " + linkData)
 				if (linkData){
 					throw new Error('Pub already submitted to Journal');
 				}
@@ -282,7 +339,7 @@ osprey.loadFile(path)
 				return res.status(202).json('Success');
 			})
 			.catch(function(error){
-				return res.status(404).json('Error ' + error);
+				return res.status(404).json(error);
 
 			});
 			//see which user the API Key belongs to, if any
