@@ -20,7 +20,7 @@ const User = require('./models').User;
 const Atom = require('./models').Atom;
 const Link = require('./models').Link;
 
-import {getFeatured} from './journal-endpoints';
+import {getFeatured, getJournalByID} from './journal-endpoints';
 import {getUserByID} from './user-endpoints';
 
 
@@ -58,28 +58,7 @@ osprey.loadFile(path)
 	/* Route for         */
 	/* /journal/{slug}   */
 	/* /journal/{id}     */
-	app.get('/journal/:id/', function (req, res, next) {
-		// Set the query based on whether the params.id is a valid ObjectID;
-		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
-
-		// Set the parameters we'd like to return
-		const select = {_id: 1, journalName: 1, slug: 1, description: 1, logo: 1, icon: 1, about: 1, website: 1, twitter: 1, facebook: 1, headerColor: 1, headerImage: 1};
-
-		// Make db call
-		Journal.findOne(query, select).lean().exec()
-		.then(function(journalResult) {
-			if (!journalResult) { throw new Error('Journal not found'); }
-
-			journalResult.journalID = journalResult._id;
-			delete journalResult._id;
-
-			return res.status(200).json(journalResult);
-		})
-		.catch(function(error) {
-			return res.status(404).json('Journal not found');
-		});
-	});
+	app.get('/journal/:id/', getJournalByID);
 
 	/* Route for                 		*/
 	/* /journal/{slug}/submissions  */

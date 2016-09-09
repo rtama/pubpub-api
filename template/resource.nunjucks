@@ -76,9 +76,9 @@
                       <span class="glyphicon glyphicon-lock" title="Authentication required"></span> Secured by {{ securedByScopes }}
                       {% set securityScheme = securitySchemeWithName(securedBy) %}
                       {% if securityScheme.description %}
-{% markdown %}
-{{ securityScheme.description }}
-{% endmarkdown %}
+                        {% markdown %}
+                        {{ securityScheme.description }}
+                        {% endmarkdown %}
                       {% endif %}
                     </div>
                   {% endif %}

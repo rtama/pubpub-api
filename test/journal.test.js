@@ -1,4 +1,4 @@
-import {getUserByID} from '../user-endpoints';
+import {getJournalByID} from '../journal-endpoints';
 
 const assert = require('assert');
 // var server = require('../server/app');
@@ -8,21 +8,22 @@ const chaiHttp = require('chai-http');
 const url = 'http://localhost:9876';
 chai.use(chaiHttp);
 
-describe('/user/:id/', function() {
+
+describe('/journal/:id/', function() {
   this.timeout(15000);
-  it('should get the user by a given ID', function(done) {
+  it('should get the journal by a given ID', function(done) {
     chai.request(url)
-    .get('/user/576bf659c8dade3700266c17')
+    .get('/journal/576c0561c8dade3700266c25')
     .end(function(err, res){
       assert.equal(res.status, 200);
       done();
     });
   });
-  it('should return 404 for non-existent ID', function(done) {
+  it('should get the journal by a given slug', function(done) {
     chai.request(url)
-    .get('/user/abcd')
+    .get('/journal/absurd')
     .end(function(err, res){
-      assert.equal(res.status, 404);
+      assert.equal(res.status, 200);
       done();
     });
   });
