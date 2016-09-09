@@ -1,5 +1,3 @@
-import {getJournalByID} from '../journal-endpoints';
-
 const assert = require('assert');
 // var server = require('../server/app');
 
@@ -27,7 +25,7 @@ describe('/journal/:id/', function() {
       done();
     });
   });
-  it('should 404 for a non existent ID', function(done) {
+  it('should 404 for a non existent ID/slug', function(done) {
     chai.request(url)
     .get('/journal/abcd001010101010999')
     .end(function(err, res){
@@ -42,6 +40,19 @@ describe('/journal/:id/', function() {
     .end(function(err, res){
       const journalName = JSON.parse(res.text).journalName
       assert.equal(journalName, "Journal of Absurd Ideas");
+      done();
+    });
+  });
+});
+
+describe('/journal/:id/featured', function() {
+  it('should return featured journal data', function(done) {
+    chai.request(url)
+    .get('/journal/576c0561c8dade3700266c25/featured')
+    .end(function(err, res){
+      console.log("Hii " + JSON.stringify(res))
+      // const journalName = JSON.parse(res.text).journalName
+      assert.equal(res.status, 200);
       done();
     });
   });

@@ -29,7 +29,9 @@ export function getFeatured(req, res, next) {
 		return [journalResult, findFeaturedLinks];
 	})
 	.spread(function(journalResult, featuredLinks) {
+    console.log("Featured links! " + JSON.stringify(featuredLinks))
 		const atoms = featuredLinks.filter((link)=> {
+      console.log("Returning " + link.destination.isPublished)
 			return link.destination.isPublished;
 		}).map((link)=> {
 			const output = link.destination;
@@ -42,14 +44,14 @@ export function getFeatured(req, res, next) {
 			return output;
 		});
 
-		const output = {
-			journalID: journalResult._id,
-			journalName: journalResult.journalName,
-			slug: journalResult.slug,
-			atoms: atoms,
-		};
+		// const output = {
+		// 	journalID: journalResult._id,
+		// 	journalName: journalResult.journalName,
+		// 	slug: journalResult.slug,
+		// 	atoms: atoms,
+		// };
 
-		return res.status(200).json(output);
+		return res.status(200).json(atoms);
 	})
 	.catch(function(error) {
 		return res.status(404).json('Journal not found');
@@ -57,7 +59,7 @@ export function getFeatured(req, res, next) {
 }
 
 
-export function getJournalByID(req, res, next) {
+export function getJournal(req, res, next) {
   // Set the query based on whether the params.id is a valid ObjectID;
   const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
   const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };

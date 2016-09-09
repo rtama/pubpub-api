@@ -20,7 +20,7 @@ const User = require('./models').User;
 const Atom = require('./models').Atom;
 const Link = require('./models').Link;
 
-import {getFeatured, getJournalByID} from './journal-endpoints';
+import {getFeatured, getJournal} from './journal-endpoints';
 import {getUserByID} from './user-endpoints';
 
 
@@ -58,7 +58,7 @@ osprey.loadFile(path)
 	/* Route for         */
 	/* /journal/{slug}   */
 	/* /journal/{id}     */
-	app.get('/journal/:id/', getJournalByID);
+	app.get('/journal/:id/', getJournal);
 
 	/* Route for                 		*/
 	/* /journal/{slug}/submissions  */
