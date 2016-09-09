@@ -27,4 +27,22 @@ describe('/journal/:id/', function() {
       done();
     });
   });
+  it('should 404 for a non existent ID', function(done) {
+    chai.request(url)
+    .get('/journal/abcd001010101010999')
+    .end(function(err, res){
+
+      assert.equal(res.status, 404);
+      done();
+    });
+  });
+  it('should return journal data when fetched ', function(done) {
+    chai.request(url)
+    .get('/journal/576c0561c8dade3700266c25')
+    .end(function(err, res){
+      const journalName = JSON.parse(res.text).journalName
+      assert.equal(journalName, "Journal of Absurd Ideas");
+      done();
+    });
+  });
 });
