@@ -19,12 +19,12 @@ export function getUserByID(req, res, next) {
   // Make db call
   User.findOne(query, select).lean().exec()
   .then(function(userResult) {
-    if (!userResult) { throw new Error(ERROR.userNotFound); }
+    if (!userResult) { throw new Error('User not found'); }
     userResult.userID = userResult._id;
     delete userResult._id;
     return res.status(200).json(userResult);
   })
   .catch(function(error) {
-    return res.status(404).json(ERROR.userNotFound);
+    return res.status(404).json(error);
   });
 };
