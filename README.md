@@ -22,6 +22,10 @@ npm run build-docs
 
 Determine best format for responding with errors
 
+### Testing
+
+`mocha --require 'babel-register'`
+
 ### Info
 
 Abao is pretty cool for testing

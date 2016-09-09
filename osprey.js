@@ -20,8 +20,14 @@ const User = require('./models').User;
 const Atom = require('./models').Atom;
 const Link = require('./models').Link;
 
+import {getFeatured} from './journal-endpoints';
+import {getUserByID} from './user-endpoints';
+
+
 const ERROR = {
-	missingParam: 'Required parameter missing'
+	missingParam: 'Required parameter missing',
+	userNotFound: 'User not found',
+	youDoNotHaveAccessToThisJournal: 'You do not have access to this action'
 }
 
 osprey.loadFile(path)
@@ -47,30 +53,7 @@ osprey.loadFile(path)
 	/* Route for         */
 	/* /user/{username}  */
 	/* /user/{id}        */
-	app.get('/user/:id/', function (req, res, next) {
-		const x = {fish: 5};
-		const y = {...x};
-		// Set the query based on whether the params.id is a valid ObjectID;
-		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'username': req.params.id} ]} : { 'username': req.params.id };
-
-		// Set the parameters we'd like to return
-		const select = {_id: 1, username: 1, firstName: 1, lastName: 1, name: 1, image: 1, bio: 1, publicEmail: 1, github: 1, orcid: 1, twitter: 1, website: 1, googleScholar: 1};
-
-		// Make db call
-		User.findOne(query, select).lean().exec()
-		.then(function(userResult) {
-			if (!userResult) { throw new Error('User not found'); }
-
-			userResult.userID = userResult._id;
-			delete userResult._id;
-
-			return res.status(200).json(userResult);
-		})
-		.catch(function(error) {
-			return res.status(404).json('User not found');
-		});
-	});
+	app.get('/user/:id/', getUserByID);
 
 	/* Route for         */
 	/* /journal/{slug}   */
@@ -102,24 +85,26 @@ osprey.loadFile(path)
 	/* /journal/{slug}/submissions  */
 	/* /journal/{id}/submissions    */
 	app.get('/journal/:id/submissions/', function (req, res, next) {
-		//to-do: make sure the user has ownership over the journal
-		//to-di: accept journalIds or slugs
-
 		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
 
 		// const journalID = req.params.id;
 		// const userQuery = { $or:[ ]};
 		const accessToken = req.query.accessToken;
+
+		// see if accessToken grants access to this user
 		User.findOne({'accessToken': accessToken}).lean().exec()
 		.then(function(userResult){
 			const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
 			const select = {_id: 1};
-
 			return [userResult, Journal.findOne(query, select).lean().exec() ]
 		})
 		.spread(function(userResult, journal){
 			if (!userResult) {
-				throw new Error('User not found');
+				throw new Error(ERROR.userNotFound);
+			}
+
+			if(!journal){
+				throw new Error('Journal not found')
 			}
 
 			if (!req.params.id || !req.query.accessToken){
@@ -130,12 +115,10 @@ osprey.loadFile(path)
 		})
 		.then(function(link){
 			if (!link){
-				throw new Error('You are not an admin of this journal')
+				throw new Error(ERROR.youDoNotHaveAccessToThisJournal)
 			}
-			return link;
 		})
-		.then(function(link){
-
+		.then(function(){
 			// Set the parameters we'd like to return
 			const select = {_id: 1, slug: 1, createDate: 1, source: 1};
 
@@ -147,8 +130,8 @@ osprey.loadFile(path)
 				}).exec();
 		}).then(function(links){
 			links = links.map(function(link){
-					return {id: link.source._id, slug: link.source.slug, title: link.source.title, description: link.source.description, createDate: link.createDate};
-				})
+				return {id: link.source._id, slug: link.source.slug, title: link.source.title, description: link.source.description, createDate: link.createDate};
+			})
 			return res.status(202).json(links);
 		})
 		.catch(function(error){
@@ -160,52 +143,79 @@ osprey.loadFile(path)
 	/* Route for                 */
 	/* /journal/{slug}/featured  */
 	/* /journal/{id}/featured    */
-	app.get('/journal/:id/featured/', function (req, res, next) {
-		// Set the query based on whether the params.id is a valid ObjectID;
-		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
+	app.get('/journal/:id/featured/', getFeatured);
 
-		// Set the parameters we'd like to return
-		const select = {_id: 1, journalName: 1, slug: 1};
+	/* Route for                 */
+	/* /journal/{slug}/feature  */
+	/* /journal/{id}/feature    */
+	app.post('/journal/:id/feature/', function (req, res, next) {
+		const query = { $or:[ {'accessToken': req.body.accessToken}]};
+		// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
+		// const atomId = req.body.atomId;
+		const atomID = req.body.atomID;
+		const accept = req.body.accept;
 
-		// Make db call
-		Journal.findOne(query, select).populate({path: 'collections', select: 'title createDate'}).lean().exec()
-		.then(function(journalResult) {
-			if (!journalResult) { throw new Error('Journal not found'); }
+		let journalID;
 
-			const findFeaturedLinks = Link.find({source: journalResult._id, type: 'featured'}, {_id: 1, destination: 1, createDate: 1, 'metadata.collections': 1}).populate({
-				path: 'destination',
-				model: Atom,
-				select: 'title slug description previewImage type customAuthorString createDate lastUpdated isPublished',
-			}).lean().exec();
-			return [journalResult, findFeaturedLinks];
+
+		// get user based off of ID
+		User.findOne(query).lean().exec()
+		.then(function(userResult) {
+			if (!userResult) {
+				throw new Error(ERROR.userNotFound);
+			}
+			if (!req.body.accessToken || !req.params.id || !req.body.atomID || !req.body.accept){
+				throw new Error(ERROR.missingParam);
+			}
+			const userID = userResult._id;
+			// return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote)
+			// return Link.findOne('submitted', atomId, journalId, userResult._id, now);
+			// return Link.findOne({type: 'admin', destination: journal._id, source: userResult._id, inactive: {$ne: true}}).lean().exec();
+			// return [Link.findOne({source: atomID, destination: journalID, type: 'submitted', inactive: {$ne: true}}), userID]
+			return userResult._id;
 		})
-		.spread(function(journalResult, featuredLinks) {
-			const atoms = featuredLinks.filter((link)=> {
-				return link.destination.isPublished;
-			}).map((link)=> {
-				const output = link.destination;
-				output.collections = link.metadata.collections;
-				output.featureDate = link.createDate
-				delete output.isPublished;
-				output.atomID = output._id;
-				delete output._id;
+		.then(function(userID){
+			const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
+			const select = {_id: 1};
+			return [userID, Journal.findOne(query, select).lean().exec() ]
+		})
+		.spread(function(userID, journal){
+			if (!userID) {
+				throw new Error(ERROR.userNotFound);
+			}
 
-				return output;
-			});
+			if(!journal){
+				throw new Error('Journal not found')
+			}
 
-			const output = {
-				journalID: journalResult._id,
-				journalName: journalResult.journalName,
-				slug: journalResult.slug,
-				atoms: atoms,
-			};
+			if (!req.params.id || !req.query.accessToken){
+				throw new Error(ERROR.missingParam);
+			}
+			journalID = journal._id;
 
-			return res.status(200).json(output);
+			return [userID, Link.findOne({type: 'admin', destination: journal._id, source: userResult._id, inactive: {$ne: true}}).lean().exec()];
+		})
+		.spread(function(userID, link) {
+			if (!link){
+				throw new Error(ERROR.youDoNotHaveAccessToThisJournal)
+			}
+
+			return [userID, Link.createLink('featured', journalID, atomID, userID, now)]
+		})
+		.spread(function(userID, newLink) {
+			const now = new Date().getTime();
+			const inactiveNote = 'featured';
+			return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote);
+		})
+		.then(function(updatedSubmissionLink) {
+			return res.status(201).json(updatedSubmissionLink);
 		})
 		.catch(function(error) {
-			return res.status(404).json('Journal not found');
-		});
+			console.log('error', error);
+			return res.status(500).json(error);
+		})
+
+
 	});
 
 	/* Route for                    */
@@ -305,53 +315,53 @@ osprey.loadFile(path)
 
 		/* Route for  		*/
 		/* /pubs/submit 	*/
-		app.post('/pubs/:id/submit', function (req, res, next) {
-			// const isValidObjectID = mongoose.Types.ObjectId.isValid(req.body.accessToken);
-			// const isValidObjectID = mongoose.Types.ObjectId.isValid(req.body.journalId);
-			const query = { $or:[ {'accessToken': req.body.accessToken}]};
-			// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
-			// const atomId = req.body.atomId;
-			const atomID = req.params.id;
-			const journalID = req.body.journalID;
+		app.post('/pubs/:id/submit', pubsIdSubmit);
 
-			User.findOne(query).lean().exec()
-			.then(function(userResult) {
-
-				if (!userResult) {
-					throw new Error('User not found');
-				}
-				if (!req.body.accessToken || !req.params.id || !req.body.journalID){
-					throw new Error(ERROR.missingParam);
-				}
-
-				const userID = userResult._id;
-				const inactiveNote = 'rejected';
-				// Check permission
-
-				// return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote)
-				// return Link.findOne('submitted', atomId, journalId, userResult._id, now);
-
-				return [Link.findOne({source: atomID, destination: journalID, type: 'submitted', inactive: {$ne: true}}), userID]
-			}).spread(function(linkData, userID){
-				if (linkData){
-					throw new Error('Pub already submitted to Journal');
-				}
-				const now = new Date().getTime();
-
-				return Link.createLink('submitted', atomID, journalID, userID, now);
-			})
-			.then(function(){
-				return res.status(202).json('Success');
-			})
-			.catch(function(error){
-				return res.status(404).json(error);
-
-			});
-			//see which user the API Key belongs to, if any
-			//if it's an invalid API key then respond with an error ? (How to protect against Brute forcing?)
-		});
-
-
+	console.log("Server running on " + (process.env.PORT || 9876))
 	app.listen(process.env.PORT || 9876);
 })
 .catch(function(e) { console.error("Error: %s", e.message); });
+
+
+
+export function pubsIdSubmit(req, res, next){
+	console.log("pubsIdSubmit")
+	const query = { $or:[ {'accessToken': req.body.accessToken}]};
+	// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
+	// const atomId = req.body.atomId;
+	const atomID = req.params.id;
+	const journalID = req.body.journalID;
+
+	User.findOne(query).lean().exec()
+	.then(function(userResult) {
+
+		if (!userResult) {
+			throw new Error(ERROR.userNotFound);
+		}
+		if (!req.body.accessToken || !req.params.id || !req.body.journalID){
+			throw new Error(ERROR.missingParam);
+		}
+
+		const userID = userResult._id;
+		const inactiveNote = 'rejected';
+		// Check permission
+
+		// return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote)
+		// return Link.findOne('submitted', atomId, journalId, userResult._id, now);
+
+		return [Link.findOne({source: atomID, destination: journalID, type: 'submitted', inactive: {$ne: true}}), userID]
+	}).spread(function(linkData, userID){
+		if (linkData){
+			throw new Error('Pub already submitted to Journal');
+		}
+		const now = new Date().getTime();
+
+		return Link.createLink('submitted', atomID, journalID, userID, now);
+	})
+	.then(function(){
+		return res.status(202).json('Success');
+	})
+	.catch(function(error){
+		return res.status(404).json(error);
+	});
+}
