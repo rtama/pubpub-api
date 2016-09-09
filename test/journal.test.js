@@ -50,9 +50,24 @@ describe('/journal/:id/featured', function() {
     chai.request(url)
     .get('/journal/576c0561c8dade3700266c25/featured')
     .end(function(err, res){
-      console.log("Hii " + JSON.stringify(res))
+      // console.log("Hii " + JSON.stringify(res))
       // const journalName = JSON.parse(res.text).journalName
       assert.equal(res.status, 200);
+      done();
+    });
+  });
+});
+
+describe('/journal/:id/collections', function() {
+  it('returns the collections belonging to a journal', function(done) {
+    chai.request(url)
+    .get('/journal/576c0561c8dade3700266c25/collections')
+    .end(function(err, res){
+      // console.log("Hii " + JSON.stringify(res))
+      // Admittedly this is not the best test! I am assuming
+      // The collections wont change
+      const collectionData = JSON.parse(res.text).collections[0].title
+      assert.equal(collectionData, 'bat');
       done();
     });
   });

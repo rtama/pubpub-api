@@ -81,3 +81,33 @@ export function getJournal(req, res, next) {
     return res.status(404).json('Journal not found');
   });
 }
+
+export function getCollections(req, res, next) {
+  // Set the query based on whether the params.id is a valid ObjectID;
+  const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
+  const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
+
+  // Set the parameters we'd like to return
+  const select = {_id: 1, collections: 1, journalName: 1, slug: 1};
+
+  // Make db call
+  Journal.findOne(query, select).populate({path: 'collections', select: 'title createDate'}).lean().exec()
+  .then(function(journalResult) {
+    if (!journalResult) { throw new Error('Journal not found'); }
+
+    const output = {
+      journalID: journalResult._id,
+              journalName: journalResult.journalName,
+              slug: journalResult.slug,
+              collections: journalResult.collections.map((collection)=> {
+                collection.collectionID = collection._id;
+                delete collection._id;
+                return collection;
+              })
+    }
+    return res.status(200).json(output);
+  })
+  .catch(function(error) {
+    return res.status(404).json('Journal not found');
+  });
+}
