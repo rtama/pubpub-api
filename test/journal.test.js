@@ -6,6 +6,7 @@ const chaiHttp = require('chai-http');
 const url = 'http://localhost:9876';
 chai.use(chaiHttp);
 
+// GET tests
 
 describe('/journal/:id/', function() {
   this.timeout(15000);
@@ -72,3 +73,5 @@ describe('/journal/:id/collections', function() {
     });
   });
 });
+
+// POST tests
