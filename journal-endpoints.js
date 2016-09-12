@@ -111,3 +111,62 @@ export function getCollections(req, res, next) {
     return res.status(404).json('Journal not found');
   });
 }
+
+export function getSubmissions(req, res, next) {
+  const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
+
+  // const journalID = req.params.id;
+  // const userQuery = { $or:[ ]};
+  const accessToken = req.query.accessToken;
+
+  // see if accessToken grants access to this user
+  User.findOne({'accessToken': accessToken}).lean().exec()
+  .then(function(userResult){
+    console.log("Yes found user through accessToken: " + JSON.stringify(userResult))
+    const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
+    const select = {_id: 1};
+    return [userResult, Journal.findOne(query, select).lean().exec() ]
+  })
+  .spread(function(userResult, journal){
+    if (!userResult) {
+      throw new Error(ERROR.userNotFound);
+    }
+
+    if(!journal){
+      throw new Error('Journal not found')
+    }
+
+    if (!req.params.id || !req.query.accessToken){
+      throw new Error(ERROR.missingParam);
+    }
+
+    return Link.findOne({type: 'admin', destination: journal._id, source: userResult._id, inactive: {$ne: true}}).lean().exec();
+  })
+  .then(function(link){
+    if (!link){
+      throw new Error(ERROR.youDoNotHaveAccessToThisJournal)
+    }
+    return link;
+  })
+  .then(function(link){
+    // Set the parameters we'd like to return
+    const select = {_id: 1, slug: 1, createDate: 1, source: 1};
+
+    return Link.find({destination: link.destination, type: 'submitted', inactive: {$ne: true}}, select)
+    .populate({
+        path: 'source',
+        model: Atom,
+        select: 'title slug description',
+      }).exec();
+  }).then(function(links){
+    console.log("Yeppers here")
+    links = links.map(function(link){
+      return {id: link.source._id, slug: link.source.slug, title: link.source.title, description: link.source.description, createDate: link.createDate};
+    })
+    return res.status(200).json(links);
+  })
+  .catch(function(error){
+    console.log("THERE WAS AN ERROR " + error)
+    return res.status(404).json(error);
+  });
+}

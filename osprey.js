@@ -20,9 +20,9 @@ const User = require('./models').User;
 const Atom = require('./models').Atom;
 const Link = require('./models').Link;
 
-import {getFeatured, getCollections, getJournal} from './journal-endpoints';
+import {getFeatured, getCollections, getJournal, getSubmissions} from './journal-endpoints';
 import {getUserByID} from './user-endpoints';
-
+import {submitPub} from './pub-endpoints'
 
 const ERROR = {
 	missingParam: 'Required parameter missing',
@@ -63,61 +63,7 @@ osprey.loadFile(path)
 	/* Route for                 		*/
 	/* /journal/{slug}/submissions  */
 	/* /journal/{id}/submissions    */
-	app.get('/journal/:id/submissions/', function (req, res, next) {
-		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-
-		// const journalID = req.params.id;
-		// const userQuery = { $or:[ ]};
-		const accessToken = req.query.accessToken;
-
-		// see if accessToken grants access to this user
-		User.findOne({'accessToken': accessToken}).lean().exec()
-		.then(function(userResult){
-			const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
-			const select = {_id: 1};
-			return [userResult, Journal.findOne(query, select).lean().exec() ]
-		})
-		.spread(function(userResult, journal){
-			if (!userResult) {
-				throw new Error(ERROR.userNotFound);
-			}
-
-			if(!journal){
-				throw new Error('Journal not found')
-			}
-
-			if (!req.params.id || !req.query.accessToken){
-				throw new Error(ERROR.missingParam);
-			}
-
-			return Link.findOne({type: 'admin', destination: journal._id, source: userResult._id, inactive: {$ne: true}}).lean().exec();
-		})
-		.then(function(link){
-			if (!link){
-				throw new Error(ERROR.youDoNotHaveAccessToThisJournal)
-			}
-		})
-		.then(function(){
-			// Set the parameters we'd like to return
-			const select = {_id: 1, slug: 1, createDate: 1, source: 1};
-
-			return Link.find({destination: link.destination, type: 'submitted', inactive: {$ne: true}}, select)
-			.populate({
-					path: 'source',
-					model: Atom,
-					select: 'title slug description',
-				}).exec();
-		}).then(function(links){
-			links = links.map(function(link){
-				return {id: link.source._id, slug: link.source.slug, title: link.source.title, description: link.source.description, createDate: link.createDate};
-			})
-			return res.status(202).json(links);
-		})
-		.catch(function(error){
-			return res.status(404).json(error);
-		});
-
-	});
+	app.get('/journal/:id/submissions/', getSubmissions);
 
 	/* Route for                 */
 	/* /journal/{slug}/featured  */
@@ -266,53 +212,9 @@ osprey.loadFile(path)
 
 		/* Route for  		*/
 		/* /pubs/submit 	*/
-		app.post('/pubs/:id/submit', pubsIdSubmit);
+		app.post('/pubs/:id/submit', submitPub);
 
 	console.log("Server running on " + (process.env.PORT || 9876))
 	app.listen(process.env.PORT || 9876);
 })
 .catch(function(e) { console.error("Error: %s", e.message); });
-
-
-
-export function pubsIdSubmit(req, res, next){
-	console.log("pubsIdSubmit")
-	const query = { $or:[ {'accessToken': req.body.accessToken}]};
-	// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
-	// const atomId = req.body.atomId;
-	const atomID = req.params.id;
-	const journalID = req.body.journalID;
-
-	User.findOne(query).lean().exec()
-	.then(function(userResult) {
-
-		if (!userResult) {
-			throw new Error(ERROR.userNotFound);
-		}
-		if (!req.body.accessToken || !req.params.id || !req.body.journalID){
-			throw new Error(ERROR.missingParam);
-		}
-
-		const userID = userResult._id;
-		const inactiveNote = 'rejected';
-		// Check permission
-
-		// return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote)
-		// return Link.findOne('submitted', atomId, journalId, userResult._id, now);
-
-		return [Link.findOne({source: atomID, destination: journalID, type: 'submitted', inactive: {$ne: true}}), userID]
-	}).spread(function(linkData, userID){
-		if (linkData){
-			throw new Error('Pub already submitted to Journal');
-		}
-		const now = new Date().getTime();
-
-		return Link.createLink('submitted', atomID, journalID, userID, now);
-	})
-	.then(function(){
-		return res.status(202).json('Success');
-	})
-	.catch(function(error){
-		return res.status(404).json(error);
-	});
-}
