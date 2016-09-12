@@ -1,3 +1,5 @@
+import { NotModified, BadRequest } from './errors';
+
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
@@ -6,22 +8,20 @@ const User = require('./models').User;
 const Atom = require('./models').Atom;
 const Link = require('./models').Link;
 
-export function submitPub(req, res, next){
-	console.log("pubsIdSubmit")
+export function submitPub(req, res, next) {
 	const query = { $or:[ {'accessToken': req.body.accessToken}]};
 	// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
 	// const atomId = req.body.atomId;
 	const atomID = req.params.id;
 	const journalID = req.body.journalID;
 
-	User.findOne(query).lean().exec()
+	User.findOne(query, {_id: 1}).lean().exec()
 	.then(function(userResult) {
-
 		if (!userResult) {
-			throw new Error(ERROR.userNotFound);
+			throw new BadRequest();
 		}
-		if (!req.body.accessToken || !req.params.id || !req.body.journalID){
-			throw new Error(ERROR.missingParam);
+		if (!req.body.accessToken || !req.params.id || !req.body.journalID) {
+			throw new BadRequest();
 		}
 
 		const userID = userResult._id;
@@ -32,18 +32,18 @@ export function submitPub(req, res, next){
 		// return Link.findOne('submitted', atomId, journalId, userResult._id, now);
 
 		return [Link.findOne({source: atomID, destination: journalID, type: 'submitted', inactive: {$ne: true}}), userID]
-	}).spread(function(linkData, userID){
-		if (linkData){
-			throw new Error('Pub already submitted to Journal');
+	}).spread(function(linkData, userID) {
+		if (linkData) {
+			throw new NotModified();
 		}
 		const now = new Date().getTime();
 
 		return Link.createLink('submitted', atomID, journalID, userID, now);
 	})
-	.then(function(){
-		return res.status(202).json('Success');
+	.then(function() {
+		return res.status(200).json('Success');
 	})
-	.catch(function(error){
-		return res.status(404).json(error);
+	.catch(function(error) {
+		return res.status(error.status).json(error.message);
 	});
 }

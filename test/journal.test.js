@@ -3,10 +3,9 @@ const assert = require('assert');
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+
 const url = 'http://localhost:9876';
 chai.use(chaiHttp);
-
-// GET tests
 
 describe('/journal/:id/', function() {
   this.timeout(15000);
@@ -51,8 +50,7 @@ describe('/journal/:id/featured', function() {
     chai.request(url)
     .get('/journal/576c0561c8dade3700266c25/featured')
     .end(function(err, res){
-      // console.log("Hii " + JSON.stringify(res))
-      // const journalName = JSON.parse(res.text).journalName
+
       assert.equal(res.status, 200);
       done();
     });
@@ -64,9 +62,7 @@ describe('/journal/:id/collections', function() {
     chai.request(url)
     .get('/journal/576c0561c8dade3700266c25/collections')
     .end(function(err, res){
-      // console.log("Hii " + JSON.stringify(res))
-      // Admittedly this is not the best test! I am assuming
-      // The collections wont change
+
       const collectionData = JSON.parse(res.text).collections[0].title
       assert.equal(collectionData, 'bat');
       done();
@@ -74,20 +70,53 @@ describe('/journal/:id/collections', function() {
   });
 });
 
-describe('/journal/:id/submissions', function() {
-  it('returns the submissions belonging to a journal', function(done) {
+describe('/journal/:id/collection/:collectionID', function() {
+  it('returns a specific collection belonging to a journal', function(done) {
     chai.request(url)
-    .get('/journal/576c0561c8dade3700266c25/submissions')
-    .query({accessToken: '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})
+    .get('/journal/576c0561c8dade3700266c25/collection/57d33558cf284eea2d714e77')
     .end(function(err, res){
-      // console.log("Hii " + JSON.stringify(res))
-      // Admittedly this is not the best test! I am assuming
-      // The collections wont change
-      // const collectionData = JSON.parse(res.text).collections[0].title
-      assert.equal(res.status, 200);
+      const collectionData = JSON.parse(res.text).title
+      assert.equal(collectionData, 'bat');
       done();
     });
   });
 });
 
-// POST tests
+describe('/journal/:id/submissions', function() {
+  it('returns the submissions belonging to a journal by ID', function(done) {
+    chai.request(url)
+    .get('/journal/576c0561c8dade3700266c25/submissions')
+    .query({accessToken: '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})
+    .end(function(err, res){
+      assert.equal(res.status, 200);
+      done();
+    });
+  });
+
+  it('returns the submissions belonging to a journal by slug', function(done) {
+    chai.request(url)
+    .get('/journal/absurd/submissions')
+    .query({accessToken: '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})
+    .end(function(err, res){
+      assert.equal(res.status, 200);
+      done();
+    });
+  });
+  it('404s on an invalid id', function(done) {
+    chai.request(url)
+    .get('/journal/2d368225b521c2328dd3501253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335/submissions')
+    .query({accessToken: '2d368225b521c2328dd3501253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})
+    .end(function(err, res){
+      assert.equal(res.status, 404);
+      done();
+    });
+  });
+  it('400s on missing access token', function(done) {
+    chai.request(url)
+    .get('/journal/2d368225b521c2328dd3501253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335/submissions')
+    .end(function(err, res){
+      assert.equal(res.status, 400)
+      done();
+    });
+  });
+});

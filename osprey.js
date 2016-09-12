@@ -1,34 +1,34 @@
+import { getFeatured, getCollections, getJournal, getSubmissions, getJournalCollection } from './journal-endpoints';
+import { getUserByID } from './user-endpoints';
+import { submitPub } from './pub-endpoints';
+
 if (process.env.NODE_ENV !== 'production') {
-	require('./config.js');
+	require('./config');
+} else {
+	console.log("Production not implemented yet, needs the right vars set, etc")
 }
 
 const osprey = require('osprey');
 const express = require('express');
-const join = require('path').join;
-const app = express();
 const bodyParser = require('body-parser');
+const join = require('path').join;
+
+const app = express();
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const path = join(__dirname, 'api.raml');
 
 const mongoose = require('mongoose');
-mongoose.Promise = require('bluebird');
-mongoose.connect(process.env.MONGO_URI);
 const Journal = require('./models').Journal;
 const User = require('./models').User;
 const Atom = require('./models').Atom;
 const Link = require('./models').Link;
+mongoose.Promise = require('bluebird');
 
-import {getFeatured, getCollections, getJournal, getSubmissions} from './journal-endpoints';
-import {getUserByID} from './user-endpoints';
-import {submitPub} from './pub-endpoints'
+mongoose.connect(process.env.MONGO_URI);
 
-const ERROR = {
-	missingParam: 'Required parameter missing',
-	userNotFound: 'User not found',
-	youDoNotHaveAccessToThisJournal: 'You do not have access to this action'
-}
 
 osprey.loadFile(path)
 .then(function (middleware) {
@@ -87,10 +87,10 @@ osprey.loadFile(path)
 		User.findOne(query).lean().exec()
 		.then(function(userResult) {
 			if (!userResult) {
-				throw new Error(ERROR.userNotFound);
+				throw new Error();
 			}
 			if (!req.body.accessToken || !req.params.id || !req.body.atomID || !req.body.accept){
-				throw new Error(ERROR.missingParam);
+				throw new Error('Required parameter missing');
 			}
 			const userID = userResult._id;
 			// return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote)
@@ -106,7 +106,7 @@ osprey.loadFile(path)
 		})
 		.spread(function(userID, journal){
 			if (!userID) {
-				throw new Error(ERROR.userNotFound);
+				throw new Error();
 			}
 
 			if(!journal){
@@ -114,7 +114,7 @@ osprey.loadFile(path)
 			}
 
 			if (!req.params.id || !req.query.accessToken){
-				throw new Error(ERROR.missingParam);
+				throw new Error('Required parameter missing');
 			}
 			journalID = journal._id;
 
@@ -122,7 +122,7 @@ osprey.loadFile(path)
 		})
 		.spread(function(userID, link) {
 			if (!link){
-				throw new Error(ERROR.youDoNotHaveAccessToThisJournal)
+				throw new Error('You do not have access to this action')
 			}
 
 			return [userID, Link.createLink('featured', journalID, atomID, userID, now)]
@@ -151,70 +151,13 @@ osprey.loadFile(path)
 	/* Route for                                  */
 	/* /journal/{slug}/collection/{collectionID}  */
 	/* /journal/{id}/collection/{collectionID}    */
-	app.get('/journal/:id/collection/:collectionID', function (req, res, next) {
-		// Set the query based on whether the params.id is a valid ObjectID;
-		const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
+	app.get('/journal/:id/collection/:collectionID', getJournalCollection);
 
-		// Set the parameters we'd like to return
-		const select = {_id: 1, journalName: 1, slug: 1, collections: 1};
+	/* Route for  		*/
+	/* /pubs/{id}/submit 	*/
+	app.post('/pubs/:id/submit', submitPub);
 
-		// Make db call
-		Journal.findOne(query, select).populate({path: 'collections', select: 'title createDate'}).lean().exec()
-		.then(function(journalResult) {
-			if (!journalResult) { throw new Error('Journal not found'); }
-
-			const findFeaturedLinks = Link.find({source: journalResult._id, type: 'featured', 'metadata.collections': req.params.collectionID}, {_id: 1, destination: 1, createDate: 1, 'metadata.collections': 1}).populate({
-				path: 'destination',
-				model: Atom,
-				select: 'title slug description previewImage type customAuthorString createDate lastUpdated isPublished',
-			}).lean().exec();
-			return [journalResult, findFeaturedLinks];
-		})
-		.spread(function(journalResult, featuredLinks) {
-			const atoms = featuredLinks.filter((link)=> {
-				return link.destination.isPublished;
-			}).map((link)=> {
-				const output = link.destination;
-				output.collections = link.metadata.collections;
-				output.featureDate = link.createDate
-				delete output.isPublished;
-				output.atomID = output._id;
-				delete output._id;
-
-				return output;
-			});
-
-			let collectionID;
-			let collectionTitle;
-			let collectionCreateDate;
-			const collections = journalResult.collections || [];
-			collections.map((item)=> {
-				if (String(item._id) === String(req.params.collectionID)) {
-					collectionID = item._id;
-					collectionTitle = item.title;
-					collectionCreateDate = item.createDate;
-				}
-			});
-
-			const output = {
-				collectionID: collectionID,
-				title: collectionTitle,
-				createDate: collectionCreateDate,
-				atoms: atoms,
-			};
-			return res.status(200).json(output);
-		})
-		.catch(function(error) {
-			return res.status(404).json('Collection not found');
-		});
-	});
-
-		/* Route for  		*/
-		/* /pubs/submit 	*/
-		app.post('/pubs/:id/submit', submitPub);
-
-	console.log("Server running on " + (process.env.PORT || 9876))
+	console.log(`Server running on ${process.env.PORT || 9876}`)
 	app.listen(process.env.PORT || 9876);
 })
-.catch(function(e) { console.error("Error: %s", e.message); });
+.catch(function (error) { console.error("Error: %s", error.message); });

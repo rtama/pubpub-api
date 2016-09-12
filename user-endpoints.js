@@ -1,3 +1,5 @@
+import { NotModified, BadRequest } from './errors';
+
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
@@ -19,7 +21,7 @@ export function getUserByID(req, res, next) {
   // Make db call
   User.findOne(query, select).lean().exec()
   .then(function(userResult) {
-    if (!userResult) { throw new Error('User not found'); }
+    if (!userResult) { throw new BadRequest(); }
     userResult.userID = userResult._id;
     delete userResult._id;
     return res.status(200).json(userResult);
