@@ -27,6 +27,6 @@ export function getUserByID(req, res, next) {
     return res.status(200).json(userResult);
   })
   .catch(function(error) {
-    return res.status(404).json(error);
+    return res.status(error.status).json(error.message);
   });
 };

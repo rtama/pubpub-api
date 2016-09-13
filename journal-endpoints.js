@@ -52,7 +52,7 @@ export function getFeatured(req, res, next) {
 		return res.status(200).json(atoms);
 	})
 	.catch(function(error) {
-		return res.status(404).json('Journal not found');
+		return res.status(error.status).json(error.message);
 	});
 }
 
@@ -76,7 +76,7 @@ export function getJournal(req, res, next) {
     return res.status(200).json(journalResult);
   })
   .catch(function(error) {
-    return res.status(404).json('Journal not found');
+		return res.status(error.status).json(error.message);
   });
 }
 
@@ -106,7 +106,7 @@ export function getCollections(req, res, next) {
     return res.status(200).json(output);
   })
   .catch(function(error) {
-    return res.status(404).json('Journal not found');
+		return res.status(error.status).json(error.message);
   });
 }
 
@@ -162,7 +162,7 @@ export function getSubmissions(req, res, next) {
     return res.status(200).json(links);
   })
   .catch(function(error){
-    return res.status(404).json(error);
+		return res.status(error.status).json(error.message);
   });
 }
 
@@ -221,6 +221,85 @@ export function getJournalCollection(req, res, next) {
 		return res.status(200).json(output);
 	})
 	.catch(function(error) {
-		return res.status(404).json('Collection not found');
+		return res.status(error.status).json(error.message);
 	});
+}
+
+export function featurePub(req, res, next) {
+	const query = { $or:[ { 'accessToken': req.body.accessToken }] };
+	// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
+	// const atomId = req.body.atomId;
+	const atomID = req.body.atomID;
+	const accept = req.body.accept;
+
+	let journalID;
+
+	// get user based off of ID
+	User.findOne(query).lean().exec()
+	.then(function(userResult) {
+		console.log("user Find One!:D" + JSON.stringify(userResult))
+		if (!userResult) {
+			throw new BadRequest();
+		}
+		if (!req.body.accessToken || !req.params.id || !req.body.atomID || !req.body.accept) {
+			throw new BadRequest();
+		}
+		const userID = userResult._id;
+		// return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote)
+		// return Link.findOne('submitted', atomId, journalId, userResult._id, now);
+		// return Link.findOne({type: 'admin', destination: journal._id, source: userResult._id, inactive: {$ne: true}}).lean().exec();
+		// return [Link.findOne({source: atomID, destination: journalID, type: 'submitted', inactive: {$ne: true}}), userID]
+		return userResult._id;
+	})
+	.then(function(userID) {
+		console.log("SMITTER")
+		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
+		const select = {_id: 1};
+		return [userID, Journal.findOne(query, select).lean().exec() ];
+	})
+	.spread(function(userID, journal) {
+		console.log("Hello " + userID + " .. " + journal)
+		if (!userID) {
+			throw new BadRequest();
+		}
+
+		if(!journal) {
+			throw new BadRequest();
+		}
+
+		if (!req.params.id || !req.query.accessToken) {
+			throw new BadRequest();
+		}
+		journalID = journal._id;
+
+		return [userID, Link.findOne({ type: 'admin', destination: journal._id, source: userResult._id, inactive: { $ne: true } }).lean().exec()];
+	})
+	.spread(function (userID, link) {
+		console.log("HEYYOOO")
+		if (!link) {
+			throw new Unauthorized();
+		}
+	return [userID, Link.findOne( { type: 'featured', destination: journalID, source: atomID })]
+
+}).spread(function(userID, link){
+		console.log("Does a link already exist? " + link)
+		if (link){
+			throw new NotModified();
+		}
+		return [userID, Link.createLink('featured', journalID, atomID, userID, now)]
+	})
+	.spread(function (userID, newLink) {
+		const now = new Date().getTime();
+		const inactiveNote = 'featured';
+		return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote);
+	})
+	.then(function(updatedSubmissionLink) {
+		console.log ("Works properly ")
+		return res.status(200).json(updatedSubmissionLink);
+	})
+	.catch(function(error) {
+		console.log('error ' + JSON.stringify(error));
+		return res.status(error.status).json(error.message);
+	})
+
 }

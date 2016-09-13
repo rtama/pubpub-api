@@ -1,4 +1,4 @@
-import { getFeatured, getCollections, getJournal, getSubmissions, getJournalCollection } from './journal-endpoints';
+import { getFeatured, getCollections, getJournal, getSubmissions, getJournalCollection, featurePub } from './journal-endpoints';
 import { getUserByID } from './user-endpoints';
 import { submitPub } from './pub-endpoints';
 
@@ -73,75 +73,7 @@ osprey.loadFile(path)
 	/* Route for                 */
 	/* /journal/{slug}/feature  */
 	/* /journal/{id}/feature    */
-	app.post('/journal/:id/feature/', function (req, res, next) {
-		const query = { $or:[ {'accessToken': req.body.accessToken}]};
-		// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
-		// const atomId = req.body.atomId;
-		const atomID = req.body.atomID;
-		const accept = req.body.accept;
-
-		let journalID;
-
-
-		// get user based off of ID
-		User.findOne(query).lean().exec()
-		.then(function(userResult) {
-			if (!userResult) {
-				throw new Error();
-			}
-			if (!req.body.accessToken || !req.params.id || !req.body.atomID || !req.body.accept){
-				throw new Error('Required parameter missing');
-			}
-			const userID = userResult._id;
-			// return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote)
-			// return Link.findOne('submitted', atomId, journalId, userResult._id, now);
-			// return Link.findOne({type: 'admin', destination: journal._id, source: userResult._id, inactive: {$ne: true}}).lean().exec();
-			// return [Link.findOne({source: atomID, destination: journalID, type: 'submitted', inactive: {$ne: true}}), userID]
-			return userResult._id;
-		})
-		.then(function(userID){
-			const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
-			const select = {_id: 1};
-			return [userID, Journal.findOne(query, select).lean().exec() ]
-		})
-		.spread(function(userID, journal){
-			if (!userID) {
-				throw new Error();
-			}
-
-			if(!journal){
-				throw new Error('Journal not found')
-			}
-
-			if (!req.params.id || !req.query.accessToken){
-				throw new Error('Required parameter missing');
-			}
-			journalID = journal._id;
-
-			return [userID, Link.findOne({type: 'admin', destination: journal._id, source: userResult._id, inactive: {$ne: true}}).lean().exec()];
-		})
-		.spread(function(userID, link) {
-			if (!link){
-				throw new Error('You do not have access to this action')
-			}
-
-			return [userID, Link.createLink('featured', journalID, atomID, userID, now)]
-		})
-		.spread(function(userID, newLink) {
-			const now = new Date().getTime();
-			const inactiveNote = 'featured';
-			return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote);
-		})
-		.then(function(updatedSubmissionLink) {
-			return res.status(201).json(updatedSubmissionLink);
-		})
-		.catch(function(error) {
-			console.log('error', error);
-			return res.status(500).json(error);
-		})
-
-
-	});
+	app.post('/journal/:id/feature/', featurePub);
 
 	/* Route for                    */
 	/* /journal/{slug}/collections  */
