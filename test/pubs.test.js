@@ -17,7 +17,7 @@ describe('POST /pubs/:id/submit', function () {
     // .field('journalID', '576c0561c8dade3700266c25')
     // .field('accessToken', '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335')
     .end(function (err, res) {
-      // console.log("hi" +JSON.stringify(res))
+      // console.log('hi' +JSON.stringify(res))
       assert.equal(res.status, 200);
       done();
     });
@@ -29,7 +29,7 @@ describe('POST /pubs/:id/submit', function () {
     // .field('journalID', '576c0561c8dade3700266c25')
     // .field('accessToken', '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335')
     .end(function (err, res) {
-      // console.log("hi" +JSON.stringify(res))
+      // console.log('hi' +JSON.stringify(res))
       assert.equal(res.status, 304);
       done();
     });

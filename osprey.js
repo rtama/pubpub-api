@@ -5,7 +5,7 @@ import { submitPub } from './pub-endpoints';
 if (process.env.NODE_ENV !== 'production') {
 	require('./config');
 } else {
-	console.log("Production not implemented yet, needs the right vars set, etc")
+	console.log('Production not implemented yet, needs the right vars set, etc')
 }
 
 const osprey = require('osprey');
@@ -36,17 +36,17 @@ osprey.loadFile(path)
 	app.use(middleware);
 
 	app.all('/*', function(req, res, next) {
-		res.header("Access-Control-Allow-Origin", req.headers.origin);
-		res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type");
-		res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
-		res.header("Access-Control-Allow-Credentials", true);
+		res.header('Access-Control-Allow-Origin', req.headers.origin);
+		res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
+		res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+		res.header('Access-Control-Allow-Credentials', true);
 		next();
 	});
 
 
 	app.use(function (err, req, res, next) {
 		// Handle errors.
-		console.log("Error! " + err + ", " + next)
+		console.log('Error! ' + err );
 		next();
 	});
 
@@ -92,4 +92,4 @@ osprey.loadFile(path)
 	console.log(`Server running on ${process.env.PORT || 9876}`)
 	app.listen(process.env.PORT || 9876);
 })
-.catch(function (error) { console.error("Error: %s", error.message); });
+.catch(function (error) { console.error('Error: %s', error.message); });

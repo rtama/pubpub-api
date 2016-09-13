@@ -237,7 +237,7 @@ export function featurePub(req, res, next) {
 	// get user based off of ID
 	User.findOne(query).lean().exec()
 	.then(function(userResult) {
-		console.log("user Find One!:D" + JSON.stringify(userResult))
+		console.log('user Find One!:D' + JSON.stringify(userResult))
 		if (!userResult) {
 			throw new BadRequest();
 		}
@@ -252,13 +252,13 @@ export function featurePub(req, res, next) {
 		return userResult._id;
 	})
 	.then(function(userID) {
-		console.log("SMITTER")
+		console.log('SMITTER')
 		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
 		const select = {_id: 1};
 		return [userID, Journal.findOne(query, select).lean().exec() ];
 	})
 	.spread(function(userID, journal) {
-		console.log("Hello " + userID + " .. " + journal)
+		console.log('Hello ' + userID + ' .. ' + journal)
 		if (!userID) {
 			throw new BadRequest();
 		}
@@ -275,14 +275,14 @@ export function featurePub(req, res, next) {
 		return [userID, Link.findOne({ type: 'admin', destination: journal._id, source: userResult._id, inactive: { $ne: true } }).lean().exec()];
 	})
 	.spread(function (userID, link) {
-		console.log("HEYYOOO")
+		console.log('HEYYOOO')
 		if (!link) {
 			throw new Unauthorized();
 		}
 	return [userID, Link.findOne( { type: 'featured', destination: journalID, source: atomID })]
 
 }).spread(function(userID, link){
-		console.log("Does a link already exist? " + link)
+		console.log('Does a link already exist? ' + link)
 		if (link){
 			throw new NotModified();
 		}
@@ -294,7 +294,7 @@ export function featurePub(req, res, next) {
 		return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote);
 	})
 	.then(function(updatedSubmissionLink) {
-		console.log ("Works properly ")
+		console.log ('Works properly ')
 		return res.status(200).json(updatedSubmissionLink);
 	})
 	.catch(function(error) {

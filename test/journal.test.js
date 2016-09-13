@@ -39,7 +39,7 @@ describe('/journal/:id/', function () {
     .get('/journal/576c0561c8dade3700266c25')
     .end(function(err, res){
       const journalName = JSON.parse(res.text).journalName
-      assert.equal(journalName, "Journal of Absurd Ideas");
+      assert.equal(journalName, 'Journal of Absurd Ideas');
       done();
     });
   });
@@ -127,11 +127,11 @@ describe('POST /journal/:id/feature/', function () {
   it('should 304 on already featured pubs', function (done) {
     chai.request(url)
     .post('/journal/576c0561c8dade3700266c25/feature')
-    .send({accept: "true", atomID: '578fa2ba8099de3700eba17d', accessToken: '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})
+    .send({accept: 'true', atomID: '578fa2ba8099de3700eba17d', accessToken: '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})
     // .field('journalID', '576c0561c8dade3700266c25')
     // .field('accessToken', '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335')
     .end(function (err, res) {
-       console.log("hi" +JSON.stringify(res))
+       console.log('hi' +JSON.stringify(res))
       assert.equal(res.status, 304);
       done();
     });
