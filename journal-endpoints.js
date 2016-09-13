@@ -127,20 +127,24 @@ export function getSubmissions(req, res, next) {
     const select = {_id: 1};
     return [userResult, Journal.findOne(query, select).lean().exec()];
   })
-  .spread(function(userResult, journal) {
+  .spread(function(userResult, journalResult) {
+		console.log("It happens here, Travis! " + JSON.stringify(journalResult) +"\nID/SLUG: " + req.params.id)
     if (!userResult) {
+			console.log("Rekt")
       throw new BadRequest();
     }
 
-    if(!journal) {
+    if(!journalResult) {
+			console.log("YEP I AMDE IT")
       throw new NotFound();
     }
+		console.log("DERP")
 
     if (!req.params.id || !req.query.accessToken) {
       throw new BadRequest();
     }
 
-    return Link.findOne({ type: 'admin', destination: journal._id, source: userResult._id, inactive: { $ne: true } }).lean().exec();
+    return Link.findOne({ type: 'admin', destination: journalResult._id, source: userResult._id, inactive: { $ne: true } }).lean().exec();
   })
   .then(function(link){
     if (!link){
@@ -164,7 +168,7 @@ export function getSubmissions(req, res, next) {
     })
     return res.status(200).json(links);
   })
-  .catch(function(error){
+  .catch(function(error) {
 		return res.status(error.status).json(error.message);
   });
 }

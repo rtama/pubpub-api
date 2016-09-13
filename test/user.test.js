@@ -20,7 +20,7 @@ describe('/user/:id/', function () {
   it('should return 404 for non-existent ID', function (done) {
     chai.request(url)
     .get('/user/abcd')
-    .end(function(err, res){
+    .end(function(err, res) {
       assert.equal(res.status, 404);
       done();
     });

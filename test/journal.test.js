@@ -104,8 +104,8 @@ describe('/journal/:id/submissions', function () {
   });
   it('404 on an invalid id', function (done) {
     chai.request(url)
-    .get('/journal/2d368225b521c2328dd3501253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335/submissions')
-    .query({accessToken: '2d368225b521c2328dd3501253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})
+    .get('/journal/1d368225b521c2328dd3501253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335/submissions')
+    .query({accessToken: '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})
     .end(function(err, res){
       assert.equal(res.status, 404);
       done();
