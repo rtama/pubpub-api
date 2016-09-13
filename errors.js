@@ -14,3 +14,8 @@ export function Unauthorized() {
   this.message = 'Unauthorized';
   this.status = '401';
 }
+
+export function NotFound() {
+  this.message = 'Not Found';
+  this.status = '404';
+}

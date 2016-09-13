@@ -25,12 +25,12 @@ describe('/journal/:id/', function () {
       done();
     });
   });
-  it('should 400 for a non existent ID/slug', function (done) {
+  it('should 404 for a non existent slug', function (done) {
     chai.request(url)
     .get('/journal/abcd001010101010999')
     .end(function(err, res) {
 
-      assert.equal(res.status, 400);
+      assert.equal(res.status, 404);
       done();
     });
   });
@@ -102,12 +102,12 @@ describe('/journal/:id/submissions', function () {
       done();
     });
   });
-  it('400s on an invalid id', function (done) {
+  it('404 on an invalid id', function (done) {
     chai.request(url)
     .get('/journal/2d368225b521c2328dd3501253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335/submissions')
     .query({accessToken: '2d368225b521c2328dd3501253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})
     .end(function(err, res){
-      assert.equal(res.status, 400);
+      assert.equal(res.status, 404);
       done();
     });
   });
