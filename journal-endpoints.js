@@ -19,7 +19,6 @@ export function getFeatured(req, res, next) {
 	// Make db call
 	Journal.find(query).select(select).populate({path: 'collections', select: 'title createDate slug'}).lean().exec()
 	.then(function(journalResult) {
-		console.log("journal result: " + JSON.stringify(journalResult))
 		if (!journalResult ) { //|| (!isValidObjectID && journalResult != req.params.id)
 			throw new NotFound();
 		}
@@ -128,17 +127,13 @@ export function getSubmissions(req, res, next) {
     return [userResult, Journal.findOne(query, select).lean().exec()];
   })
   .spread(function(userResult, journalResult) {
-		console.log("It happens here, Travis! " + JSON.stringify(journalResult) +"\nID/SLUG: " + req.params.id)
     if (!userResult) {
-			console.log("Rekt")
       throw new BadRequest();
     }
 
     if(!journalResult) {
-			console.log("YEP I AMDE IT")
       throw new NotFound();
     }
-		console.log("DERP")
 
     if (!req.params.id || !req.query.accessToken) {
       throw new BadRequest();
@@ -146,8 +141,8 @@ export function getSubmissions(req, res, next) {
 
     return Link.findOne({ type: 'admin', destination: journalResult._id, source: userResult._id, inactive: { $ne: true } }).lean().exec();
   })
-  .then(function(link){
-    if (!link){
+  .then(function (link) {
+    if (!link) {
       throw new Unauthorized();
     }
     return link;
@@ -244,7 +239,6 @@ export function featurePub(req, res, next) {
 	// get user based off of ID
 	User.findOne(query).lean().exec()
 	.then(function(userResult) {
-		console.log('user Find One!:D' + JSON.stringify(userResult))
 		if (!userResult) {
 			throw new BadRequest();
 		}
@@ -259,13 +253,11 @@ export function featurePub(req, res, next) {
 		return userResult._id;
 	})
 	.then(function(userID) {
-		console.log('SMITTER')
 		const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'slug': req.params.id} ]} : { 'slug': req.params.id };
 		const select = {_id: 1};
 		return [userID, Journal.findOne(query, select).lean().exec() ];
 	})
 	.spread(function(userID, journal) {
-		console.log('Hello ' + userID + ' .. ' + journal)
 		if (!userID) {
 			throw new BadRequest();
 		}
@@ -274,25 +266,21 @@ export function featurePub(req, res, next) {
 			throw new BadRequest();
 		}
 
-		if (!req.params.id || !req.query.accessToken) {
-			throw new BadRequest();
-		}
 		journalID = journal._id;
 
-		return [userID, Link.findOne({ type: 'admin', destination: journal._id, source: userResult._id, inactive: { $ne: true } }).lean().exec()];
+		return [userID, Link.findOne({ type: 'admin', destination: journal._id, source: userID, inactive: { $ne: true } }).lean().exec()];
 	})
 	.spread(function (userID, link) {
-		console.log('HEYYOOO')
 		if (!link) {
 			throw new Unauthorized();
 		}
-	return [userID, Link.findOne( { type: 'featured', destination: journalID, source: atomID })]
+	return [userID, Link.findOne( { type: 'featured', destination: atomID, source: journalID })]
 
 }).spread(function(userID, link){
-		console.log('Does a link already exist? ' + link)
 		if (link){
 			throw new NotModified();
 		}
+		const now = new Date().getTime();
 		return [userID, Link.createLink('featured', journalID, atomID, userID, now)]
 	})
 	.spread(function (userID, newLink) {
@@ -301,7 +289,6 @@ export function featurePub(req, res, next) {
 		return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote);
 	})
 	.then(function(updatedSubmissionLink) {
-		console.log ('Works properly ')
 		return res.status(200).json(updatedSubmissionLink);
 	})
 	.catch(function(error) {

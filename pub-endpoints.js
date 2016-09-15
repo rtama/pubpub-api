@@ -9,7 +9,7 @@ const Atom = require('./models').Atom;
 const Link = require('./models').Link;
 
 export function submitPub(req, res, next) {
-	const query = { $or:[ {'accessToken': req.body.accessToken}]};
+const query = { $or:[ {'accessToken': req.body.accessToken}]};
 	// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
 	// const atomId = req.body.atomId;
 	const atomID = req.params.id;
@@ -31,8 +31,9 @@ export function submitPub(req, res, next) {
 		// return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote)
 		// return Link.findOne('submitted', atomId, journalId, userResult._id, now);
 
-		return [Link.findOne({source: atomID, destination: journalID, type: 'submitted', inactive: {$ne: true}}), userID]
+		return [Link.findOne({source: atomID, destination: journalID, type: 'submitted', inactive: { $ne: true }}), userID]
 	}).spread(function(linkData, userID) {
+		console.log("is there linkdata " + JSON.stringify(linkData))
 		if (linkData) {
 			throw new NotModified();
 		}
