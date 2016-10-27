@@ -273,7 +273,13 @@ securitySchemes:
       securedBy: [Basic Authentication]
       description:
         Create an atom
-      #queryParameters:
-      #  accessToken:
-      #    type: string
-      #    required: true
+      queryParameters:
+        accessToken:
+          type: string
+          required: true
+        title:
+          type: string
+        type:
+          type: string
+        versionContent.url:
+          type: string

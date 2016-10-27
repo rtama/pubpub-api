@@ -3,9 +3,9 @@ import { NotModified, BadRequest } from './errors';
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
-const Journal = require('./models').Journal;
+// const Journal = require('./models').Journal;
 const User = require('./models').User;
-const Atom = require('./models').Atom;
+// const Atom = require('./models').Atom;
 const Link = require('./models').Link;
 
 export function submitPub(req, res, next) {
@@ -15,8 +15,8 @@ export function submitPub(req, res, next) {
 	const atomID = req.params.id;
 	const journalID = req.body.journalID;
 
-	User.findOne(query, {_id: 1}).lean().exec()
-	.then(function(userResult) {
+	User.findOne(query, { _id: 1 }).lean().exec()
+	.then((userResult) => {
 		if (!userResult) {
 			throw new BadRequest();
 		}
@@ -25,15 +25,15 @@ export function submitPub(req, res, next) {
 		}
 
 		const userID = userResult._id;
-		const inactiveNote = 'rejected';
+		// const inactiveNote = 'rejected';
 		// Check permission
 
 		// return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote)
 		// return Link.findOne('submitted', atomId, journalId, userResult._id, now);
 
-		return [Link.findOne({source: atomID, destination: journalID, type: 'submitted', inactive: { $ne: true }}), userID]
-	}).spread(function(linkData, userID) {
-		console.log("is there linkdata " + JSON.stringify(linkData))
+		return [Link.findOne({ source: atomID, destination: journalID, type: 'submitted', inactive: { $ne: true } }), userID];
+	})
+	.spread((linkData, userID) => {
 		if (linkData) {
 			throw new NotModified();
 		}
@@ -41,10 +41,10 @@ export function submitPub(req, res, next) {
 
 		return Link.createLink('submitted', atomID, journalID, userID, now);
 	})
-	.then(function() {
+	.then(() => {
 		return res.status(200).json('Success');
 	})
-	.catch(function(error) {
+	.catch((error) => {
 		return res.status(error.status).json(error.message);
 	});
 }

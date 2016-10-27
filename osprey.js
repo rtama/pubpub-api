@@ -23,6 +23,7 @@ const path = join(__dirname, 'api.raml');
 
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
+
 mongoose.connect(process.env.MONGO_URI);
 
 
