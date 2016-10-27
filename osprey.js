@@ -5,7 +5,7 @@ import { submitPub } from './pub-endpoints';
 if (process.env.NODE_ENV !== 'production') {
 	require('./config');
 } else {
-	console.log('Production not implemented yet, needs the right vars set, etc')
+	console.log('Production not implemented yet, needs the right vars set, etc');
 }
 
 const osprey = require('osprey');
@@ -21,21 +21,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const path = join(__dirname, 'api.raml');
 
 const mongoose = require('mongoose');
-const Journal = require('./models').Journal;
-const User = require('./models').User;
-const Atom = require('./models').Atom;
-const Link = require('./models').Link;
 mongoose.Promise = require('bluebird');
-
 mongoose.connect(process.env.MONGO_URI);
 
 
 osprey.loadFile(path)
-.then(function (middleware) {
+.then((middleware) => {
 
 	app.use(middleware);
 
-	app.all('/*', function(req, res, next) {
+	app.all('/*', (req, res, next) => {
 		res.header('Access-Control-Allow-Origin', req.headers.origin);
 		res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
 		res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
@@ -44,9 +39,9 @@ osprey.loadFile(path)
 	});
 
 
-	app.use(function (err, req, res, next) {
+	app.use((err, req, res, next) => {
 		// Handle errors.
-		console.log('Error! ' + err );
+		console.log(err);
 		next();
 	});
 
@@ -89,7 +84,7 @@ osprey.loadFile(path)
 	/* /pubs/{id}/submit 	*/
 	app.post('/pubs/:id/submit', submitPub);
 
-	console.log(`Server running on ${process.env.PORT || 9876}`)
+	console.log(`Server running on ${process.env.PORT || 9876}`);
 	app.listen(process.env.PORT || 9876);
 })
-.catch(function (error) { console.error('Error: %s', error.message); });
+.catch((error) => { console.error('Error: %s', error.message); });
