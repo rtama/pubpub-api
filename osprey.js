@@ -1,6 +1,7 @@
 import { getFeatured, getCollections, getJournal, getSubmissions, getJournalCollection, featurePub } from './journal-endpoints';
 import { getUserByID } from './user-endpoints';
 import { submitPub } from './pub-endpoints';
+import { createAtom } from './atom-endpoints';
 
 if (process.env.NODE_ENV !== 'production') {
 	require('./config');
@@ -83,6 +84,10 @@ osprey.loadFile(path)
 	/* Route for  		*/
 	/* /pubs/{id}/submit 	*/
 	app.post('/pubs/:id/submit', submitPub);
+
+	/* Route for */
+	/* /atoms/create */
+	app.post('/atom/create', createAtom);
 
 	console.log(`Server running on ${process.env.PORT || 9876}`);
 	app.listen(process.env.PORT || 9876);

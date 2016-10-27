@@ -264,3 +264,16 @@ securitySchemes:
           #accessToken:
           #  type: string
           #  required: true
+/atom:
+  description: |
+    Routes to create and access data about Atoms
+  displayName: Atoms
+  /create:
+    post:
+      securedBy: [Basic Authentication]
+      description:
+        Create an atom
+      #queryParameters:
+      #  accessToken:
+      #    type: string
+      #    required: true

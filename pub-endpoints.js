@@ -9,7 +9,7 @@ const Atom = require('./models').Atom;
 const Link = require('./models').Link;
 
 export function submitPub(req, res, next) {
-const query = { $or:[ {'accessToken': req.body.accessToken}]};
+	const query = { $or: [{ accessToken: req.body.accessToken }] };
 	// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
 	// const atomId = req.body.atomId;
 	const atomID = req.params.id;
