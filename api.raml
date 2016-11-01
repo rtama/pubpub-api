@@ -10,15 +10,15 @@ protocols: [ HTTPS ]
 baseUri: https://api.pubpub.org
 mediaType: application/json
 securitySchemes:
-  - Basic Authentication:
+  - basic_auth:
       description:
-        Need an Access Token to access this API endpoint. For post requests set accessToken in the body. For Get requests set it as a query parameter.
-      describedBy:
-        queryParameters:
-           accessToken:
-             description: provide token
-             type: string
-             example: 464981a8f7cb64c55e6f99fa3cf14ac69e47ff466cfd5ab76ed1b1faea97c0ed2a0f395a4348094d4aee9f9b78e7e9f1
+        Need an Access Token in an Authorization Header to access this API endpoint. Requests need to be of the format username:accessToken. Access tokens are generated on pubpub.org/user/{username}/tokens.
+      #describedBy:
+        #queryParameters:
+           #accessToken:
+             #description: provide token
+             #type: string
+             #example: 464981a8f7cb64c55e6f99fa3cf14ac69e47ff466cfd5ab76ed1b1faea97c0ed2a0f395a4348094d4aee9f9b78e7e9f1
       type: Basic Authentication
 /user:
   description: |
@@ -127,7 +127,7 @@ securitySchemes:
                   }
     /feature:
       post:
-        securedBy: [Basic Authentication]
+        securedBy: [ basic_auth ]
         description:
           Feature a publication on this journal.
         queryParameters:
@@ -254,7 +254,7 @@ securitySchemes:
   /{id}:
     /submit:
       post:
-        securedBy: [Basic Authentication]
+        securedBy: [ basic_auth ]
         description:
           Submit a document to a journal for review and publication.
         queryParameters:
@@ -266,20 +266,33 @@ securitySchemes:
           #  required: true
 /atom:
   description: |
-    Routes to create and access data about Atoms
+    Routes to create and access data about Atoms. Currently works for types: image,
+    jupyter, docx and pdf.
   displayName: Atoms
   /create:
     post:
-      securedBy: [Basic Authentication]
+      securedBy: [ basic_auth ]
       description:
         Create an atom
       queryParameters:
         accessToken:
           type: string
-          required: true
-        title:
-          type: string
         type:
           type: string
-        versionContent.url:
+        url:
           type: string
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "id": "577958fe9caas832001acd93",
+                  "url": "www.idk.com",
+                  //...add later
+                },
+/test:
+  description: |
+    Testing stuff.
+  get:
+    securedBy: [ basic_auth ]

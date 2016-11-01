@@ -38,7 +38,8 @@
     "new-cap": 0,
     "no-unused-vars": [1, {"vars": "local", "args": "none"}],
     "id-length": [2, {"exceptions": ["_"]}],
-    "no-tabs": 0
+    "no-tabs": 0,
+    "no-underscore-dangle": 0
   },
   "plugins": [
     "react", "import"

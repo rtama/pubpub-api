@@ -86,7 +86,7 @@ export function getJournal(req, res, next) {
 export function getCollections(req, res, next) {
 	// Set the query based on whether the params.id is a valid ObjectID;
 	const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-	const query = isValidObjectID ? { $or: [ { _id: req.params.id}, { slug: req.params.id} ]} : { slug: req.params.id };
+	const query = isValidObjectID ? { $or: [{ _id: req.params.id }, { slug: req.params.id }] } : { slug: req.params.id };
 
 	// Set the parameters we'd like to return
 	const select = { _id: 1, collections: 1, journalName: 1, slug: 1 };
@@ -123,7 +123,8 @@ export function getSubmissions(req, res, next) {
 	// see if accessToken grants access to this user
 	User.findOne({ 'accessToken': accessToken }).lean().exec()
 	.then((userResult) => {
-		const query = isValidObjectID ? { $or: [{ _id: req.params.id }, { slug: req.params.id }] } : { slug: req.params.id };
+		const query = isValidObjectID ? { $or: [{ _id: req.params.id },
+			{ slug: req.params.id }] } : { slug: req.params.id };
 		const select = { _id: 1 };
 		return [userResult, Journal.findOne(query, select).lean().exec()];
 	})
@@ -150,17 +151,23 @@ export function getSubmissions(req, res, next) {
 	})
 	.then((link) => {
 		// Set the parameters we'd like to return
-		const select = {_id: 1, slug: 1, createDate: 1, source: 1};
+		const select = { _id: 1, slug: 1, createDate: 1, source: 1};
 
-		return Link.find({destination: link.destination, type: 'submitted', inactive: {$ne: true}}, select)
+		return Link.find({ destination: link.destination, type: 'submitted', inactive: { $ne: true } }, select)
 		.populate({
 			path: 'source',
 			model: Atom,
 			select: 'title slug description',
 		}).exec();
-	}).then((links) => {
+	})
+	.then((links) => {
 		links = links.map((link) => {
-			return { id: link.source._id, slug: link.source.slug, title: link.source.title, description: link.source.description, createDate: link.createDate };
+			return {
+				id: link.source._id,
+				slug: link.source.slug,
+				title: link.source.title,
+				description: link.source.description,
+				createDate: link.createDate };
 		});
 		return res.status(200).json(links);
 	})
@@ -172,7 +179,7 @@ export function getSubmissions(req, res, next) {
 export function getJournalCollection(req, res, next) {
 	// Set the query based on whether the params.id is a valid ObjectID;
 	const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-	const query = isValidObjectID ? { $or: [{ _id: req.params.id}, { slug: req.params.id }] } : { slug: req.params.id };
+	const query = isValidObjectID ? { $or: [{ _id: req.params.id }, { slug: req.params.id }] } : { slug: req.params.id };
 
 	// Set the parameters we'd like to return
 	const select = { _id: 1, journalName: 1, slug: 1, collections: 1 };
