@@ -13,13 +13,14 @@ securitySchemes:
   - basic_auth:
       description:
         Need an Access Token in an Authorization Header to access this API endpoint. Requests need to be of the format username:accessToken. Access tokens are generated on pubpub.org/user/{username}/tokens.
-      #describedBy:
-        #queryParameters:
-           #accessToken:
-             #description: provide token
-             #type: string
-             #example: 464981a8f7cb64c55e6f99fa3cf14ac69e47ff466cfd5ab76ed1b1faea97c0ed2a0f395a4348094d4aee9f9b78e7e9f1
       type: Basic Authentication
+      describedBy:
+        headers:
+          Authorization:
+              description: |
+                 Used to send a valid OAuth 2 access token. Do not use
+                 with the "access_token" query string parameter.
+              type: string
 /user:
   description: |
     Routes to access data about PubPub Users

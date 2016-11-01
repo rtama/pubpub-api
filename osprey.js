@@ -46,39 +46,19 @@ const User = require('./models').User;
 osprey.loadFile(path, {
 	security: {
 		basic_auth: {
-			validateUser: function (username, api_key, done) {
-				const query = { $or: [{ accessToken: api_key }] };
+			validateUser: function (username, apiKey, done) {
+				const query = { $or: [{ accessToken: apiKey }] };
 				User.findOne(query).lean().exec()
 				.then((user) => {
-					if (!user || user.username != username) return done(null, false)
-
-					return done(null, true)
+					if (!user || user.username !== username) return done(null, false);
+					return done(null, true);
 				});
 			}
 		}
 	}
-	// security: {
-	// 	basic_auth: function (auth_info, auth_type) {
-	// 		return { handler: handler }
-	// 	}
-	// }
 })
 .then((middleware) => {
-
 	app.use(middleware);
-	// app.use(osprey.security(middleware, {
-	// 	basic: {
-	// 		validateUser: function (username, password, done) {
-	// 			console.log("Hit")
-	// 			if (users[username] && users[username].password === password) {
-	// 				return done(null, true)
-	// 			}
-	// 			return done(null, false)
-	// 		}
-	// 	},
-	// })
-	// )
-
 
 	app.all('/*', (req, res, next) => {
 		res.header('Access-Control-Allow-Origin', req.headers.origin);
@@ -88,23 +68,11 @@ osprey.loadFile(path, {
 		next();
 	});
 
-
 	app.use((err, req, res, next) => {
 		// Handle errors.
 		console.log(err);
 		next();
 	});
-
-	// app.use((req, res, next) => {
-	// 	console.log(JSON.stringify(req.headers))
-	// 	const b64string = /* whatever */;
-	// 	const buf = Buffer.from(b64string, 'base64');
-	//   if (objUser === undefined || objUser.name !== "john" || objUser.pass !== "1234") {
-	//       res.set("WWW-Authenticate", "Basic realm=Authorization Required")
-	//       res.status(401).end()
-	//   } else { next() }
-	// })
-
 
 	/* Route for         */
 	/* /user/{username}  */
