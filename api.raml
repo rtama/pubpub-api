@@ -13,14 +13,13 @@ securitySchemes:
   - basic_auth:
       description: |
         Need an Access Token in an Authorization Header to access this API endpoint. Requests need to be in the format username:accessToken. Access tokens are generated on pubpub.org/user/{username}/tokens.
-        Also send them base 64 encoded. So an example header looks like 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+        Also send them base 64 encoded.
       type: Basic Authentication
       describedBy:
         headers:
           Authorization:
               description: |
-                 Used to send a valid OAuth 2 access token. Do not use
-                 with the "access_token" query string parameter.
+                Follows the Basic Authentication protocol. A base 64 encoded username:accessToken. So an example header looks like 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
               type: string
 /user:
   description: |
@@ -260,12 +259,9 @@ securitySchemes:
         description:
           Submit a document to a journal for review and publication.
         queryParameters:
-          #journalID:
-          #  type: string
-          #  required: true
-          #accessToken:
-          #  type: string
-          #  required: true
+          journalID:
+            type: string
+            required: true
 /atom:
   description: |
     Routes to create and access data about Atoms. Currently works for types: image,

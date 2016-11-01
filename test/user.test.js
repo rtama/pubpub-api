@@ -8,7 +8,7 @@ chai.use(chaiHttp);
 
 describe('/user/:id/', function () {
   this.timeout(15000);
-  it('should get the user by a given ID', function (done) {
+  it('get user by ID', function (done) {
     chai.request(url)
     .get('/user/576bf659c8dade3700266c17')
     .end(function(err, res){
@@ -16,7 +16,15 @@ describe('/user/:id/', function () {
       done();
     });
   });
-  it('should return 404 for non-existent ID', function (done) {
+  it('get user by username', function (done) {
+    chai.request(url)
+    .get('/user/hassan_shaikley')
+    .end(function(err, res){
+      assert.equal(res.status, 200);
+      done();
+    });
+  });
+  it('404 for non-existent ID', function (done) {
     chai.request(url)
     .get('/user/abcd')
     .end(function(err, res) {

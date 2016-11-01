@@ -41,16 +41,20 @@ osprey.loadFile(ramlFile, {
 	security: {
 		basic_auth: {
 			validateUser: function (username, apiKey, done) {
-				console.log("mmk " + JSON.stringify(arguments))
 				const query = { $or: [{ accessToken: apiKey }] };
+				console.log("Yep query " + query)
 				User.findOne(query).lean().exec()
 				.then((user) => {
+					console.log("did we get a user? " + user.username)
 					if (!user || user.username !== username) return done(null, false);
-					console.log("Swaa ");
 
+					console.log("authenticated, bro! : D")
 					return done(null, user);
 				})
-				.catch(error => done(error));
+				.catch(error => {
+					console.log("Error in the basic_auth thing")
+					done(error)
+				});
 			}
 		}
 	}
@@ -67,7 +71,6 @@ osprey.loadFile(ramlFile, {
 	});
 
 	app.use((err, req, res, next) => {
-		console.log(err);
 		next();
 	});
 

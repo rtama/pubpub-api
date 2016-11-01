@@ -13,7 +13,7 @@ const validUrl = require('valid-url');
 
 // Workrs for Images, Juypter and PDF's
 export function createAtom(req, res, next) {
-	console.log("I AM HERE")
+	console.log("Create Atom")
 	const query = { $or: [{ _id: req.user._id }] };  // pointless but don't feel like changing code
 	const url = req.body.url;
 

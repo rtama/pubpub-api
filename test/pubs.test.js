@@ -10,7 +10,7 @@ chai.use(chaiHttp);
 
 describe('POST /pubs/:id/submit', function () {
   this.timeout(15000);
-  it('should submit a pub to a journal', function (done) {
+  it('submit a pub to a journal', function (done) {
     chai.request(url)
     .post('/pubs/578fa2ba8099de3700eba17d/submit')
     .send({journalID: new ObjectID(), accessToken: '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})
@@ -22,7 +22,16 @@ describe('POST /pubs/:id/submit', function () {
       done();
     });
   });
-  it('should 304 on already submitted pubs', function (done) {
+  it('journalID must be an ObjectID', function (done) {
+    chai.request(url)
+    .post('/pubs/578fa2ba8099de3700eba17d/submit')
+    .send({journalID: 'hi', accessToken: '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})
+    .end(function (err, res) {
+      assert.equal(res.status, 500);
+      done();
+    });
+  });
+  it('304 on already submitted pub', function (done) {
     chai.request(url)
     .post('/pubs/578fa2ba8099de3700eba17d/submit')
     .send({journalID: '576c0561c8dade3700266c25', accessToken: '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})

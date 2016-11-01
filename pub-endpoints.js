@@ -9,42 +9,59 @@ const User = require('./models').User;
 const Link = require('./models').Link;
 
 export function submitPub(req, res, next) {
-	const query = { $or: [{ accessToken: req.body.accessToken }] };
-	// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
-	// const atomId = req.body.atomId;
+	console.log("Submit Pub:" + JSON.stringify(req.user))
+	// const query = { $or: [{ _id: req.user ? req.user._id : -1 }] };
 	const atomID = req.params.id;
 	const journalID = req.body.journalID;
+	const userID = req.user ? req.user._id : undefined;
+	const user = req.user;
 
-	User.findOne(query, { _id: 1 }).lean().exec()
-	.then((userResult) => {
-		if (!userResult) {
+	// User.findOne(query, { _id: 1 }).lean().exec()
+	// .then((userResult) => {
+	if (!mongoose.Types.ObjectId.isValid(journalID)){
+		let error = new BadRequest();
+		return res.status(error.status).json(error.message);
+	}
+
+	Link.findOne({ source: atomID, destination: journalID, type: 'submitted', inactive: { $ne: true } })
+	.then((linkData) => {
+		console.log("Did we get a user tho " + user)
+		if (!user) {
 			throw new BadRequest();
 		}
-		if (!req.body.accessToken || !req.params.id || !req.body.journalID) {
+		if (!req.params.id || !req.body.journalID ) {
 			throw new BadRequest();
 		}
 
-		const userID = userResult._id;
+		const userID = user._id;
 		// const inactiveNote = 'rejected';
 		// Check permission
 
 		// return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote)
-		// return Link.findOne('submitted', atomId, journalId, userResult._id, now);
+		// return Link.findOne('submitted', atomId, journalId, user._id, now);
+		console.log("getting Linkdata ")
 
-		return [Link.findOne({ source: atomID, destination: journalID, type: 'submitted', inactive: { $ne: true } }), userID];
 	})
-	.spread((linkData, userID) => {
+	.then((linkData) => {
+		console.log("got Linkdata "  + linkData)
 		if (linkData) {
 			throw new NotModified();
 		}
 		const now = new Date().getTime();
+		try {
+			return Link.createLink('submitted', atomID, journalID, userID, now);
+		}
+		catch(err) {
+			throw new BadRequest();
 
-		return Link.createLink('submitted', atomID, journalID, userID, now);
+		}
 	})
 	.then(() => {
 		return res.status(200).json('Success');
 	})
 	.catch((error) => {
+		console.log("Aaah222h eee " + error)
+
 		return res.status(error.status).json(error.message);
 	});
 }
