@@ -11,6 +11,7 @@ const Link = require('./models').Link;
 export function getUserByID(req, res, next) {
   const x = {fish: 5};
   const y = {...x};
+
   // Set the query based on whether the params.id is a valid ObjectID;
   const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
   const query = isValidObjectID ? { $or:[ {'_id': req.params.id}, {'username': req.params.id} ]} : { 'username': req.params.id };

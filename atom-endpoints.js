@@ -8,26 +8,30 @@ const User = require('./models').User;
 const Atom = require('./models').Atom;
 const Link = require('./models').Link;
 const Version = require('./models').Version;
-
 const request = require('superagent-promise')(require('superagent'), Promise);
-
 const validUrl = require('valid-url');
 
 // Workrs for Images, Juypter and PDF's
 export function createAtom(req, res, next) {
-	const query = { $or: [{ accessToken: req.body.accessToken }] };
+	console.log("I AM HERE")
+	const query = { $or: [{ _id: req.user._id }] };  // pointless but don't feel like changing code
 	const url = req.body.url;
+
 	const versionContent = url ? {
 		url: url
 	} : undefined;
 
 	User.findOne(query).lean().exec()
 	.then((user) => {
-		if (!user || !req.body.accessToken || !user.verifiedEmail
-			|| !req.body.url || !validUrl.isUri(url)) {
-				console.log("Haha bad requst " + req.body.url +' ' +validUrl.isUri(url) + '' + req.body.accessToken)
+		if (!validUrl.isUri(url) || !user.verifiedEmail) {
 			throw new BadRequest();
 		}
+		// if (!user || !req.body.accessToken || !user.verifiedEmail
+		// 	|| !req.body.url || !validUrl.isUri(url)) {
+		// 		console.log("Haha bad requst " + req.body.url +' '
+		// +validUrl.isUri(url) + '' + req.body.accessToken)
+		// 	throw new BadRequest();
+		// }
 
 		const userID = user._id;
 		const now = new Date().getTime();
@@ -125,5 +129,4 @@ export function createAtom(req, res, next) {
 		});
 	})
 	.catch(error => res.status(error.status || 500).json(error.message || 'Internal Server Error'));
-
 }

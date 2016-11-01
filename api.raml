@@ -11,8 +11,9 @@ baseUri: https://api.pubpub.org
 mediaType: application/json
 securitySchemes:
   - basic_auth:
-      description:
-        Need an Access Token in an Authorization Header to access this API endpoint. Requests need to be of the format username:accessToken. Access tokens are generated on pubpub.org/user/{username}/tokens.
+      description: |
+        Need an Access Token in an Authorization Header to access this API endpoint. Requests need to be in the format username:accessToken. Access tokens are generated on pubpub.org/user/{username}/tokens.
+        Also send them base 64 encoded. So an example header looks like 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
       type: Basic Authentication
       describedBy:
         headers:
@@ -292,3 +293,7 @@ securitySchemes:
                   "url": "www.idk.com",
                   //...add later
                 },
+
+/test:
+  get:
+    securedBy: [ basic_auth ]

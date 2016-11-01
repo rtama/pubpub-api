@@ -19,7 +19,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const path = join(__dirname, 'api.raml');
+const ramlFile = join(__dirname, 'api.raml');
 
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
@@ -27,32 +27,30 @@ mongoose.Promise = require('bluebird');
 mongoose.connect(process.env.MONGO_URI);
 
 
-// osprey.security(path, {
-//   basic_auth: {
-//     validateUser: function (username, password, done) {
-// 			console.log("Swoop")
-//       User.findOne({ username: username }, function (err, user) {
-//         if (err) { return done(err) }
-//         if (!user) { return done(null, false) }
-//         if (!user.verifyPassword(password)) { return done(null, false) }
-//         return done(null, user)
-//       })
-//     }
-//   }
-// })
-
 const User = require('./models').User;
 
-osprey.loadFile(path, {
+/* Function for checking if a user an access a resource*/
+function isAllowed(req, res, next) {
+	const username = req.user.username;
+
+
+	next();
+}
+
+osprey.loadFile(ramlFile, {
 	security: {
 		basic_auth: {
 			validateUser: function (username, apiKey, done) {
+				console.log("mmk " + JSON.stringify(arguments))
 				const query = { $or: [{ accessToken: apiKey }] };
 				User.findOne(query).lean().exec()
 				.then((user) => {
 					if (!user || user.username !== username) return done(null, false);
-					return done(null, true);
-				});
+					console.log("Swaa ");
+
+					return done(null, user);
+				})
+				.catch(error => done(error));
 			}
 		}
 	}
@@ -69,7 +67,6 @@ osprey.loadFile(path, {
 	});
 
 	app.use((err, req, res, next) => {
-		// Handle errors.
 		console.log(err);
 		next();
 	});
