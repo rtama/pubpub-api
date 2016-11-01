@@ -117,11 +117,6 @@ osprey.loadFile(path, {
 	/* /atoms/create */
 	app.post('/atom/create', createAtom);
 
-	app.get('/test', function(req, res){
-		console.log("Hit test");
-		res.end("Dammit")
-	})
-
 	console.log(`Server running on ${process.env.PORT || 9876}`);
 	app.listen(process.env.PORT || 9876);
 })
