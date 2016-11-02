@@ -215,10 +215,7 @@ securitySchemes:
       get:
         description: |
           Get the pubs submitted to a journal.
-        queryParameters:
-          accessToken:
-            type: string
-            required: true
+        securedBy: [ basic_auth ]
         responses:
           200:
 
@@ -258,10 +255,18 @@ securitySchemes:
         securedBy: [ basic_auth ]
         description:
           Submit a document to a journal for review and publication.
-        queryParameters:
-          journalID:
-            type: string
-            required: true
+        body:
+          application/json:
+            schema: |
+              {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "type": "object",
+                "properties": {
+                  "journalID": {
+                    "type": "string"
+                  }
+                }
+              }
 /atom:
   description: |
     Routes to create and access data about Atoms. Currently works for types: image,
@@ -273,8 +278,6 @@ securitySchemes:
       description:
         Create an atom
       queryParameters:
-        accessToken:
-          type: string
         type:
           type: string
         url:

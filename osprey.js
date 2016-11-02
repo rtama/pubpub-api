@@ -2,6 +2,7 @@ import { getFeatured, getCollections, getJournal, getSubmissions, getJournalColl
 import { getUserByID } from './user-endpoints';
 import { submitPub } from './pub-endpoints';
 import { createAtom } from './atom-endpoints';
+import { Unauthorized } from './errors';
 
 if (process.env.NODE_ENV !== 'production') {
 	require('./config');
@@ -42,13 +43,10 @@ osprey.loadFile(ramlFile, {
 		basic_auth: {
 			validateUser: function (username, apiKey, done) {
 				const query = { $or: [{ accessToken: apiKey }] };
-				console.log("Yep query " + query)
 				User.findOne(query).lean().exec()
 				.then((user) => {
-					console.log("did we get a user? " + user.username)
 					if (!user || user.username !== username) return done(null, false);
 
-					console.log("authenticated, bro! : D")
 					return done(null, user);
 				})
 				.catch(error => {
@@ -70,8 +68,14 @@ osprey.loadFile(ramlFile, {
 		next();
 	});
 
-	app.use((err, req, res, next) => {
-		next();
+	app.use((error, req, res, next) => {
+
+		// Assuming that
+		if (!error.status) {
+			error = new Unauthorized();
+		}
+		return res.status(error.status).json(error.message);
+		// next();
 	});
 
 	/* Route for         */

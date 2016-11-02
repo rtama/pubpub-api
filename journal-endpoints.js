@@ -11,12 +11,12 @@ const Link = require('./models').Link;
 export function getFeatured(req, res, next) {
 	// Set the query based on whether the params.id is a valid ObjectID;
 	const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-	const query = isValidObjectID ? { $or: [{ _id: req.params.id }, { slug: req.params.id }] } : { slug: req.params.id };
+	const query = isValidObjectID ? { $or: [{ _id: req.params.id },
+		{ slug: req.params.id }] } : { slug: req.params.id };
 
 	// Set the parameters we'd like to return
 	const select = { _id: 1, journalName: 1, slug: 1 };
 
-	// Make db call
 	Journal.find(query).select(select).populate({ path: 'collections', select: 'title createDate slug' }).lean()
 	.exec()
 	.then((journalResult) => {
@@ -114,36 +114,36 @@ export function getCollections(req, res, next) {
 }
 
 export function getSubmissions(req, res, next) {
-	const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
+	console.log("getSubmissions")
 
-	// const journalID = req.params.id;
-	// const userQuery = { $or:[ ]};
-	const accessToken = req.query.accessToken;
+	const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
+	const userID = req.user._id;
+	const user = req.user;
 
 	// see if accessToken grants access to this user
-	User.findOne({ 'accessToken': accessToken }).lean().exec()
-	.then((userResult) => {
-		const query = isValidObjectID ? { $or: [{ _id: req.params.id },
+	const query = isValidObjectID ? { $or: [{ _id: req.params.id },
 			{ slug: req.params.id }] } : { slug: req.params.id };
-		const select = { _id: 1 };
-		return [userResult, Journal.findOne(query, select).lean().exec()];
-	})
-	.spread((userResult, journalResult) => {
-		if (!userResult) {
-			throw new BadRequest();
-		}
+	const select = { _id: 1 };
+
+	Journal.findOne(query, select).lean().exec()
+	.then((journalResult) => {
+		console.log("journal Result " + journalResult)
+		// if (!user) {
+		// 	throw new BadRequest();
+		// }
 
 		if (!journalResult) {
 			throw new NotFound();
 		}
 
-		if (!req.params.id || !req.query.accessToken) {
+		if (!req.params.id) {
 			throw new BadRequest();
 		}
 
-		return Link.findOne({ type: 'admin', destination: journalResult._id, source: userResult._id, inactive: { $ne: true } }).lean().exec();
+		return Link.findOne({ type: 'admin', destination: journalResult._id, source: user._id, inactive: { $ne: true } }).lean().exec();
 	})
 	.then((link) => {
+		console.log("Grabbing a link " + link)
 		if (!link) {
 			throw new Unauthorized();
 		}

@@ -82,11 +82,11 @@ describe('/journal/:id/collection/:collectionID', function () {
   });
 });
 
-describe('/journal/:id/submissions', function () {
+describe.only('/journal/:id/submissions', function () {
   it('returns the submissions belonging to a journal by ID', function (done) {
     chai.request(url)
     .get('/journal/576c0561c8dade3700266c25/submissions')
-    .query({accessToken: '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})
+    .auth('hassan_shaikley', '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335')
     .end(function(err, res){
       assert.equal(res.status, 200);
       done();
@@ -96,7 +96,7 @@ describe('/journal/:id/submissions', function () {
   it('returns the submissions belonging to a journal by slug', function (done) {
     chai.request(url)
     .get('/journal/absurd/submissions')
-    .query({accessToken: '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})
+    .auth('hassan_shaikley', '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335')
     .end(function(err, res){
       assert.equal(res.status, 200);
       done();
@@ -105,15 +105,15 @@ describe('/journal/:id/submissions', function () {
   it('404 on invalid journal id', function (done) {
     chai.request(url)
     .get('/journal/1d368225b521c2328dd3501253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335/submissions')
-    .query({accessToken: '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335'})
     .end(function(err, res){
       assert.equal(res.status, 404);
       done();
     });
   });
-  it('400s on missing access token', function (done) {
+  it('400s on missing basic auth info', function (done) {
     chai.request(url)
     .get('/journal/2d368225b521c2328dd3501253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335/submissions')
+    .auth('hassan_shaikley', '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335')
     .end(function(err, res){
       assert.equal(res.status, 400)
       done();
