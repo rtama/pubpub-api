@@ -18,14 +18,13 @@ export function submitPub(req, res, next) {
 
 	// User.findOne(query, { _id: 1 }).lean().exec()
 	// .then((userResult) => {
-	if (!mongoose.Types.ObjectId.isValid(journalID)){
-		let error = new BadRequest();
+	if (!mongoose.Types.ObjectId.isValid(journalID)) {
+		const error = new BadRequest();
 		return res.status(error.status).json(error.message);
 	}
 
 	Link.findOne({ source: atomID, destination: journalID, type: 'submitted', inactive: { $ne: true } })
 	.then((linkData) => {
-		console.log("Does a link exist? " + linkData)
 		if (linkData) {
 			throw new NotModified();
 		}
@@ -53,12 +52,9 @@ export function submitPub(req, res, next) {
 		}
 	})
 	.then(() => {
-		console.log("Getting success!!")
 		return res.status(200).json('Success');
 	})
 	.catch((error) => {
-		console.log("Aaah222h eee " + error)
-
 		return res.status(error.status).json(error.message);
 	});
 }

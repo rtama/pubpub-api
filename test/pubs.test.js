@@ -9,7 +9,7 @@ chai.use(chaiHttp);
 
 describe('POST /pubs/:id/submit', function () {
 	this.timeout(15000);
-	it('submit a pub to a journal', function (done) {
+	it('submit a pub to a journal', (done) => {
 		chai.request(url)
 		.post('/pubs/578fa2ba8099de3700eba17d/submit')
 		.send({ journalID: new ObjectID() })
@@ -19,7 +19,7 @@ describe('POST /pubs/:id/submit', function () {
 			done();
 		});
 	});
-	it('journalID must be an ObjectID', function (done) {
+	it('journalID must be an ObjectID', (done) => {
 		chai.request(url)
 		.post('/pubs/578fa2ba8099de3700eba17d/submit')
 		.send({ journalID: 'hi' })
@@ -29,7 +29,7 @@ describe('POST /pubs/:id/submit', function () {
 			done();
 		});
 	});
-	it('304 on already submitted pub', function (done) {
+	it('304 on already submitted pub', (done) => {
 		chai.request(url)
 		.post('/pubs/578fa2ba8099de3700eba17d/submit')
 		.auth('hassan_shaikley', '7d368225b521c2328dd3502253c258bdaa2249fe77af5eeebb9e61baf6e9773688fc9d53eb14ea94f2c414670e2fa335')

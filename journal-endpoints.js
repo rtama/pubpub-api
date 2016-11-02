@@ -126,7 +126,6 @@ export function getSubmissions(req, res, next) {
 
 	Journal.findOne(query, select).lean().exec()
 	.then((journalResult) => {
-		console.log("journal Result " + journalResult)
 		if (!journalResult) {
 			throw new NotFound();
 		}
@@ -138,7 +137,6 @@ export function getSubmissions(req, res, next) {
 		return Link.findOne({ type: 'admin', destination: journalResult._id, source: user._id, inactive: { $ne: true } }).lean().exec();
 	})
 	.then((link) => {
-		console.log("Grabbing a link " + link)
 		if (!link) {
 			throw new Unauthorized();
 		}
