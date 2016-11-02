@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
 const Journal = require('./models').Journal;
-const User = require('./models').User;
+// const User = require('./models').User;
 const Atom = require('./models').Atom;
 const Link = require('./models').Link;
 
@@ -32,9 +32,8 @@ export function getFeatured(req, res, next) {
 		return [journalResult, findFeaturedLinks];
 	})
 	.spread((journalResult, featuredLinks) => {
-		const atoms = featuredLinks.filter((link) => {
-			return link.destination.isPublished;
-		}).map((link) => {
+		const atoms = featuredLinks.filter(link => link.destination.isPublished)
+		.map((link) => {
 			const output = link.destination;
 			output.collections = link.metadata.collections;
 			output.featureDate = link.createDate;
@@ -54,19 +53,31 @@ export function getFeatured(req, res, next) {
 
 		return res.status(200).json(atoms);
 	})
-	.catch((error) => {
-		return res.status(error.status).json(error.message);
-	});
+	.catch(error => res.status(error.status).json(error.message));
 }
 
 
 export function getJournal(req, res, next) {
 	// Set the query based on whether the params.id is a valid ObjectID;
 	const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-	const query = isValidObjectID ? { $or: [{ _id: req.params.id }, { slug: req.params.id }] } : { slug: req.params.id };
+	const query = isValidObjectID ? { $or: [{ _id: req.params.id },
+		{ slug: req.params.id }] } : { slug: req.params.id };
 
 	// Set the parameters we'd like to return
-	const select = { _id: 1, journalName: 1, slug: 1, description: 1, logo: 1, icon: 1, about: 1, website: 1, twitter: 1, facebook: 1, headerColor: 1, headerImage: 1 };
+	const select = {
+		_id: 1,
+		journalName: 1,
+		slug: 1,
+		description: 1,
+		logo: 1,
+		icon: 1,
+		about: 1,
+		website: 1,
+		twitter: 1,
+		facebook: 1,
+		headerColor: 1,
+		headerImage: 1
+	};
 
 	// Make db call
 	Journal.findOne(query, select).lean().exec()
@@ -78,15 +89,14 @@ export function getJournal(req, res, next) {
 
 		return res.status(200).json(journalResult);
 	})
-	.catch((error) => {
-		return res.status(error.status).json(error.message);
-	});
+	.catch(error => res.status(error.status).json(error.message));
 }
 
 export function getCollections(req, res, next) {
 	// Set the query based on whether the params.id is a valid ObjectID;
 	const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-	const query = isValidObjectID ? { $or: [{ _id: req.params.id }, { slug: req.params.id }] } : { slug: req.params.id };
+	const query = isValidObjectID ? { $or: [{ _id: req.params.id },
+		{ slug: req.params.id }] } : { slug: req.params.id };
 
 	// Set the parameters we'd like to return
 	const select = { _id: 1, collections: 1, journalName: 1, slug: 1 };
@@ -105,24 +115,21 @@ export function getCollections(req, res, next) {
 				delete collection._id;
 				return collection;
 			})
-		}
+		};
 		return res.status(200).json(output);
 	})
-	.catch((error) => {
-		return res.status(error.status).json(error.message);
-	});
+	.catch(error => res.status(error.status).json(error.message));
 }
 
 export function getSubmissions(req, res, next) {
 	const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-	const userID = req.user._id;
+	// const userID = req.user._id;
 	const user = req.user;
 
 	const query = isValidObjectID ? { $or: [{ _id: req.params.id },
 			{ slug: req.params.id }] } : { slug: req.params.id };
-	const select = { _id: 1 };
 
-	Journal.findOne(query, select).lean().exec()
+	Journal.findOne(query, { _id: 1 }).lean().exec()
 	.then((journalResult) => {
 		if (!journalResult) {
 			throw new NotFound();
@@ -141,8 +148,7 @@ export function getSubmissions(req, res, next) {
 		return link;
 	})
 	.then((link) => {
-		// Set the parameters we'd like to return
-		const select = { _id: 1, slug: 1, createDate: 1, source: 1};
+		const select = { _id: 1, slug: 1, createDate: 1, source: 1 };
 
 		return Link.find({ destination: link.destination, type: 'submitted', inactive: { $ne: true } }, select)
 		.populate({
@@ -162,21 +168,21 @@ export function getSubmissions(req, res, next) {
 		});
 		return res.status(200).json(links);
 	})
-	.catch((error) => {
-		return res.status(error.status).json(error.message);
-	});
+	.catch(error => res.status(error.status).json(error.message));
 }
 
 export function getJournalCollection(req, res, next) {
 	// Set the query based on whether the params.id is a valid ObjectID;
 	const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-	const query = isValidObjectID ? { $or: [{ _id: req.params.id }, { slug: req.params.id }] } : { slug: req.params.id };
+	const query = isValidObjectID ? { $or: [{ _id: req.params.id },
+		{ slug: req.params.id }] } : { slug: req.params.id };
 
 	// Set the parameters we'd like to return
 	const select = { _id: 1, journalName: 1, slug: 1, collections: 1 };
 
 	// Make db call
-	Journal.findOne(query, select).populate({ path: 'collections', select: 'title createDate' }).lean().exec()
+	Journal.findOne(query, select)
+	.populate({ path: 'collections', select: 'title createDate' }).lean().exec()
 	.then((journalResult) => {
 		if (!journalResult) { throw new BadRequest(); }
 
@@ -188,9 +194,8 @@ export function getJournalCollection(req, res, next) {
 		return [journalResult, findFeaturedLinks];
 	})
 	.spread((journalResult, featuredLinks) => {
-		const atoms = featuredLinks.filter((link) => {
-			return link.destination.isPublished;
-		}).map((link) => {
+		const atoms = featuredLinks.filter(link => link.destination.isPublished)
+		.map((link) => {
 			const output = link.destination;
 			output.collections = link.metadata.collections;
 			output.featureDate = link.createDate;
@@ -221,35 +226,30 @@ export function getJournalCollection(req, res, next) {
 		};
 		return res.status(200).json(output);
 	})
-	.catch((error) => {
-		return res.status(error.status).json(error.message);
-	});
+	.catch(error => res.status(error.status).json(error.message));
 }
 
 export function featurePub(req, res, next) {
 	const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
 
 	const userID = req.user._id;
-	const user = req.user;
+	// const user = req.user;
 
 	// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
 	// const atomId = req.body.atomId;
 	const atomID = req.body.atomID;
-	const accept = req.body.accept;
+	// const accept = req.body.accept;
 	let journalID;
 
-		if (!req.params.id || !req.body.atomID || !req.body.accept) {
-			throw new BadRequest();
-		}
-		// return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote)
-		// return Link.findOne('submitted', atomId, journalId, user._id, now);
-		// return Link.findOne({type: 'admin', destination: journal._id, source: user._id, inactive: {$ne: true}}).lean().exec();
-		// return [Link.findOne({source: atomID, destination: journalID, type: 'submitted', inactive: {$ne: true}}), userID]
+	if (!req.params.id || !req.body.atomID || !req.body.accept) {
+		throw new BadRequest();
+	}
 
-		const query = isValidObjectID ? { $or: [{ _id: req.params.id }, { slug: req.params.id }] } : { slug: req.params.id };
-		const select = { _id: 1 };
-		Journal.findOne(query, select).lean().exec()
-		.then((journal) => {
+	const query = isValidObjectID ? { $or: [{ _id: req.params.id },
+		{ slug: req.params.id }] } : { slug: req.params.id };
+	const select = { _id: 1 };
+	Journal.findOne(query, select).lean().exec()
+	.then((journal) => {
 		if (!userID) {
 			throw new BadRequest();
 		}
@@ -260,31 +260,27 @@ export function featurePub(req, res, next) {
 
 		journalID = journal._id;
 
-		return [userID, Link.findOne({ type: 'admin', destination: journal._id, source: userID, inactive: { $ne: true } }).lean().exec()];
+		return Link.findOne({ type: 'admin', destination: journal._id, source: userID, inactive: { $ne: true } }).lean().exec();
 	})
-	.spread((userID, link) => {
+	.then((link) => {
 		if (!link) {
 			throw new Unauthorized();
 		}
-		return [userID, Link.findOne( { type: 'featured', destination: atomID, source: journalID })];
+		return Link.findOne({ type: 'featured', destination: atomID, source: journalID });
 
 	})
-	.spread((userID, link) => {
+	.then((link) => {
 		if (link) {
 			throw new NotModified();
 		}
 		const now = new Date().getTime();
-		return [userID, Link.createLink('featured', journalID, atomID, userID, now)];
+		return Link.createLink('featured', journalID, atomID, userID, now);
 	})
-	.spread((userID, newLink) => {
+	.then((newLink) => {
 		const now = new Date().getTime();
 		const inactiveNote = 'featured';
 		return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote);
 	})
-	.then((updatedSubmissionLink) => {
-		return res.status(200).json(updatedSubmissionLink);
-	})
-	.catch((error) => {
-		return res.status(error.status).json(error.message);
-	});
+	.then(updatedSubmissionLink => res.status(200).json(updatedSubmissionLink))
+	.catch(error => res.status(error.status).json(error.message));
 }

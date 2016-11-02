@@ -31,12 +31,12 @@ mongoose.connect(process.env.MONGO_URI);
 const User = require('./models').User;
 
 /* Function for checking if a user an access a resource*/
-function isAllowed(req, res, next) {
-	const username = req.user.username;
+/*function isAllowed(req, res, next) {
+	 const username = req.user.username;
 
 
 	next();
-}
+}*/
 
 osprey.loadFile(ramlFile, {
 	security: {
@@ -50,7 +50,6 @@ osprey.loadFile(ramlFile, {
 					return done(null, user);
 				})
 				.catch((error) => {
-					console.log("Error in the basic_auth")
 					done(error);
 				});
 			}
@@ -69,7 +68,6 @@ osprey.loadFile(ramlFile, {
 	});
 
 	app.use((error, req, res, next) => {
-
 		// Assuming that
 		if (!error.status) {
 			error = new Unauthorized();

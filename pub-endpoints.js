@@ -9,15 +9,12 @@ mongoose.Promise = require('bluebird');
 const Link = require('./models').Link;
 
 export function submitPub(req, res, next) {
-	console.log("Submitting Pub from user:" + JSON.stringify(req.user))
 	// const query = { $or: [{ _id: req.user ? req.user._id : -1 }] };
 	const atomID = req.params.id;
 	const journalID = req.body.journalID;
 	const userID = req.user._id;
-	const user = req.user;
+	// const user = req.user;
 
-	// User.findOne(query, { _id: 1 }).lean().exec()
-	// .then((userResult) => {
 	if (!mongoose.Types.ObjectId.isValid(journalID)) {
 		const error = new BadRequest();
 		return res.status(error.status).json(error.message);

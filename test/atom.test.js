@@ -5,7 +5,7 @@ const chaiHttp = require('chai-http');
 const url = 'http://localhost:9876';
 chai.use(chaiHttp);
 
-describe.only('POST /atom/createImage/', function () {
+describe('POST /atom/createImage/', function () {
 	this.timeout(15000);
 	it('should create an atom', (done) => {
 		chai.request(url)

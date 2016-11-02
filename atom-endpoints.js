@@ -13,7 +13,6 @@ const validUrl = require('valid-url');
 
 // Workrs for Images, Juypter and PDF's
 export function createImage(req, res, next) {
-	console.log("Create imageAtom")
 	const query = { $or: [{ _id: req.user._id }] };  // pointless but don't feel like changing code
 	const url = req.body.url;
 	const userID = req.user._id;
@@ -63,12 +62,9 @@ export function createImage(req, res, next) {
 			throw new NotImplemented();
 		}
 
-
-
 		const tasks = [
 			Link.createLink('author', userID, newAtomID, userID, now),
 		];
-		console.log("Cp 1")
 
 
 		// If there is version data, create the version!
@@ -85,7 +81,6 @@ export function createImage(req, res, next) {
 		return Promise.all(tasks);
 	})
 	.then((taskResults) => { // If we created a version, make sure to add that version to parent
-		console.log("Cp 2")
 
 		if (taskResults.length === 2) {
 			const versionData = taskResults[1];
