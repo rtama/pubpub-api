@@ -19,3 +19,8 @@ export function NotFound() {
 	this.message = 'Not Found';
 	this.status = '404';
 }
+
+export function NotImplemented() {
+	this.message = 'Not Yet Implemented';
+	this.status = '501';
+}

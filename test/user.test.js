@@ -6,7 +6,7 @@ const chaiHttp = require('chai-http');
 const url = 'http://localhost:9876';
 chai.use(chaiHttp);
 
-describe('/user/:id/', function () {
+describe('/user/:id', function () {
 	this.timeout(15000);
 	it('get user by ID', (done) => {
 		chai.request(url)

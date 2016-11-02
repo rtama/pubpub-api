@@ -2,11 +2,13 @@
 
 The goal of this API is to give access to all of the publicly available resources on PubPub.
 
-Accessing resources or actions that require authentication will be supported soon.
+The API is still really nascent. If there is anything you would like to do that isn't available please submit an issue.
 
 # Running Locally
 
-First, create a `config.js` file to configure the MongoDB URI. See `config.sample.js` for an example.
+First, create a `config.js` file to configure the API Server. See `config.sample.js` for an example.
+
+npm run build-docs depends on raml2html.
 
 Then run:
 
@@ -16,11 +18,6 @@ npm run start
 npm run build-docs
 ```
 `npm run buid-docs` will need to be run each time the template or api.raml is changed.
-
-
-### TO-DO
-
-Determine best format for responding with errors
 
 ### Testing
 

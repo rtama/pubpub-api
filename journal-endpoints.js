@@ -114,8 +114,6 @@ export function getCollections(req, res, next) {
 }
 
 export function getSubmissions(req, res, next) {
-	console.log("getSubmissions")
-
 	const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
 	const userID = req.user._id;
 	const user = req.user;
@@ -287,7 +285,6 @@ export function featurePub(req, res, next) {
 		return res.status(200).json(updatedSubmissionLink);
 	})
 	.catch((error) => {
-		console.log(`error  + ${error}`);
 		return res.status(error.status).json(error.message);
 	});
 }

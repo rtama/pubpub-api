@@ -1,7 +1,7 @@
 import { getFeatured, getCollections, getJournal, getSubmissions, getJournalCollection, featurePub } from './journal-endpoints';
 import { getUserByID } from './user-endpoints';
 import { submitPub } from './pub-endpoints';
-import { createAtom } from './atom-endpoints';
+import { createImage } from './atom-endpoints';
 import { Unauthorized } from './errors';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -49,9 +49,9 @@ osprey.loadFile(ramlFile, {
 
 					return done(null, user);
 				})
-				.catch(error => {
-					console.log("Error in the basic_auth thing")
-					done(error)
+				.catch((error) => {
+					console.log("Error in the basic_auth")
+					done(error);
 				});
 			}
 		}
@@ -119,7 +119,7 @@ osprey.loadFile(ramlFile, {
 
 	/* Route for */
 	/* /atoms/create */
-	app.post('/atom/create', createAtom);
+	app.post('/atom/createImage', createImage);
 
 	console.log(`Server running on ${process.env.PORT || 9876}`);
 	app.listen(process.env.PORT || 9876);

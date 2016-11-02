@@ -33,28 +33,13 @@ export function submitPub(req, res, next) {
 			throw new BadRequest();
 		}
 
-		// const inactiveNote = 'rejected';
-		// Check permission
-
-		// return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote)
-		// return Link.findOne('submitted', atomId, journalId, user._id, now);
-	//
-	// })
-	// .then((linkData) => {
-	// 	console.log("got Linkdata "  + linkData)
-
 		const now = new Date().getTime();
 		try {
 			return Link.createLink('submitted', atomID, journalID, userID, now);
-		}
-		catch(err) {
+		} catch (err) {
 			throw new BadRequest();
 		}
 	})
-	.then(() => {
-		return res.status(200).json('Success');
-	})
-	.catch((error) => {
-		return res.status(error.status).json(error.message);
-	});
+	.then(() => res.status(200).json('Success'))
+	.catch(error => res.status(error.status).json(error.message));
 }
