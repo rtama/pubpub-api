@@ -7,29 +7,29 @@ const url = 'http://localhost:9876';
 chai.use(chaiHttp);
 
 describe('/user/:id/', function () {
-  this.timeout(15000);
-  it('get user by ID', function (done) {
-    chai.request(url)
-    .get('/user/576bf659c8dade3700266c17')
-    .end(function(err, res){
-      assert.equal(res.status, 200);
-      done();
-    });
-  });
-  it('get user by username', function (done) {
-    chai.request(url)
-    .get('/user/hassan_shaikley')
-    .end(function(err, res){
-      assert.equal(res.status, 200);
-      done();
-    });
-  });
-  it('404 for non-existent ID', function (done) {
-    chai.request(url)
-    .get('/user/abcd')
-    .end(function(err, res) {
-      assert.equal(res.status, 404);
-      done();
-    });
-  });
+	this.timeout(15000);
+	it('get user by ID', (done) => {
+		chai.request(url)
+		.get('/user/576bf659c8dade3700266c17')
+		.end((err, res) => {
+			assert.equal(res.status, 200);
+			done();
+		});
+	});
+	it('get user by username', (done) => {
+		chai.request(url)
+		.get('/user/hassan_shaikley')
+		.end((err, res) => {
+			assert.equal(res.status, 200);
+			done();
+		});
+	});
+	it('404 for non-existent ID', (done) => {
+		chai.request(url)
+		.get('/user/abcd')
+		.end((err, res) => {
+			assert.equal(res.status, 404);
+			done();
+		});
+	});
 });

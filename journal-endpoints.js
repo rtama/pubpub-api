@@ -120,7 +120,6 @@ export function getSubmissions(req, res, next) {
 	const userID = req.user._id;
 	const user = req.user;
 
-	// see if accessToken grants access to this user
 	const query = isValidObjectID ? { $or: [{ _id: req.params.id },
 			{ slug: req.params.id }] } : { slug: req.params.id };
 	const select = { _id: 1 };
@@ -128,10 +127,6 @@ export function getSubmissions(req, res, next) {
 	Journal.findOne(query, select).lean().exec()
 	.then((journalResult) => {
 		console.log("journal Result " + journalResult)
-		// if (!user) {
-		// 	throw new BadRequest();
-		// }
-
 		if (!journalResult) {
 			throw new NotFound();
 		}
@@ -237,35 +232,28 @@ export function getJournalCollection(req, res, next) {
 
 export function featurePub(req, res, next) {
 	const isValidObjectID = mongoose.Types.ObjectId.isValid(req.params.id);
-	const query = { $or: [{ accessToken: req.body.accessToken }] };
+
+	const userID = req.user._id;
+	const user = req.user;
+
 	// const atomArray = JSON.parse(JSON.stringify(req.body.atomIds));
 	// const atomId = req.body.atomId;
 	const atomID = req.body.atomID;
 	const accept = req.body.accept;
 	let journalID;
 
-	// get user based off of ID
-	User.findOne(query).lean().exec()
-	.then((userResult) => {
-		if (!userResult) {
+		if (!req.params.id || !req.body.atomID || !req.body.accept) {
 			throw new BadRequest();
 		}
-		if (!req.body.accessToken || !req.params.id || !req.body.atomID || !req.body.accept) {
-			throw new BadRequest();
-		}
-		const userID = userResult._id;
 		// return Link.setLinkInactive('submitted', atomID, journalID, userID, now, inactiveNote)
-		// return Link.findOne('submitted', atomId, journalId, userResult._id, now);
-		// return Link.findOne({type: 'admin', destination: journal._id, source: userResult._id, inactive: {$ne: true}}).lean().exec();
+		// return Link.findOne('submitted', atomId, journalId, user._id, now);
+		// return Link.findOne({type: 'admin', destination: journal._id, source: user._id, inactive: {$ne: true}}).lean().exec();
 		// return [Link.findOne({source: atomID, destination: journalID, type: 'submitted', inactive: {$ne: true}}), userID]
-		return userResult._id;
-	})
-	.then((userID) => {
+
 		const query = isValidObjectID ? { $or: [{ _id: req.params.id }, { slug: req.params.id }] } : { slug: req.params.id };
 		const select = { _id: 1 };
-		return [userID, Journal.findOne(query, select).lean().exec()];
-	})
-	.spread((userID, journal) => {
+		Journal.findOne(query, select).lean().exec()
+		.then((journal) => {
 		if (!userID) {
 			throw new BadRequest();
 		}
