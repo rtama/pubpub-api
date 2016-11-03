@@ -57,7 +57,7 @@ export function createImage(req, res, next) {
 	atom.save() // Save new atom data
 	.then((newAtom) => { // Create new Links pointing between atom and author
 
-		//if it is not owned by PubPub then there's no need to upload
+		// if it is not owned by PubPub then there's no need to upload
 		if (!(url.search('assets.pubpub.org') || url.search('sandbox.pubpub.org'))) {
 			throw new NotImplemented();
 		}
