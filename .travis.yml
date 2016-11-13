@@ -9,21 +9,15 @@ before_script:
   npm i -g raml2html ;
   mkdir build ;
 
-
 script:
-  raml2html -t template/templatenew/template.nunjucks api.raml -o build/index.html ;
-
-before_deploy:
-  mv template/templatenew/* build/ ;
-
+  raml2html -t template/template.nunjucks api.raml -o build/index.html ;
 
 deploy:
   provider: s3
   access_key_id: $AWS_ACCESS_KEY_ID
   secret_access_key: $AWS_SECRET_ACCESS_KEY
-  bucket: "docs.pubpub.org"
+  bucket: "docs.pubpub.co"
   acl: public_read
   detect_encoding: true
-  upload-dir: "api"
   skip_cleanup: true
   local_dir: build

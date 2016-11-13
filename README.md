@@ -1,14 +1,10 @@
 # Introduction
 
-The goal of this API is to give access to all of the publicly available resources on PubPub.
-
-The API is still really nascent. If there is anything you would like to do that isn't available please submit an issue.
+This API provides full access to the ListOfLinks database.
 
 # Running Locally
 
-First, create a `config.js` file to configure the API Server. See `config.sample.js` for an example.
-
-npm run build-docs depends on raml2html.
+First, create a `config.js` file to configure the PostgreSQL URI. See `config.sample.js` for an example.
 
 Then run:
 
@@ -19,40 +15,4 @@ npm run build-docs
 ```
 `npm run buid-docs` will need to be run each time the template or api.raml is changed.
 
-### Testing
-
-`mocha --require 'babel-register'`
-
-### Info
-
-Abao is pretty cool for testing
-
-https://github.com/cybertk/abao
-
-One example request:
-
-curl --data '{"name" :"hassan"}' \;
-localhost:9876/users/0
-
-
-Old schema data, for
-application/json:
-  schema: |
-    {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    }
-
-### Useful scripts
-
-Automatically generates the documentation from the raml and the template whenever the template is edited.
-
-fswatch -0 api.raml template/template.nunjucks   | (xargs -0 -n1 -I{} raml2html -t template/template.nunjucks api.raml -o index.html)
-
-### Useful resources
-
-https://github.com/raml2html/raml2html/blob/master/examples/github.raml
+The `.travis.yml` file specifies a means for Travis-CI to automatically build the docs and upload them to an S3 bucket.

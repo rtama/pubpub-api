@@ -4,23 +4,17 @@
     <title>{{ title }} API documentation</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="generator" content="https://github.com/raml2html/raml2html {{ config.raml2HtmlVersion }}">
-
+    <meta name="generator" content="https://github.com/kevinrenskers/raml2html {{ config.raml2HtmlVersion }}">
+    <link rel="shortcut icon" type="image/png" href="https://s3.amazonaws.com/tw-desk/i/346753/docfavicon/225812.20160809072613033.225812.20160809072613033jIv7R.png">
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/styles/default.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/highlight.min.js"></script>
 
     <script type="text/javascript">
       $(document).ready(function() {
-
-        //highlight /user when you first get to the API
-        if ($(window).scrollTop() < 150){
-          $('#sidebar li:first').addClass('active')
-        }
-
-        $('.page-header pre code, .top-resource-description pre code, .modal-body pre code').each(function(i, block) {
+        $('.page-header pre code, .top-resource-description pre code').each(function(i, block) {
           hljs.highlightBlock(block);
         });
 
@@ -57,124 +51,11 @@
     </script>
 
     <style>
-    @font-face {
-        font-family: 'yrsaregular';
-        src: url('fonts/yrsa-regular-webfont.eot');
-        src: url('fonts/yrsa-regular-webfont.eot?#iefix') format('embedded-opentype'),
-             url('fonts/yrsa-regular-webfont.woff2') format('woff2'),
-             url('fonts/yrsa-regular-webfont.woff') format('woff'),
-             url('fonts/yrsa-regular-webfont.ttf') format('truetype'),
-             url('fonts/yrsa-regular-webfont.svg#yrsaregular') format('svg');
-        font-weight: normal;
-        font-style: normal;
-    }
-    @font-face {
-        font-family: 'yrsabold';
-        src: url('fonts/yrsa-bold-webfont.eot');
-        src: url('fonts/yrsa-bold-webfont.eot?#iefix') format('embedded-opentype'),
-             url('fonts/yrsa-bold-webfont.woff2') format('woff2'),
-             url('fonts/yrsa-bold-webfont.woff') format('woff'),
-             url('fonts/yrsa-bold-webfont.ttf') format('truetype'),
-             url('fonts/yrsa-bold-webfont.svg#yrsabold') format('svg');
-        font-weight: normal;
-        font-style: normal;
-
-    }
-
-    @font-face {
-        font-family: 'yrsasemibold';
-        src: url('fonts/yrsa-semibold-webfont.eot');
-        src: url('fonts/yrsa-semibold-webfont.eot?#iefix') format('embedded-opentype'),
-             url('fonts/yrsa-semibold-webfont.woff2') format('woff2'),
-             url('fonts/yrsa-semibold-webfont.woff') format('woff'),
-             url('fonts/yrsa-semibold-webfont.ttf') format('truetype'),
-             url('fonts/yrsa-semibold-webfont.svg#yrsasemibold') format('svg');
-        font-weight: normal;
-        font-style: normal;
-    }
-    @font-face {
-        font-family: 'clearsans_bold';
-        src: url('fonts/clearsans-bold-webfont.eot');
-        src: url('fonts/clearsans-bold-webfont.eot?#iefix') format('embedded-opentype'),
-             url('fonts/clearsans-bold-webfont.woff2') format('woff2'),
-             url('fonts/clearsans-bold-webfont.woff') format('woff'),
-             url('fonts/clearsans-bold-webfont.ttf') format('truetype'),
-             url('fonts/clearsans-bold-webfont.svg#clear_sansbold') format('svg');
-        font-weight: normal;
-        font-style: normal;
-    }
-    @font-face {
-        font-family: 'clear_sansbold_italic';
-        src: url('fonts/clearsans-bolditalic-webfont.eot');
-        src: url('fonts/clearsans-bolditalic-webfont.eot?#iefix') format('embedded-opentype'),
-             url('fonts/clearsans-bolditalic-webfont.woff2') format('woff2'),
-             url('fonts/clearsans-bolditalic-webfont.woff') format('woff'),
-             url('fonts/clearsans-bolditalic-webfont.ttf') format('truetype'),
-             url('fonts/clearsans-bolditalic-webfont.svg#clear_sansbold_italic') format('svg');
-        font-weight: normal;
-        font-style: normal;
-    }
-    @font-face {
-        font-family: 'clear_sansitalic';
-        src: url('fonts/clearsans-italic-webfont.eot');
-        src: url('fonts/clearsans-italic-webfont.eot?#iefix') format('embedded-opentype'),
-             url('fonts/clearsans-italic-webfont.woff2') format('woff2'),
-             url('fonts/clearsans-italic-webfont.woff') format('woff'),
-             url('fonts/clearsans-italic-webfont.ttf') format('truetype'),
-             url('fonts/clearsans-italic-webfont.svg#clear_sansitalic') format('svg');
-        font-weight: normal;
-        font-style: normal;
-    }
-    @font-face {
-        font-family: 'clearsans_light';
-        src: url('fonts/clearsans-light-webfont.eot');
-        src: url('fonts/clearsans-light-webfont.eot?#iefix') format('embedded-opentype'),
-             url('fonts/clearsans-light-webfont.woff2') format('woff2'),
-             url('fonts/clearsans-light-webfont.woff') format('woff'),
-             url('fonts/clearsans-light-webfont.ttf') format('truetype'),
-             url('fonts/clearsans-light-webfont.svg#clear_sans_lightregular') format('svg');
-        font-weight: normal;
-        font-style: normal;
-    }
-    @font-face {
-        font-family: 'clearsans_regular';
-        src: url('fonts/clearsans-regular-webfont.eot');
-        src: url('fonts/clearsans-regular-webfont.eot?#iefix') format('embedded-opentype'),
-             url('fonts/clearsans-regular-webfont.woff2') format('woff2'),
-             url('fonts/clearsans-regular-webfont.woff') format('woff'),
-             url('fonts/clearsans-regular-webfont.ttf') format('truetype'),
-             url('fonts/clearsans-regular-webfont.svg#clear_sansregular') format('svg');
-        font-weight: normal;
-        font-style: normal;
-    }
-    @font-face {
-        font-family: 'clearsans_thin';
-        src: url('fonts/clearsans-thin-webfont.eot');
-        src: url('fonts/clearsans-thin-webfont.eot?#iefix') format('embedded-opentype'),
-             url('fonts/clearsans-thin-webfont.woff2') format('woff2'),
-             url('fonts/clearsans-thin-webfont.woff') format('woff'),
-             url('fonts/clearsans-thin-webfont.ttf') format('truetype'),
-             url('fonts/clearsans-thin-webfont.svg#clear_sans_thinregular') format('svg');
-        font-weight: normal;
-        font-style: normal;
-
-    }
-
-
-
-
       .hljs {
         background: transparent;
       }
       .parent {
         color: #999;
-      }
-      .list-group-item > .badge {
-        float: none;
-        margin-right: 6px;
-      }
-      .panel {
-        border-radius: 1px;
       }
       .panel-title > .methods {
         float: right;
@@ -202,29 +83,8 @@
       .badge_patch {
         background-color: #ccc444;
       }
-      .list-group, .panel-group {
-        margin-bottom: 0;
-      }
-      .panel-group .panel+.panel-white {
-        margin-top: 0;
-      }
-      .panel-group .panel-white {
-        border-bottom: 1px solid #F5F5F5;
-        border-radius: 0;
-      }
-      .panel-white:last-child {
-        border-bottom-color: white;
-        -webkit-box-shadow: none;
-        box-shadow: none;
-      }
-      .panel-white .panel-heading {
-        background: white;
-      }
       .tab-pane ul {
         padding-left: 2em;
-      }
-      .tab-pane h1 {
-        font-size: 1.3em;
       }
       .tab-pane h2 {
         font-size: 1.2em;
@@ -240,149 +100,162 @@
         border-bottom: 1px solid #ddd;
         padding: 10px;
       }
-      #sidebar {
-        padding-right: 5px;
-        overflow: auto;
-        height: 90%;
-      }
+
       .top-resource-description {
-        border-bottom: 1px solid #ddd;
-        background: #fcfcfc;
-        padding: 15px 15px 0 15px;
-        margin: -15px -15px 10px -15px;
       }
+
       .resource-description {
-        border-bottom: 1px solid #fcfcfc;
-        background: #fcfcfc;
-        padding: 15px 15px 0 15px;
-        margin: -15px -15px 10px -15px;
+        margin-bottom: 15px;
       }
+
       .resource-description p:last-child {
         margin: 0;
       }
-      .list-group .badge {
-        float: left;
-      }
-      .method_description {
-        margin-left: 85px;
-      }
-      .method_description p:last-child {
-        margin: 0;
-      }
-      .list-group-item {
-        cursor: pointer;
-      }
-      .list-group-item:hover {
-        background-color: #f5f5f5;
+
+      .method-description {
+        margin-top: 10px;
       }
 
-      pre code {
+      .site-header {
+        background-color: black;
+      }
+
+      .brand-logo {
+        padding-left: 15px;
+      }
+
+      .brand-logo img {
+        max-height: 60px;
+      }
+
+      .api-header {
+        display: inline;
+        margin-left: 10px;
+        line-height: 60px;
+        vertical-align: middle;
+      }
+
+      .nav-pills>li>a {
+        border-radius: 0;
+      }
+
+      .panel  {
+        box-shadow: none;
+      }
+
+      .resource-header {
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+      }
+
+      .logo-header {
+        white-space: nowrap;
+        border-bottom: 1px solid #eee;
+        padding-right: 15px;
+      }
+
+      #sidebar {
+        height: 100%;
+        min-width: 200px;
+        border-right: 1px solid #eee;
+      }
+
+      #sidebar .nav {
         overflow: auto;
-        word-wrap: normal;
-        white-space: pre;
+        position: absolute;
+        bottom: 0;
+        top: 80px;
+        left: 0;
+        right: 0;
       }
       .nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus {
-        background-color: #2C2A2B;
+        background-color: #202224;
       }
-      .nav>li>a {
-        border-radius: 1px;
-        padding: 5px 15px;
+      a, a:hover, a:focus {
+        color: #202224;
       }
-      a {
-        color: #2C2A2B;
-      }
-      .alert-info {
-        background-color: #F3F3F4;
-        border-color: #BBBDC0;
-        color: #363736;
-        border-radius: 1px;
-      }
-      @media (max-width:768) {
-        .sidebar {
-          display:none;
-        }
-      }
-      .title {
-        font-family: 'yrsabold';
-        font-size: 3.5em;
-      }
-      h1 {
-        font-size: 2.2rem;
-        font-family: 'clearsans_light';
-      }
-      h2 {
-        font-size: 1.9rem;
-        font-family: 'clearsans_light';
-      }
-
-      .sidebar {
-        background-color: '#F3F3F4';
-        top:0;
-        left:0;
-        bottom: 0;
-      }
-
     </style>
   </head>
 
   <body data-spy="scroll" data-target="#sidebar">
+    <div class="container-fluid">
       <div class="row">
-
-        <div class="col-md-3 col-sm-0 sidebar">
-          <div id="sidebar" role="complementary">
+        <div class="col-sm-3 hidden-xs">
+          <div id="sidebar" class="hidden-print affix" role="complementary">
+            <div class="logo-header">
+              <a href="https://www.listoflinks.co" class="brand-logo">
+                  <img src="https://www.listoflinks.co/static/logo.png" alt="ListOfLinks Logo">
+              </a>
+              <a href="#"><h3 class="api-header">API</h3></a>
+            </div>
             <ul class="nav nav-pills nav-stacked">
+                <li><a href="#Introduction">Introduction</a></li>
               {% for resource in resources %}
                 <li><a href="#{{ resource.uniqueId}}">{% if resource.displayName %}{{ resource.displayName}}{% else %}{{ resource.relativeUri }}{% endif %}</a></li>
               {% endfor %}
             </ul>
           </div>
         </div>
-
-        <div class="col-md-9 col-sm-12">
-
-          <div class="page-header">
-            <div class="title">{{ title }} API documentation{% if version %}
-            </div>
-            </br>
-            <h2>version {{ version }}</h2>{% endif %}
+        <div class="col-sm-9" role="main">
+          <div class="row">
+          <div class="col-sm-8">
+            <h1>API Reference{% if version %} <small>version {{ version }}</small>{% endif %}</h1>
             <p>{{ baseUri }}</p>
 
             {% for chapter in documentation %}
-              <h2 id="{{ chapter.uniqueId }}"><a href="#{{ chapter.uniqueId }}">{{ chapter.title }}</a></h2>
-              <div class="overview">
-
-                  {{ chapter.content }}
-
-              </div>
+              <h3 id="{{ chapter.uniqueId }}"><a href="#{{ chapter.uniqueId }}">{{ chapter.title }}</a></h3>
+{% markdown %}
+{{ chapter.content }}
+{% endmarkdown %}
             {% endfor %}
-            fet
+
+            {% for securedById in securedBy %}
+              {% set securityScheme = securitySchemeWithName(securedById) %}
+              {# {% set exp = new RegExp('_', 'g') %}
+              {% set schemeName = securedById.replace(exp, ' ') %} #}
+              <h3 id="{{ securedById }}"><a href="#{{ securedById }}">{{ securedById | replace('_', ' ') | capitalize }}</a></h3>
+              {% if securityScheme.description %}
+{% markdown %}
+{{ securityScheme.description }}
+{% endmarkdown %}
+              {% endif %}
+
+              {% if securityScheme.describedBy.headers %}
+                {% for header, headerInfo in securityScheme.describedBy.headers %}
+                  <h4 id="{{ securedById }}_{{ header }}"><a href="#{{ securedById }}_{{ header }}">{{ header }} header</a></h4>
+{% markdown %}
+{{ headerInfo.description }}
+{% endmarkdown %}
+                {% endfor %}
+              {% endif %}
+              {% if securityScheme.describedBy.responses %}
+                <h4 id="{{ securedById }}_responses"><a href="#{{ securedById }}_respnses">HTTP responses</a></h5>
+                {% for code, response in securityScheme.describedBy.responses %}
+                  <h5 id="{{ securedById }}_{{ code }}"><a href="#{{ securedById }}_{{ header }}">{{ code }}</a></h5>
+{% markdown %}
+{{ response.description }}
+{% endmarkdown %}
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+          </div>
           </div>
 
-
           {% for resource in resources %}
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h3 id="{{ resource.uniqueId }}" class="panel-title">{% if resource.displayName %}{{ resource.displayName}}{% else %}{{ resource.relativeUri }}{% endif %}</h3>
-              </div>
+            <h2 class="resource-header" id="{{ resource.uniqueId }}">{% if resource.displayName %}{{ resource.displayName}}{% else %}{{ resource.relativeUri }}{% endif %}</h2>
 
-              <div class="panel-body">
-                {% if resource.description %}
-                  <div class="top-resource-description">
-                  {% markdown %}
-                  {{ resource.description }}
-                  {% endmarkdown %}
-                  </div>
-                {% endif %}
-
-                <div class="panel-group">
-                  {% include "./resource.nunjucks" %}
-                </div>
+            {% if resource.description %}
+              <div class="top-resource-description">
+{% markdown %}
+{{ resource.description }}
+{% endmarkdown %}
               </div>
-            </div>
+            {% endif %}
+
+            {% include "./resource.nunjucks" %}
           {% endfor %}
         </div>
-
-
       </div>
+    </div>
   </body>
 </html>

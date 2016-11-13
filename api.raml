@@ -1,291 +1,451 @@
 #%RAML 0.8
-title: PubPub
+title: List of Links
 documentation:
   - title: Introduction
     content: |
-      The goal of this API is to give access to all of the publicly available resources on PubPub. Accessing resources or actions that require authentication will be supported soon.
+      This API provides full access to the List of Links database.
       All requests and responses are in the form of application/json.
+      Requests should be made to the following URL paths added to the hostname
+      https://api.listoflinks.co. For example https://api.listoflinks.co/search/kate.
+  - title: Authentication
+    content: |
+      Access to secured URLs is granted by included an apiToken in the body of POST, PUT, and DELETE requests or an apiToken in the query of GET requests. The apiToken can be found on the settings page of each users profile (https://wwww.listoflinks.co/settings). 
+  - title: Contributing
+    content: |
+      This API documentation and the associated server code is all open source: https://github.com/isTravis/list-of-links-api. Contributions, fixes, bug reports are welcome!
+
 version: v1
 protocols: [ HTTPS ]
-baseUri: https://api.pubpub.org
+baseUri: https://api.listoflinks.co
 mediaType: application/json
-securitySchemes:
-  - basic_auth:
-      description: |
-        Need an Access Token in an Authorization Header to access this API endpoint. Requests need to be in the format username:accessToken. Access tokens are generated on pubpub.org/user/{username}/tokens.
-        Also send them base 64 encoded.
-      type: Basic Authentication
-      describedBy:
-        headers:
-          Authorization:
-              description: |
-                Follows the Basic Authentication protocol. A base 64 encoded username:accessToken. So an example header looks like 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
-              type: string
-/user:
+/user: !include routes/user.raml
+/token: !include routes/token.raml
+/signup: !include routes/signUp/signUp.raml
+/password:
   description: |
-    Routes to access data about PubPub Users
-  displayName: User
-  /{username}:
-    get:
-      description: |
-        Get user data by username. The User's ID can alternatively be used instead of the username.
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                {
-                  userID: "980ca098189",
-                  username: "username",
-                  firstName: "Jane",
-                  lastName: "Doe",
-                  name: "Jane Doe",
-                  image: "https://assets.pubpub.org/picture.jpg",
-                  bio: "I am a porcupine",
-                  publicEmail: "jane@doe.com",
-                  github: "janeCodes",
-                  orcid: "123-123-123-123",
-                  twitter: "janedoe",
-                  website: "http://www.example.com",
-                  googleScholar: "janesGoogleURI",
-                }
-        404:
-          body:
-            application/json:
-              example: |
-                {
-                  error : "User not found"
-                }
-
-/journal:
-  description: |
-    Routes to access data about PubPub Journals
-  displayName: Journal
-  /{slug}:
-    get:
-      description: |
-        Get journal data by slug. The Journal's ID can alternatively be used instead of the slug.
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                {
-                  journalID: "980ca098189",
-                  journalName: "Super Journal",
-                  slug: "superjournal",
-                  description: "This is some description of my journal",
-                  logo: "https://assets.pubpub.org/picture.jpg",
-                  icon: "https://assets.pubpub.org/picture2.jpg",
-                  about: "This is a long-form description about the journal",
-                  website: "www.superjournal.com",
-                  twitter: "superJournal",
-                  facebook: "facebookSuperJournal",
-                  headerColor: "#ff0",
-                  headerImage: "https://assets.pubpub.org/picture3.jpg",
-                }
-        404:
-          body:
-            application/json:
-              example: |
-                {
-                  error : "Journal not found"
-                }
-    /featured:
-      get:
-        description: |
-          Get data for all atoms featured by the journal. The Journal's ID can alternatively be used instead of the slug.
-        responses:
-          200:
-            body:
-              application/json:
-                example: |
-                  {
-                    journalID: "980ca098189",
-                    journalName: "Super Journal",
-                    slug: "superjournal",
-                    atoms: [
-                      {
-                        atomID: "56964b73849fe43d00b7d080",
-                        slug: "myDocument",
-                        title: "Awesome document",
-                        description: "Description of awesome document",
-                        previewImage: "https://assets.pubpub.org/_site/pub.png",
-                        type: "document",
-                        createDate: "2016-01-13T13:04:51.764Z",
-                        lastUpdated: "2016-02-23T03:55:44.231Z",
-                        featureDate: "Date atom was featured."
-                        collections: ["Array of collections this atom has been added to"]
-                      }
-                    ]
-                  }
-          404:
-            body:
-              application/json:
-                example: |
-                  {
-                    error : "Journal not found"
-                  }
-    /feature:
-      post:
-        securedBy: [ basic_auth ]
-        description:
-          Feature a publication on this journal.
-        queryParameters:
-          #journalID:
-          #  type: string
-          #  required: true
-          #accept:
-          #  type: string
-          #  required: true
-          #pubID:
-          #  type: string
-          #  required: true
-    /collections:
-      get:
-        description: |
-          Get journal collection data by id. The Journal's ID can alternatively be used instead of the slug.
-        responses:
-          200:
-            body:
-              application/json:
-                example: |
-                  {
-                    journalID: "980ca098189",
-                    journalName: "Super Journal",
-                    slug: "superjournal",
-                    collections: [
-                      {
-                        collectionID: "980ca098188",
-                        title: "My Collection",
-                        createDate: "2016-08-08T14:21:32.977Z"
-                      },
-                      {
-                        collectionID: "980ca098187",
-                        title: "Another Collection",
-                        createDate: "2016-07-08T14:21:31.977Z"
-                      }
-                    ]
-                  }
-          404:
-            body:
-              application/json:
-                example: |
-                  {
-                    error : "Journal not found"
-                  }
-    /collection/{collectionID}:
-      get:
-        description: |
-          Get data for all atoms in a specific collection. The Journal's ID can alternatively be used instead of the slug.
-        responses:
-          200:
-            body:
-              application/json:
-                example: |
-                  {
-                    collectionID: "56962b72849fe43d00b7d080",
-                    title: "Another Collection",
-                    createDate: "2016-07-08T14:21:31.977Z",
-                    atoms: [
-                      {
-                        atomID: "56964b73849fe43d00b7d080",
-                        slug: "myDocument",
-                        title: "Awesome document",
-                        description: "Description of awesome document",
-                        previewImage: "https://assets.pubpub.org/_site/pub.png",
-                        type: "document",
-                        createDate: "2016-01-13T13:04:51.764Z",
-                        lastUpdated: "2016-02-23T03:55:44.231Z"
-                      }
-                    ]
-                  }
-          404:
-            body:
-              application/json:
-
-                example: |
-                  {
-                    error : "Collection not found"
-                  }
-    /submissions:
-      get:
-        description: |
-          Get the pubs submitted to a journal.
-        securedBy: [ basic_auth ]
-        responses:
-          200:
-
-            body:
-              application/json:
-                example: |
-                  [
-                    {
-                      "id": "577958fe9caas832001acd93",
-                      "slug": "The Anatomy of Absurdity",
-                      "title": "anatomy-absurd",
-                      "description": "The la la la",
-                      "createDate": "2016-09-08T17:45:25.006Z"
-                    },
-                    {
-                      "id": "576d814a2cbcc22c00dcaa1b",
-                      "slug": "consesuscats",
-                      "title": "Consensus Cats",
-                      "description": "Here our cats beleive",
-                      "createDate": "2016-09-08T17:45:13.503Z"
-                    },
-                    {
-                      "id": "578fa2ba9099de3700eba17d",
-                      "slug": "zeus",
-                      "title": "Zues and Mythology",
-                      "description": "An atom about zeus and mythology",
-                      "createDate": "2016-09-07T20:35:23.447Z"
-                    }
-                  ]
-/pubs:
-  description: |
-    Routes to access data about Pubs
-  displayName: Pubs
-  /{id}:
-    /submit:
-      post:
-        securedBy: [ basic_auth ]
-        description:
-          Submit a document to a journal for review and publication.
+    Routes to manipulate the users password
+  displayName: Password
+  put:
+    description: |
+      Validate and save a new password
+    responses:
+      200:
         body:
           application/json:
-            schema: |
+            example: |
+              { success: true }
+      404:
+        body:
+          application/json:
+            example: |
               {
-                "$schema": "http://json-schema.org/draft-04/schema#",
-                "type": "object",
-                "properties": {
-                  "journalID": {
-                    "type": "string"
-                  }
-                }
+                error : "User not found"
               }
-/atom:
+/search/{string}:
   description: |
-    Routes to create and access data about Atoms. Currently works for types: image,
-    jupyter, docx and pdf.
-  displayName: Atoms
-  /createImage:
-    post:
-      securedBy: [ basic_auth ]
-      description:
-        Create an atom
-      queryParameters:
-        type:
-          type: string
-        url:
-          type: string
+    Routes to search for users
+  displayName: Search
+  get:
+    description: |
+      Search for users by name and username
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [{
+                id: "2",
+                username: "janedoe",
+                name: "Jane Doe",
+                image: "https://assets.pubpub.org/picture.jpg",
+              }]
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                error : "Error"
+              }  
+/recent:
+  displayName: Recent
+  description: Routes to get lists of recently active users
+  get:
+    description: List of users who have recently posted links
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [{
+                id: "2",
+                username: "janedoe",
+                name: "Jane Doe",
+                image: "https://assets.pubpub.org/picture.jpg",
+              }]
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                error : "Error"
+              }  
+/link:
+  description: |
+    Routes to access data about ListOfLinks Link
+  displayName: Link
+  post:
+    description: |
+      Create a new Link
+    body:
+      application/json:
+        formParameters:
+          UserId:
+            description: id of the User creating the link
+            required: true
+          description:
+            description: description of the Link to be created
+            required: true
+          url:
+            description: url of the new Link to be created
+            required: true
+          apiToken: 
+            description: token used to authenticate the request.
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                description: "Another link",
+                url: "http://www.link2.com"
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                success: false
+              }
+  /{id}:
+    put:
+      description: |
+        Edit a link
+      body:
+        application/json:
+          formParameters:
+            descritpion:
+              description: updated descritpion of Link to be updated
+            url:
+              description: updated url of the Link to be updated
+            apiToken: 
+              description: token used to authenticate the request.
       responses:
         200:
           body:
             application/json:
               example: |
                 {
-                  "id": "577958fe9caas832001acd93",
-                  "url": "www.idk.com",
-                  //...add later
+                  success: true
+                }
+        404:
+          body:
+            application/json:
+              example: |
+                {
+                  success: false
+                }
+    delete:
+      description: |
+        Delete a Link
+      body:
+        application/json:
+          formParameters:
+            apiToken: 
+              description: token used to authenticate the request.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  success: true
+                }
+        404:
+          body:
+            application/json:
+              example: |
+                {
+                  success: false
+                }
+/follow:
+  description: |
+    Routes to access data about ListOfLinks Follow
+  displayName: Follow
+  post:
+    description: |
+      Create a new Follow
+    body:
+      application/json:
+        formParameters:
+          follower:
+            description: id of the follower. Can be passed in through session data.
+            required: true
+          followee:
+            description: id of the User who is being followed
+            required: true
+          apiToken: 
+              description: token used to authenticate the request.
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                id: 2,
+                username: "john",
+                name: "John Micahels",
+                image: "www.myimage.com",
+                Follow: {
+                  lastRead: "2016-09-07T18:06:52.655Z",
+                  createdAt: "2016-09-07T18:06:52.655Z",
+                  updatedAt: "2016-09-07T18:06:52.655Z",
+                  follower: 1,
+                  followee: 2
                 },
+                links: [
+                  {
+                    description: "My new link",
+                    url: "http://www.link.com"
+                  },
+                  {
+                    description: "Another link",
+                    url: "http://www.link2.com"
+                  }
+                ]
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                success: false
+              }
+  put:
+      description: |
+        Update the lastRead value of a Follow by follower and followee
+      body:
+        application/json:
+          formParameters:
+            follower:
+              description: id of the follower. Can be passed in through session data.
+              type: integer
+            followee:
+              description: id of the followee
+              type: integer
+            lastRead:
+              description: date the follower last viewed the profile of the followee
+              type: date
+            apiToken: 
+              description: token used to authenticate the request.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  success: true
+                }
+        404:
+          body:
+            application/json:
+              example: |
+                {
+                  success: false
+                }
+  delete:
+      description: |
+        Delete a follow
+      body:
+        application/json:
+          formParameters:
+            follower:
+              description: id of the follower. Can be passed in through session data.
+              type: integer
+            followee:
+              description: id of the followee
+              type: integer
+            apiToken: 
+              description: token used to authenticate the request.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  success: true
+                }
+        404:
+          body:
+            application/json:
+              example: |
+                {
+                  success: false
+                }
+/login:
+  description: |
+    Routes to access login data and functionality
+  displayName: Login
+  get:
+    description: |
+      Get login data from browser cookie
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                  id: "2",
+                  username: "janedoe",
+                  name: "Jane Doe",
+                  image: "https://assets.pubpub.org/picture.jpg",
+                  links: [
+                    {
+                      description: "My new link",
+                      url: "http://www.link.com"
+                    },
+                    {
+                      description: "Another link",
+                      url: "http://www.link2.com"
+                    }
+                  ],
+                  following: [
+                    {
+                      id: 2,
+                      username: "john",
+                      name: "John Micahels",
+                      image: "www.myimage.com",
+                      Follow: {
+                        inactive: null,
+                        createdAt: "2016-09-07T18:06:52.655Z",
+                        updatedAt: "2016-09-07T18:06:52.655Z",
+                        follower: 1,
+                        followee: 2
+                      },
+                      links: [
+                        {
+                          description: "My new link",
+                          url: "http://www.link.com"
+                        },
+                        {
+                          description: "Another link",
+                          url: "http://www.link2.com"
+                        }
+                      ]
+                    }
+                  ],
+                  followers: [
+                    {
+                      id: 2,
+                      username: "john",
+                      name: "John Micahels",
+                      image: "www.myimage.com",
+                      Follow: {
+                        inactive: null,
+                        createdAt: "2016-09-07T18:06:52.655Z",
+                        updatedAt: "2016-09-07T18:06:52.655Z",
+                        follower: 2,
+                        followee: 1
+                      }
+                    }
+                  ]
+                }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                null
+              }
+  post:
+    description: |
+      Get login data from username and password
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                  id: "2",
+                  username: "janedoe",
+                  name: "Jane Doe",
+                  image: "https://assets.pubpub.org/picture.jpg",
+                  links: [
+                    {
+                      description: "My new link",
+                      url: "http://www.link.com"
+                    },
+                    {
+                      description: "Another link",
+                      url: "http://www.link2.com"
+                    }
+                  ],
+                  following: [
+                    {
+                      id: 2,
+                      username: "john",
+                      name: "John Micahels",
+                      image: "www.myimage.com",
+                      followerLinks: {
+                        lastRead: "2016-09-07T18:06:52.655Z",
+                        createdAt: "2016-09-07T18:06:52.655Z",
+                        updatedAt: "2016-09-07T18:06:52.655Z",
+                        follower: 1,
+                        followee: 2
+                      }
+                    }
+                  ],
+                  followers: [
+                    {
+                      id: 2,
+                      username: "john",
+                      name: "John Micahels",
+                      image: "www.myimage.com",
+                      Follow: {
+                        lastRead: "2016-09-07T18:06:52.655Z",
+                        createdAt: "2016-09-07T18:06:52.655Z",
+                        updatedAt: "2016-09-07T18:06:52.655Z",
+                        follower: 2,
+                        followee: 1
+                      }
+                    }
+                  ]
+                }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                success: false
+              }
+/logout:
+  description: |
+    Route to logout a user
+  displayName: Logout
+  get:
+    description: |
+      Logout a user.
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                success:true
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                Unauthorized
+              }

@@ -1,0 +1,37 @@
+displayName: SignUp
+description: Used to trigger a signup request for a given email. 
+get:
+  description: Gets the associated signup data for a given hash. Most importantly, returns the email that was signed up with.
+  queryParameters:
+      hash:
+        type: string
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+              hash: "hfwk18jJGTE81maj12K0kal9BY",
+              email: "email@example.com"
+            }
+    500:
+      body:
+        application/json:
+          example: "Hash not valid"
+post:
+  description: Creates a signup hash for a given email address. If the email has already been used (and account creation has not been completed), it will increment the count. On creation or increment, a signup email is sent.
+  body:
+    application/json:
+      formParameters:
+        email:
+          description: email of the account to be created
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: true
+    500:
+      body:
+        application/json:
+          example: "Email already tied to an account"

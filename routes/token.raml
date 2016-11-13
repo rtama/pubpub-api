@@ -1,0 +1,21 @@
+description: |
+  Routes to manipulate the users apiToken
+displayName: Token
+put:
+  description: |
+    Generate and return a new token
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+              apiToken: H128DJ1hdukr
+            }
+    404:
+      body:
+        application/json:
+          example: |
+            {
+              error : "User not found"
+            }

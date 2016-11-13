@@ -1,1 +1,3 @@
-process.env.MONGO_URI = '<YOUR-URI-HERE>';
+process.env.DATABASE_URL = '<YOUR-POSTGRES-URI>';
+process.env.AWS_ACCESS_KEY_ID = '<YOUR-ACCESS-KEY>';
+process.env.AWS_SECRET_ACCESS_KEY = '<YOUR-SECRET-ACCESS-KEY>';
