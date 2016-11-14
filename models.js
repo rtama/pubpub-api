@@ -43,7 +43,16 @@ SignUp.hook('afterUpdate', function(user, options) {
 
 
 const User = sequelize.define('User', {
-	username: { type: Sequelize.STRING, allowNull: false },
+	username: { 
+		type: Sequelize.STRING, 
+		unique: true, 
+		allowNull: false,
+		validate: {
+			isLowercase: true,
+			isAlphanumeric: true, // No special characters
+			is: /^.*[A-Za-z]+.*$/, // Must contain at least one letter
+		},
+	},
 	firstName: { type: Sequelize.STRING, allowNull: false },
 	lastName: { type: Sequelize.STRING, allowNull: false },
 	image: { type: Sequelize.STRING },
@@ -56,8 +65,6 @@ const User = sequelize.define('User', {
 		} 
 	},
 	isUnclaimed: Sequelize.BOOLEAN, // Used to add a user/author to a pub that isn't in the system. When claimed, the foreign keys are changed/merged with the real account.
-	emailVerified: Sequelize.BOOLEAN,
-	emailVerificationHash: Sequelize.TEXT,
 	bio: Sequelize.TEXT,
 	github: Sequelize.STRING,
 	orcid: Sequelize.STRING,

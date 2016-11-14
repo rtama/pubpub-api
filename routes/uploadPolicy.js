@@ -1,6 +1,6 @@
+import crypto from 'crypto';
 import app from '../server';
-// const app = require('../server');
-const crypto = require('crypto');
+
 const awsDetails = {
 	accessKeyAws: process.env.AWS_ACCESS_KEY_ID,
 	secretKeyAws: process.env.AWS_SECRET_ACCESS_KEY,
@@ -23,9 +23,8 @@ app.get('/uploadPolicy', function(req, res) {
 		expiration_date: function() {
 			const now = new Date();
 			const date = new Date( now.getTime() + (3600 * 1000) );
-			let ed = date.getFullYear() + '-' + this.pad(date.getMonth() + 1) + '-' + this.pad(date.getDate());
-			ed += 'T' + this.pad(date.getHours()) + ':' + this.pad(date.getMinutes()) + ':' + this.pad(date.getSeconds()) + '.000Z';
-			// return ed;
+			let edate = date.getFullYear() + '-' + this.pad(date.getMonth() + 1) + '-' + this.pad(date.getDate());
+			edate += 'T' + this.pad(date.getHours()) + ':' + this.pad(date.getMinutes()) + ':' + this.pad(date.getSeconds()) + '.000Z';
 			return new Date(Date.now() + 60000);
 		}
 	};

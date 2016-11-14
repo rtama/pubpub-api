@@ -271,18 +271,18 @@ app.get('/getPub/:slug', function(req, res, next) {
 	});
 });
 
-app.post('/user', function(req, res, next) {
-	const newUser = {
-		name: req.body.name,
-		email: req.body.email
-	};
+// app.post('/user', function(req, res, next) {
+// 	const newUser = {
+// 		name: req.body.name,
+// 		email: req.body.email
+// 	};
 
-	User.register(newUser, 'password', function(err, account) {
-		if (err) { return res.status(500).json(err); }
-		const output = {...account.dataValues};
-		return res.status(201).json(output);
-	});
-});
+// 	User.register(newUser, 'password', function(err, account) {
+// 		if (err) { return res.status(500).json(err); }
+// 		const output = {...account.dataValues};
+// 		return res.status(201).json(output);
+// 	});
+// });
 
 // app.post('/signup', function(req, res, next) {
 // 	// First, try to update the emailSentCount.
@@ -374,6 +374,7 @@ osprey.loadFile(path.join(__dirname, 'api.raml')).then(function (middleware) {
 	/* Begin API Endpoints */
 	/* ------------------- */
 	require('./routes/signUp/signUp.js');
+	require('./routes/user/user.js');
 
 	/* GET Login data by cookie*/
 	app.get('/login', function(req, res, next) {
