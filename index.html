@@ -1,4 +1,4 @@
-<!DOCTYPE HTML><html><head><title>List of Links API documentation</title><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="generator" content="https://github.com/kevinrenskers/raml2html 3.0.1"><link rel="shortcut icon" type="image/png" href="https://s3.amazonaws.com/tw-desk/i/346753/docfavicon/225812.20160809072613033.225812.20160809072613033jIv7R.png"><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/styles/default.min.css"><script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script><script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/highlight.min.js"></script><script type="text/javascript">
+<!DOCTYPE HTML><html><head><title>PubPub API API documentation</title><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="generator" content="https://github.com/kevinrenskers/raml2html 3.0.1"><link rel="shortcut icon" type="image/png" href="https://s3.amazonaws.com/tw-desk/i/346753/docfavicon/225812.20160809072613033.225812.20160809072613033jIv7R.png"><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/styles/default.min.css"><script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script><script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/highlight.min.js"></script><script type="text/javascript">
       $(document).ready(function() {
         $('.page-header pre code, .top-resource-description pre code').each(function(i, block) {
           hljs.highlightBlock(block);
@@ -109,7 +109,8 @@
       }
 
       .brand-logo img {
-        max-height: 60px;
+        max-height: 50px;
+        padding: 5px 0px;
       }
 
       .api-header {
@@ -158,199 +159,7 @@
       a, a:hover, a:focus {
         color: #202224;
       }
-    </style></head><body data-spy="scroll" data-target="#sidebar"><div class="container-fluid"><div class="row"><div class="col-sm-3 hidden-xs"><div id="sidebar" class="hidden-print affix" role="complementary"><div class="logo-header"><a href="https://www.listoflinks.co" class="brand-logo"><img src="https://www.listoflinks.co/static/logo.png" alt="ListOfLinks Logo"></a> <a href="#"><h3 class="api-header">API</h3></a></div><ul class="nav nav-pills nav-stacked"><li><a href="#Introduction">Introduction</a></li><li><a href="#password">Password</a></li><li><a href="#search__string_">Search</a></li><li><a href="#recent">Recent</a></li><li><a href="#link">Link</a></li><li><a href="#follow">Follow</a></li><li><a href="#login">Login</a></li><li><a href="#logout">Logout</a></li><li><a href="#user">User</a></li><li><a href="#token">Token</a></li><li><a href="#signup">SignUp</a></li></ul></div></div><div class="col-sm-9" role="main"><div class="row"><div class="col-sm-8"><h1>API Reference <small>version v1</small></h1><p>https://api.listoflinks.co</p><h3 id="Introduction"><a href="#Introduction">Introduction</a></h3><p>This API provides full access to the List of Links database. All requests and responses are in the form of application/json. Requests should be made to the following URL paths added to the hostname <a href="https://api.listoflinks.co">https://api.listoflinks.co</a>. For example <a href="https://api.listoflinks.co/search/kate">https://api.listoflinks.co/search/kate</a>.</p><h3 id="Authentication"><a href="#Authentication">Authentication</a></h3><p>Access to secured URLs is granted by included an apiToken in the body of POST, PUT, and DELETE requests or an apiToken in the query of GET requests. The apiToken can be found on the settings page of each users profile (<a href="https://wwww.listoflinks.co/settings">https://wwww.listoflinks.co/settings</a>).</p><h3 id="Contributing"><a href="#Contributing">Contributing</a></h3><p>This API documentation and the associated server code is all open source: <a href="https://github.com/isTravis/list-of-links-api">https://github.com/isTravis/list-of-links-api</a>. Contributions, fixes, bug reports are welcome!</p></div></div><h2 class="resource-header" id="password">Password</h2><div class="top-resource-description"><p>Routes to manipulate the users password</p></div><div><h3><span class="parent"></span>/password</h3><div class="row"><div class="col-md-6"><span class="badge badge_put">put</span><div class="method-description"><p>Validate and save a new password</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li><a href="#password_put_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane" id="password_put_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{ success: true }
-</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  error : "User not found"
-}
-</code></pre></div></div></div></div></div><h2 class="resource-header" id="search__string_">Search</h2><div class="top-resource-description"><p>Routes to search for users</p></div><div><h3><span class="parent"></span>/search/{string}</h3><div class="row"><div class="col-md-6"><span class="badge badge_get">get</span><div class="method-description"><p>Search for users by name and username</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#search__string__get_request" data-toggle="tab">Request</a></li><li><a href="#search__string__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="search__string__get_request"><h3>URI Parameters</h3><ul><li><strong>string</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="search__string__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>[{
-  id: "2",
-  username: "janedoe",
-  name: "Jane Doe",
-  image: "https://assets.pubpub.org/picture.jpg",
-}]
-</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  error : "Error"
-}  
-</code></pre></div></div></div></div></div><h2 class="resource-header" id="recent">Recent</h2><div class="top-resource-description"><p>Routes to get lists of recently active users</p></div><div><h3><span class="parent"></span>/recent</h3><div class="row"><div class="col-md-6"><span class="badge badge_get">get</span><div class="method-description"><p>List of users who have recently posted links</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li><a href="#recent_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane" id="recent_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>[{
-  id: "2",
-  username: "janedoe",
-  name: "Jane Doe",
-  image: "https://assets.pubpub.org/picture.jpg",
-}]
-</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  error : "Error"
-}  
-</code></pre></div></div></div></div></div><h2 class="resource-header" id="link">Link</h2><div class="top-resource-description"><p>Routes to access data about ListOfLinks Link</p></div><div><h3><span class="parent"></span>/link</h3><div class="row"><div class="col-md-6"><span class="badge badge_post">post</span><div class="method-description"><p>Create a new Link</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#link_post_request" data-toggle="tab">Request</a></li><li><a href="#link_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="link_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><strong>Form Parameters</strong><ul><li><strong>UserId</strong>: <em>required (string)</em><p>id of the User creating the link</p></li><li><strong>description</strong>: <em>required (string)</em><p>description of the Link to be created</p></li><li><strong>url</strong>: <em>required (string)</em><p>url of the new Link to be created</p></li><li><strong>apiToken</strong>: <em>(string)</em><p>token used to authenticate the request.</p></li></ul></div><div class="tab-pane" id="link_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  description: "Another link",
-  url: "http://www.link2.com"
-}
-</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  success: false
-}
-</code></pre></div></div></div></div></div><div><h3><span class="parent">/link</span>/{id}</h3><div class="row"><div class="col-md-6"><span class="badge badge_put">put</span><div class="method-description"><p>Edit a link</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#link__id__put_request" data-toggle="tab">Request</a></li><li><a href="#link__id__put_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="link__id__put_request"><h3>URI Parameters</h3><ul><li><strong>id</strong>: <em>required (string)</em></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><strong>Form Parameters</strong><ul><li><strong>descritpion</strong>: <em>(string)</em><p>updated descritpion of Link to be updated</p></li><li><strong>url</strong>: <em>(string)</em><p>updated url of the Link to be updated</p></li><li><strong>apiToken</strong>: <em>(string)</em><p>token used to authenticate the request.</p></li></ul></div><div class="tab-pane" id="link__id__put_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  success: true
-}
-</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  success: false
-}
-</code></pre></div></div></div></div><div class="row"><div class="col-md-6"><span class="badge badge_delete">delete</span><div class="method-description"><p>Delete a Link</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#link__id__delete_request" data-toggle="tab">Request</a></li><li><a href="#link__id__delete_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="link__id__delete_request"><h3>URI Parameters</h3><ul><li><strong>id</strong>: <em>required (string)</em></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><strong>Form Parameters</strong><ul><li><strong>apiToken</strong>: <em>(string)</em><p>token used to authenticate the request.</p></li></ul></div><div class="tab-pane" id="link__id__delete_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  success: true
-}
-</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  success: false
-}
-</code></pre></div></div></div></div></div><h2 class="resource-header" id="follow">Follow</h2><div class="top-resource-description"><p>Routes to access data about ListOfLinks Follow</p></div><div><h3><span class="parent"></span>/follow</h3><div class="row"><div class="col-md-6"><span class="badge badge_post">post</span><div class="method-description"><p>Create a new Follow</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#follow_post_request" data-toggle="tab">Request</a></li><li><a href="#follow_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="follow_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><strong>Form Parameters</strong><ul><li><strong>follower</strong>: <em>required (string)</em><p>id of the follower. Can be passed in through session data.</p></li><li><strong>followee</strong>: <em>required (string)</em><p>id of the User who is being followed</p></li><li><strong>apiToken</strong>: <em>(string)</em><p>token used to authenticate the request.</p></li></ul></div><div class="tab-pane" id="follow_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  id: 2,
-  username: "john",
-  name: "John Micahels",
-  image: "www.myimage.com",
-  Follow: {
-    lastRead: "2016-09-07T18:06:52.655Z",
-    createdAt: "2016-09-07T18:06:52.655Z",
-    updatedAt: "2016-09-07T18:06:52.655Z",
-    follower: 1,
-    followee: 2
-  },
-  links: [
-    {
-      description: "My new link",
-      url: "http://www.link.com"
-    },
-    {
-      description: "Another link",
-      url: "http://www.link2.com"
-    }
-  ]
-}
-</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  success: false
-}
-</code></pre></div></div></div></div><div class="row"><div class="col-md-6"><span class="badge badge_put">put</span><div class="method-description"><p>Update the lastRead value of a Follow by follower and followee</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#follow_put_request" data-toggle="tab">Request</a></li><li><a href="#follow_put_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="follow_put_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><strong>Form Parameters</strong><ul><li><strong>follower</strong>: <em>(integer)</em><p>id of the follower. Can be passed in through session data.</p></li><li><strong>followee</strong>: <em>(integer)</em><p>id of the followee</p></li><li><strong>lastRead</strong>: <em>(date)</em><p>date the follower last viewed the profile of the followee</p></li><li><strong>apiToken</strong>: <em>(string)</em><p>token used to authenticate the request.</p></li></ul></div><div class="tab-pane" id="follow_put_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  success: true
-}
-</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  success: false
-}
-</code></pre></div></div></div></div><div class="row"><div class="col-md-6"><span class="badge badge_delete">delete</span><div class="method-description"><p>Delete a follow</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#follow_delete_request" data-toggle="tab">Request</a></li><li><a href="#follow_delete_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="follow_delete_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><strong>Form Parameters</strong><ul><li><strong>follower</strong>: <em>(integer)</em><p>id of the follower. Can be passed in through session data.</p></li><li><strong>followee</strong>: <em>(integer)</em><p>id of the followee</p></li><li><strong>apiToken</strong>: <em>(string)</em><p>token used to authenticate the request.</p></li></ul></div><div class="tab-pane" id="follow_delete_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  success: true
-}
-</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  success: false
-}
-</code></pre></div></div></div></div></div><h2 class="resource-header" id="login">Login</h2><div class="top-resource-description"><p>Routes to access login data and functionality</p></div><div><h3><span class="parent"></span>/login</h3><div class="row"><div class="col-md-6"><span class="badge badge_get">get</span><div class="method-description"><p>Get login data from browser cookie</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li><a href="#login_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane" id="login_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-    id: "2",
-    username: "janedoe",
-    name: "Jane Doe",
-    image: "https://assets.pubpub.org/picture.jpg",
-    links: [
-      {
-        description: "My new link",
-        url: "http://www.link.com"
-      },
-      {
-        description: "Another link",
-        url: "http://www.link2.com"
-      }
-    ],
-    following: [
-      {
-        id: 2,
-        username: "john",
-        name: "John Micahels",
-        image: "www.myimage.com",
-        Follow: {
-          inactive: null,
-          createdAt: "2016-09-07T18:06:52.655Z",
-          updatedAt: "2016-09-07T18:06:52.655Z",
-          follower: 1,
-          followee: 2
-        },
-        links: [
-          {
-            description: "My new link",
-            url: "http://www.link.com"
-          },
-          {
-            description: "Another link",
-            url: "http://www.link2.com"
-          }
-        ]
-      }
-    ],
-    followers: [
-      {
-        id: 2,
-        username: "john",
-        name: "John Micahels",
-        image: "www.myimage.com",
-        Follow: {
-          inactive: null,
-          createdAt: "2016-09-07T18:06:52.655Z",
-          updatedAt: "2016-09-07T18:06:52.655Z",
-          follower: 2,
-          followee: 1
-        }
-      }
-    ]
-  }
-</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  null
-}
-</code></pre></div></div></div></div><div class="row"><div class="col-md-6"><span class="badge badge_post">post</span><div class="method-description"><p>Get login data from username and password</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li><a href="#login_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane" id="login_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-    id: "2",
-    username: "janedoe",
-    name: "Jane Doe",
-    image: "https://assets.pubpub.org/picture.jpg",
-    links: [
-      {
-        description: "My new link",
-        url: "http://www.link.com"
-      },
-      {
-        description: "Another link",
-        url: "http://www.link2.com"
-      }
-    ],
-    following: [
-      {
-        id: 2,
-        username: "john",
-        name: "John Micahels",
-        image: "www.myimage.com",
-        followerLinks: {
-          lastRead: "2016-09-07T18:06:52.655Z",
-          createdAt: "2016-09-07T18:06:52.655Z",
-          updatedAt: "2016-09-07T18:06:52.655Z",
-          follower: 1,
-          followee: 2
-        }
-      }
-    ],
-    followers: [
-      {
-        id: 2,
-        username: "john",
-        name: "John Micahels",
-        image: "www.myimage.com",
-        Follow: {
-          lastRead: "2016-09-07T18:06:52.655Z",
-          createdAt: "2016-09-07T18:06:52.655Z",
-          updatedAt: "2016-09-07T18:06:52.655Z",
-          follower: 2,
-          followee: 1
-        }
-      }
-    ]
-  }
-</code></pre><h2>HTTP status code <a href="http://httpstatus.es/500" target="_blank">500</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  success: false
-}
-</code></pre></div></div></div></div></div><h2 class="resource-header" id="logout">Logout</h2><div class="top-resource-description"><p>Route to logout a user</p></div><div><h3><span class="parent"></span>/logout</h3><div class="row"><div class="col-md-6"><span class="badge badge_get">get</span><div class="method-description"><p>Logout a user.</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li><a href="#logout_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane" id="logout_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  success:true
-}
-</code></pre><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  Unauthorized
-}</code></pre></div></div></div></div></div><h2 class="resource-header" id="user">User</h2><div class="top-resource-description"><p>Routes to access data about Users</p></div><div><h3><span class="parent"></span>/user</h3><div class="row"><div class="col-md-6"><span class="badge badge_get">get</span><div class="method-description"><p>Get data about a user. If the user&#39;s cookie or token is included, private data is included.</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#user_get_request" data-toggle="tab">Request</a></li><li><a href="#user_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_get_request"><h3>Query Parameters</h3><ul><li><strong>username</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="user_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+    </style></head><body data-spy="scroll" data-target="#sidebar"><div class="container-fluid"><div class="row"><div class="col-sm-3 hidden-xs"><div id="sidebar" class="hidden-print affix" role="complementary"><div class="logo-header"><a href="https://www.pubpub.org" class="brand-logo"><img src="http://i.imgur.com/8ej6vIT.png" alt="PubPub Logo"></a> <a href="#"><h3 class="api-header">API</h3></a></div><ul class="nav nav-pills nav-stacked"><li><a href="#Introduction">Introduction</a></li><li><a href="#user">User</a></li><li><a href="#signup">SignUp</a></li></ul></div></div><div class="col-sm-9" role="main"><div class="row"><div class="col-sm-8"><h1>API Reference <small>version v2</small></h1><p>https://api.pubpub.org</p><h3 id="Introduction"><a href="#Introduction">Introduction</a></h3><p>This API provides full access to the PubPub database. All requests and responses are in the form of application/json. Requests should be made to the following URL paths added to the hostname <a href="https://api.pubpub.org">https://api.pubpub.org</a>. For example <a href="https://api.pubpub.org/user/travis">https://api.pubpub.org/user/travis</a>.</p><h3 id="Authentication"><a href="#Authentication">Authentication</a></h3><p>Access to secured URLs is granted by included an apiToken in the body of POST, PUT, and DELETE requests or an apiToken in the query of GET requests. The apiToken can be found on the settings page of each users profile (<a href="https://wwww.pubpub.org/user/travis/settings">https://wwww.pubpub.org/user/travis/settings</a>).</p><h3 id="Contributing"><a href="#Contributing">Contributing</a></h3><p>This API documentation and the associated server code is all open source: <a href="https://github.com/pubpub/pubpub-api">https://github.com/pubpub/pubpub-api</a>. Contributions, fixes, bug reports are welcome!</p></div></div><h2 class="resource-header" id="user">User</h2><div class="top-resource-description"><p>Routes to access data about Users</p></div><div><h3><span class="parent"></span>/user</h3><div class="row"><div class="col-md-6"><span class="badge badge_get">get</span><div class="method-description"><p>Get data about a user. If the user&#39;s cookie or token is included, private data is included.</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#user_get_request" data-toggle="tab">Request</a></li><li><a href="#user_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_get_request"><h3>Query Parameters</h3><ul><li><strong>username</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="user_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
   username: "jane"
   firstName: "Jane"
   lastName: "Sanchez"
@@ -384,7 +193,7 @@
   firstName: "Jane"
   lastName: "Sanchez"
   image: "https://images.com/1234"
-  email: "jane@email.com (if authenticated)"
+  email: "jane@email.com"
   bio: "I am a biologist."
   github: "https://github.com/jane"
   orcid: "123-412-1234-123"
@@ -395,10 +204,7 @@
 </code></pre><h2>HTTP status code <a href="http://httpstatus.es/500" target="_blank">500</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
   error : "Error updating user"
 }
-</code></pre></div></div></div></div><div class="row"><div class="col-md-6"><span class="badge badge_delete">delete</span><div class="method-description"><p>Delete the user with the given username</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#user_delete_request" data-toggle="tab">Request</a></li><li><a href="#user_delete_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_delete_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><strong>Form Parameters</strong><ul><li><strong>username</strong>: <em>(string)</em><p>username of the user to be deleted</p></li></ul></div><div class="tab-pane" id="user_delete_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  success: true
-}
-</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+</code></pre></div></div></div></div><div class="row"><div class="col-md-6"><span class="badge badge_delete">delete</span><div class="method-description"><p>Delete the user with the given username</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#user_delete_request" data-toggle="tab">Request</a></li><li><a href="#user_delete_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_delete_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><strong>Form Parameters</strong><ul><li><strong>username</strong>: <em>(string)</em><p>username of the user to be deleted</p></li></ul></div><div class="tab-pane" id="user_delete_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>User account set inactive</code></pre><h2>HTTP status code <a href="http://httpstatus.es/500" target="_blank">500</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
   error : "User not found"
 }
 </code></pre></div></div></div></div></div><div><h3><span class="parent">/user</span>/profile</h3><div class="row"><div class="col-md-6"><span class="badge badge_get">get</span><div class="method-description"><p>Get the data for a user&#39;s profile. This includes associated pubs, forks, journals, etc. Private pubs, private data included if authenticated.</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li class="active"><a href="#user_profile_get_request" data-toggle="tab">Request</a></li><li><a href="#user_profile_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_profile_get_request"><h3>Query Parameters</h3><ul><li><strong>username</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="user_profile_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
@@ -417,12 +223,7 @@
   pubs: [],
   followers: [],
   following: [],
-  
-}
-</code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  error : "User not found"
-}</code></pre></div></div></div></div></div><h2 class="resource-header" id="token">Token</h2><div class="top-resource-description"><p>Routes to manipulate the users apiToken</p></div><div><h3><span class="parent"></span>/token</h3><div class="row"><div class="col-md-6"><span class="badge badge_put">put</span><div class="method-description"><p>Generate and return a new token</p></div><div class="clearfix"></div></div><div class="col-md-6"><ul class="nav nav-tabs"><li><a href="#token_put_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane" id="token_put_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-  apiToken: H128DJ1hdukr
+
 }
 </code></pre><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
   error : "User not found"

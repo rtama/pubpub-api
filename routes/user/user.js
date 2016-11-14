@@ -148,3 +148,29 @@ export function deleteUser(req, res, next) {
 	});
 }
 app.delete('/user', deleteUser);
+
+export function getUserProfile(req, res, next) {
+	// Check if authenticated
+	// Build attribute models for authenticated or not
+	// Get and return
+	const requestedUser = req.query.username;
+	const authenticated = req.user && req.user.username === requestedUser;
+	const attributes = authenticated
+		? authenticatedUserAttributes
+		: unauthenticatedUserAttributes;
+	
+	User.findOne({ 
+		where: { username: requestedUser, inactive: { $not: true } },
+		attributes: attributes,
+		// include: [ {model: Link, as: 'links'}, {model: User, as: 'followers', foreignKey: 'follower', attributes: { exclude: ['salt', 'hash', 'apiToken', 'email', 'createdAt', 'updatedAt'] } }, {model: User, as: 'following', foreignKey: 'followee', attributes: { exclude: ['salt', 'hash', 'apiToken', 'email', 'createdAt', 'updatedAt'] }, include: [{model: Link, as: 'links'}]} ]
+	})
+	.then(function(userData) {
+		if (!userData) { return res.status(500).json('User not found'); }
+		return res.status(201).json(userData);
+	})
+	.catch(function(err) {
+		console.error('Error in getUser: ', err);
+		return res.status(500).json(err.message);
+	});
+}
+app.get('/user/profile', getUserProfile);
