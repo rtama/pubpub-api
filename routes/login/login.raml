@@ -11,27 +11,54 @@ get:
         application/json:
           example: |
             {
-              hash: "hfwk18jJGTE81maj12K0kal9BY",
-              email: "email@example.com"
+              username: "jane"
+              firstName: "Jane"
+              lastName: "Sanchez"
+              image: "https://images.com/1234"
+              email: "jane@email.com"
+              bio: "I am a biologist."
+              publicEmail: "jane@public.com"
+              github: "https://github.com/jane"
+              orcid: "123-412-1234-123"
+              twitter: "@jane"
+              website: "https://www.jane.com"
+              googleScholar: "janejane"
             }
-    500:
+    401:
       body:
         application/json:
-          example: "Hash not valid"
+          example: "Unauthorized"
 post:
   description: Creates a signup hash for a given email address. If the email has already been used (and account creation has not been completed), it will increment the count. On creation or increment, a signup email is sent.
   body:
     application/json:
       formParameters:
         email:
-          description: email of the account to be created
+          description: email of the account to login
+          required: true
+        password:
+          description: password of the account to login
           required: true
   responses:
     200:
       body:
         application/json:
-          example: true
-    500:
+          example: |
+            {
+              username: "jane"
+              firstName: "Jane"
+              lastName: "Sanchez"
+              image: "https://images.com/1234"
+              email: "jane@email.com"
+              bio: "I am a biologist."
+              publicEmail: "jane@public.com"
+              github: "https://github.com/jane"
+              orcid: "123-412-1234-123"
+              twitter: "@jane"
+              website: "https://www.jane.com"
+              googleScholar: "janejane"
+            }
+    401:
       body:
         application/json:
-          example: "Email already tied to an account"
+          example: "Unauthorized"
