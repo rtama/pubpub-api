@@ -10,7 +10,7 @@ app.get('/uploadPolicy', function(req, res) {
 	const s3 = {
 		access_key: awsDetails.accessKeyAws,
 		secret_key: awsDetails.secretKeyAws,
-		bucket: 'assets.listoflinks.co',
+		bucket: 'assets.pubpub.org',
 		acl: 'public-read',
 		https: 'true',
 		error_message: '',
@@ -22,7 +22,7 @@ app.get('/uploadPolicy', function(req, res) {
 		},
 		expiration_date: function() {
 			const now = new Date();
-			const date = new Date( now.getTime() + (3600 * 1000) );
+			const date = new Date(now.getTime() + (3600 * 1000));
 			let edate = date.getFullYear() + '-' + this.pad(date.getMonth() + 1) + '-' + this.pad(date.getDate());
 			edate += 'T' + this.pad(date.getHours()) + ':' + this.pad(date.getMinutes()) + ':' + this.pad(date.getSeconds()) + '.000Z';
 			return new Date(Date.now() + 60000);

@@ -9,7 +9,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, { logging: false, dial
 
 // Change to true to update the model in the database.
 // TODO: Review inviters get notified when approve/reject an invitation. Journals/Users updated when a reviewer posts a review.
-// NOTE: This will erase your data.
+// NOTE: This being set to true will erase your data.
 sequelize.sync({ force: false });
 
 // Used to collect emails to create user accounts with.
@@ -61,11 +61,13 @@ const User = sequelize.define('User', {
 		allowNull: false, 
 		unique: true,
 		validate: {
-			isEmail: true
+			isEmail: true,
+			isLowercase: true,
 		} 
 	},
 	isUnclaimed: Sequelize.BOOLEAN, // Used to add a user/author to a pub that isn't in the system. When claimed, the foreign keys are changed/merged with the real account.
 	bio: Sequelize.TEXT,
+	publicEmail: Sequelize.TEXT,
 	github: Sequelize.STRING,
 	orcid: Sequelize.STRING,
 	twitter: Sequelize.STRING,

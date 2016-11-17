@@ -1,17 +1,18 @@
 import Promise from 'bluebird';
-// import passport from 'passport';
+import passport from 'passport';
 import app from '../../server';
 import { SignUp, User } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 
-const authenticatedUserAttributes = ['username', 'firstName', 'lastName', 'image', 'bio', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email'];
-const unauthenticatedUserAttributes = ['username', 'firstName', 'lastName', 'image', 'bio', 'github', 'orcid', 'twitter', 'website', 'googleScholar'];
+const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email'];
+const unauthenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar'];
 
 export function getUser(req, res, next) {
 	// Check if authenticated
 	// Build attribute models for authenticated or not
 	// Get and return
-	const requestedUser = req.query.username;
+	const username = req.body.username ? req.body.username.toLowerCase() : '';
+	const requestedUser = username;
 	const authenticated = req.user && req.user.username === requestedUser;
 	const attributes = authenticated
 		? authenticatedUserAttributes
@@ -38,9 +39,11 @@ export function postUser(req, res, next) {
 	// Update SignUp to 'completed'
 	// Get authenticated user data
 	// Return
+	const email = req.body.email ? req.body.email.toLowerCase() : '';
+	const username = req.body.username ? req.body.username.toLowerCase() : '';
 
 	SignUp.findOne({ 
-		where: { hash: req.body.hash, email: req.body.email },
+		where: { hash: req.body.hash, email: email },
 		attributes: ['email', 'hash', 'completed'] 
 	})
 	.then(function(signUpData) {
@@ -50,11 +53,19 @@ export function postUser(req, res, next) {
 	})
 	.then(function() {
 		const newUser = {
-			username: req.body.username,
+			email: email,
+			username: username,
 			firstName: req.body.firstName,
 			lastName: req.body.lastName,
+			password: req.body.password,
 			image: req.body.image,
-			email: req.body.email,
+			bio: req.body.bio,
+			publicEmail: req.body.publicEmail,
+			website: req.body.website,
+			twitter: req.body.twitter,
+			orcid: req.body.orcid,
+			github: req.body.github,
+			googleScholar: req.body.googleScholar,
 			accessToken: generateHash(),
 		};
 
@@ -63,17 +74,19 @@ export function postUser(req, res, next) {
 	})
 	.then(function(newUser) {
 		return SignUp.update({ completed: true }, {
-			where: { email: req.body.email, completed: false },
+			where: { email: email, completed: false },
 		});
 	})
 	.then(function(updatedSignUp) {
 		return User.findOne({ 
-			where: { username: req.body.username },
+			where: { username: username },
 			attributes: authenticatedUserAttributes
 		});
 	})
 	.then(function(newUser) {
-		return res.status(201).json(newUser);
+		passport.authenticate('local')(req, res, function() {
+			return res.status(201).json(newUser);
+		});
 	})
 	.catch(function(err) {
 		console.error('Error in postUser: ', err);
@@ -96,7 +109,9 @@ app.post('/user', postUser);
 export function putUser(req, res, next) {
 	// Check if authenticated. Update. Find and return.
 
-	const requestedUser = req.body.username;
+	const username = req.body.username ? req.body.username.toLowerCase() : '';
+
+	const requestedUser = username;
 	const authenticated = req.user && req.user.username === requestedUser;
 	if (!authenticated) { return res.status(500).json('Unauthorized'); }
 
@@ -113,7 +128,7 @@ export function putUser(req, res, next) {
 	})
 	.then(function(updatedCount) {
 		return User.findOne({ 
-			where: { username: req.body.username },
+			where: { username: username },
 			attributes: authenticatedUserAttributes
 		});
 	})
@@ -131,7 +146,8 @@ export function deleteUser(req, res, next) {
 	// Check if authenticated. Make Inactive. Find and return.
 	// At the moment, we don't delete for archival purposes. Need to maintain user's name associated with published work.
 
-	const requestedUser = req.body.username;
+	const username = req.body.username ? req.body.username.toLowerCase() : '';
+	const requestedUser = username;
 	const authenticated = req.user && req.user.username === requestedUser;
 	if (!authenticated) { return res.status(500).json('Unauthorized'); }
 
@@ -153,7 +169,8 @@ export function getUserProfile(req, res, next) {
 	// Check if authenticated
 	// Build attribute models for authenticated or not
 	// Get and return
-	const requestedUser = req.query.username;
+	const username = req.query.username ? req.query.username.toLowerCase() : '';
+	const requestedUser = username;
 	const authenticated = req.user && req.user.username === requestedUser;
 	const attributes = authenticated
 		? authenticatedUserAttributes
