@@ -83,7 +83,7 @@ export function postPub(req, res, next) {
 		return Pub.findOne({
 			where: { slug: req.body.slug, inactive: { $not: true } },
 			include: [
-				{ model: User, as: 'contributors', attributes: userAttributes },
+				{ model: Contributor, as: 'contributors', include: [{ model: Role, as: 'roles' }, { model: User, as: 'user', attributes: userAttributes }] }, 
 				{ model: User, as: 'followers', attributes: userAttributes },
 			]
 		});

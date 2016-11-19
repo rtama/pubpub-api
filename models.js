@@ -143,7 +143,7 @@ const License = sequelize.define('License', {
 
 const Label = sequelize.define('Label', {
 	title: { type: Sequelize.TEXT },
-	isPrivate: { type: Sequelize.BOOLEAN }, // Perhaps some labels could be private. If owned by a journal or user, they could be used to keep track of private organizations
+	// isPrivate: { type: Sequelize.BOOLEAN }, // Perhaps some labels could be private. If owned by a journal or user, they could be used to keep track of private organizations
 	// journalId: journalId is used if a label is owned by a particular journal. These labels are used for collections
 	// pubId: pubId is used to allow a pub to set it's own list of privately-editable labels for discussions.
 	// userId: userId is used and private to a user to allow them to organize pubs that they follow

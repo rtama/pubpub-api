@@ -1,2 +1,353 @@
 displayName: Pub
 description: Routes to access data about Pubs
+get: 
+  description: Get pub data. Includes connected user, discussion, label, etc data. If the user's cookie or token is included, private data (private discussions, versions, etc) are included.
+  queryParameters:
+    slug:
+      type: string
+      required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                id: 9,
+                slug: "pub-slug",
+                title: "My Great Document",
+                description: "A description about this document",
+                previewImage: "https://www.image.com/myimage",
+                isReply: null,
+                isClosed: null,
+                hideAuthorsList: null,
+                customAuthorList: null,
+                distinguishedClone: null,
+                inactive: false,
+                replyRootPubId: null,
+                replyParentPubId: null,
+                licenseId: 1,
+                cloneParentPubId: 8,
+                cloneParentVersionId: null,
+                pullRequestVersionId: null,
+                contributors: [
+                    {
+                        id: 8,
+                        canEdit: true,
+                        canRead: null,
+                        isAuthor: true,
+                        isHidden: null,
+                        inactive: null,
+                        createdAt: "2016-11-19T01:37:56.660Z",
+                        updatedAt: "2016-11-19T01:37:56.660Z",
+                        pubId: 9,
+                        userId: 1,
+                        roles: [
+                            {
+                                id: 1,
+                                title: "FunkyRole",
+                                createdAt: "2016-11-19T01:17:27.702Z",
+                                updatedAt: "2016-11-19T01:17:27.702Z",
+                            }
+                        ],
+                        user: {
+                            id: 1,
+                            username: "travis1",
+                            firstName: "Travis",
+                            lastName: "One",
+                            image: "https://assets.pubpub.org/fvkcycyd/1479518664943.jpg"
+                        }
+                    }
+                ],
+                followers: [],
+                versions: [
+                        id: 1,
+                        versionMessage: "First Version",
+                        isPublished: null,
+                        datePublished: null,
+                        doi: null,
+                        files: [
+                            {
+                                id: 1,
+                                type: "doc",
+                                name: "myFile.jpg",
+                                url: null,
+                                value: null,
+                                createdAt: "2016-11-19T01:24:28.601Z",
+                                updatedAt: "2016-11-19T01:24:28.601Z",
+                                sources: [],
+                                destinations: [
+                                    {
+                                        id: 2,
+                                        type: "doc",
+                                        name: "secondFile.dox",
+                                        url: null,
+                                        value: null,
+                                    }
+                                ],
+                                users: []
+                            },
+                            {
+                                id: 2,
+                                type: "doc",
+                                name: "secondFile.dox",
+                                url: null,
+                                value: null,
+                                createdAt: "2016-11-19T01:24:28.601Z",
+                                updatedAt: "2016-11-19T01:24:28.601Z",
+                                sources: [
+                                    {
+                                        id: 1,
+                                        type: "doc",
+                                        name: "myFile.jpg",
+                                        url: null,
+                                        value: null,
+                                    }
+                                ],
+                                destinations: [],
+                                users: []
+                            }
+                        ]
+                    }
+                ],
+                discussions: [
+                    {
+                        id: 7,
+                        slug: "hasdf9h18hdkan2",
+                        title: "My discussion item",
+                        description: "",
+                        previewImage: "",
+                        isReply: true,
+                        isClosed: null,
+                        hideAuthorsList: null,
+                        customAuthorList: null,
+                        distinguishedClone: null,
+                        inactive: null,
+                        createdAt: "2016-11-19T01:32:54.350Z",
+                        updatedAt: "2016-11-19T01:32:54.350Z",
+                        replyRootPubId: 9,
+                        replyParentPubId: 9,
+                        licenseId: null,
+                        cloneParentPubId: null,
+                        cloneParentVersionId: null,
+                        pullRequestVersionId: null,
+                        contributors: [],
+                        versions: [],
+                        labels: [],
+                        reactions: []
+                    }
+                ],
+                labels: [
+                    {
+                        id: 1,
+                        title: "New Title",
+                        journalId: null,
+                        userId: null,
+                        pubId: null
+                    }
+                ],
+                pubLabels: [
+                    {
+                        id: 2,
+                        title: "Owned By Pub",
+                        journalId: null,
+                        userId: null,
+                        pubId: 9
+                    }
+                ],
+                journalsFeatured: [],
+                journalsSubmitted: [],
+                clones: [],
+                invitedReviewers: [
+                    {
+                        id: 1,
+                        email: "testing@test.co",
+                        name: "Mary Elburt",
+                        invitationHash: null,
+                        invitationAccepted: null,
+                        invitationRejected: null,
+                        rejectionReason: null,
+                        createdAt: "2016-11-19T01:24:28.601Z",
+                        updatedAt: "2016-11-19T01:24:28.601Z",
+                        pubId: 9,
+                        invitedUserId: 1,
+                        inviterUserId: 2,
+                        inviterJournalId: null,
+                        invitedUser: {
+                            id: 1,
+                            username: "mary",
+                            firstName: "Mary",
+                            lastName: "Elbert",
+                            image: "https://assets.pubpub.org/fvkcycyd/1479518664943.jpg"
+                        },
+                        inviterUser: {
+                            id: 2,
+                            username: "travis2",
+                            firstName: "Travis",
+                            lastName: "Two",
+                            image: "https://assets.pubpub.org/fvkcycyd/1479518664943.jpg"
+                        },
+                        inviterJournal: null
+                    }
+                ],
+                license: {
+                    id: 1,
+                    title: "CC-BY-3.0",
+                    description: "CC3.0",
+                    url: null,
+                    image: null,
+                    createdAt: "2016-11-19T01:30:43.284Z",
+                    updatedAt: "2016-11-19T01:30:43.284Z"
+                },
+                cloneParent: {}
+            }
+    500:
+      body:
+        application/json:
+          example: "Pub not found"
+post:
+  description: Create a new User
+  body:
+    application/json:
+      formParameters:
+        slug: 
+          description: slug used for the pub url
+          required: true
+        title: 
+          description: title used for the new pub
+          required: true
+        previewImage:
+          description: preview image to be used for the new pub
+          required: true
+        description:
+          description: description of the new pub
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                "id": 15,
+                "slug": "testslug17",
+                "title": "My new pub!",
+                "description": "My description",
+                "previewImage": "yoooImage",
+                "isReply": null,
+                "isClosed": null,
+                "hideAuthorsList": null,
+                "customAuthorList": null,
+                "distinguishedClone": null,
+                "inactive": null,
+                "createdAt": "2016-11-19T05:06:00.057Z",
+                "updatedAt": "2016-11-19T05:06:00.057Z",
+                "replyRootPubId": null,
+                "replyParentPubId": null,
+                "licenseId": null,
+                "cloneParentPubId": null,
+                "cloneParentVersionId": null,
+                "pullRequestVersionId": null,
+                "contributors": [
+                    {
+                        "id": 12,
+                        "canEdit": null,
+                        "canRead": null,
+                        "isAuthor": true,
+                        "isHidden": null,
+                        "inactive": null,
+                        "createdAt": "2016-11-19T05:06:00.097Z",
+                        "updatedAt": "2016-11-19T05:06:00.097Z",
+                        "pubId": 15,
+                        "userId": 1,
+                        "roles": [],
+                        "user": {
+                            "id": 1,
+                            "username": "travis1",
+                            "firstName": "Travis",
+                            "lastName": "One",
+                            "image": "https://assets.pubpub.org/fvkcycyd/1479518664943.jpg"
+                        }
+                    }
+                ],
+                "followers": [
+                    {
+                        "id": 1,
+                        "username": "travis1",
+                        "firstName": "Travis",
+                        "lastName": "One",
+                        "image": "https://assets.pubpub.org/fvkcycyd/1479518664943.jpg",
+                        "FollowsPub": {
+                            "notifyOnNewVersion": null,
+                            "notifyOnNewFeature": null,
+                            "notifyOnNewDiscussions": null,
+                            "createdAt": "2016-11-19T05:06:00.097Z",
+                            "updatedAt": "2016-11-19T05:06:00.097Z",
+                            "followerId": 1,
+                            "pubId": 15
+                        }
+                    }
+                ]
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating pub"
+            }
+put:
+  description: |
+    Used to allow a pub editor to update the pub. 
+    Things like 'distinguishedClone' or fields that are applied by outside users have their own 
+  body:
+    application/json:
+      formParameters:
+        pubId: 
+          description: id of the pub to be changed
+          required: true
+        slug: 
+          description: new slug 
+        title:
+          description: new title
+        description:
+          description: new description
+        previewImage:
+          description: new image
+        isClosed: 
+          description: new isClosed state
+        hideAuthors: 
+          description: new hideAuthors state
+        customAuthorList: 
+          description: new customAuthorList
+        licenseId: 
+          description: new License state
+        
+  responses:
+    200:
+      body:
+        application/json:
+          example: true
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error updating pub"
+            }
+delete:
+  description: Delete the pub
+  body:
+    application/json:
+      formParameters:
+        pubId: 
+          description: id of the pub to be deleted
+  responses:
+    200:
+      body:
+        application/json:
+          example: "Pub set inactive"
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error deleting pub"
+            }
