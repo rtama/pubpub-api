@@ -280,8 +280,8 @@ const FileRelation = sequelize.define('FileRelation', {
 }); // Used to connect specific file to specific file
 
 // A user can be an author on many pubs, and a pub can have many authors
-// User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'Contributor', foreignKey: 'userId' });
-// Pub.belongsToMany(User, { onDelete: 'CASCADE', as: 'contributors', through: 'Contributor', foreignKey: 'pubId' });
+User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'Contributor', foreignKey: 'userId' });
+Pub.belongsToMany(User, { onDelete: 'CASCADE', as: 'contributors', through: 'Contributor', foreignKey: 'pubId' });
 
 // A pub can have many contributors, but a contributor belongs to only a single pub
 Pub.hasMany(Contributor, { onDelete: 'CASCADE', as: 'contributors', foreignKey: 'pubId' });
@@ -360,6 +360,7 @@ User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubsRead', through: 'UserLas
 // A Pub can have many reactions, and a Reaction can be used on many Pubs.
 Pub.belongsToMany(Reaction, { onDelete: 'CASCADE', as: 'reactions', through: 'PubReaction', foreignKey: 'pubId' });
 Reaction.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubReaction', foreignKey: 'reactionId' });
+// Reactions need to be tied to a user. We probably want to do something similar to how contributors is structured
 
 // A File can be related to many other files
 File.belongsToMany(File, { onDelete: 'CASCADE', as: 'destinations', through: 'FileRelation', foreignKey: 'sourceFileId' });

@@ -1,0 +1,109 @@
+displayName: Reviewer
+description: Routes to access data about a pub's reviewers
+get: 
+  description: Get pub data. Includes connected user, discussion, label, etc data. If the user's cookie or token is included, private data (private discussions, versions, etc) are included.
+  queryParameters:
+    slug:
+      type: string
+      required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                id: 9,
+            }
+    500:
+      body:
+        application/json:
+          example: "Pub not found"
+post:
+  description: Create a new User
+  body:
+    application/json:
+      formParameters:
+        slug: 
+          description: slug used for the pub url
+          required: true
+        title: 
+          description: title used for the new pub
+          required: true
+        previewImage:
+          description: preview image to be used for the new pub
+          required: true
+        description:
+          description: description of the new pub
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                "id": 15,
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating pub"
+            }
+put:
+  description: |
+    Used to allow a pub editor to update the pub. 
+    Things like 'distinguishedClone' or fields that are applied by outside users have their own 
+  body:
+    application/json:
+      formParameters:
+        pubId: 
+          description: id of the pub to be changed
+          required: true
+        slug: 
+          description: new slug 
+        title:
+          description: new title
+        description:
+          description: new description
+        previewImage:
+          description: new image
+        isClosed: 
+          description: new isClosed state
+        hideAuthors: 
+          description: new hideAuthors state
+        customAuthorList: 
+          description: new customAuthorList
+        licenseId: 
+          description: new License state
+        
+  responses:
+    200:
+      body:
+        application/json:
+          example: true
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error updating pub"
+            }
+delete:
+  description: Delete the pub
+  body:
+    application/json:
+      formParameters:
+        pubId: 
+          description: id of the pub to be deleted
+  responses:
+    200:
+      body:
+        application/json:
+          example: "Pub set inactive"
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error deleting pub"
+            }

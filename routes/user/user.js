@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import passport from 'passport';
 import app from '../../server';
-import { SignUp, User } from '../../models';
+import { SignUp, User, Pub } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 
 const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email'];
@@ -179,7 +179,7 @@ export function getUserProfile(req, res, next) {
 	User.findOne({ 
 		where: { username: requestedUser, inactive: { $not: true } },
 		attributes: attributes,
-		// include: [ {model: Link, as: 'links'}, {model: User, as: 'followers', foreignKey: 'follower', attributes: { exclude: ['salt', 'hash', 'apiToken', 'email', 'createdAt', 'updatedAt'] } }, {model: User, as: 'following', foreignKey: 'followee', attributes: { exclude: ['salt', 'hash', 'apiToken', 'email', 'createdAt', 'updatedAt'] }, include: [{model: Link, as: 'links'}]} ]
+		include: [{ model: Pub, as: 'pubs' }]
 		// only populate public follows if necessary
 	})
 	.then(function(userData) {
