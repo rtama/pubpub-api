@@ -11,7 +11,7 @@ export function getUser(req, res, next) {
 	// Check if authenticated
 	// Build attribute models for authenticated or not
 	// Get and return
-	const username = req.body.username ? req.body.username.toLowerCase() : '';
+	const username = req.query.username ? req.query.username.toLowerCase() : '';
 	const requestedUser = username;
 	const authenticated = req.user && req.user.username === requestedUser;
 	const attributes = authenticated
@@ -115,7 +115,7 @@ export function putUser(req, res, next) {
 	const authenticated = req.user && req.user.username === requestedUser;
 	if (!authenticated) { return res.status(500).json('Unauthorized'); }
 
-	const updatedUser = { ...req.body }; // Remove the items you don't want to let me updated
+	const updatedUser = { ...req.body }; // Remove the items you don't want to let be updated
 	delete updatedUser.id;
 	delete updatedUser.hash;
 	delete updatedUser.salt;
@@ -180,6 +180,7 @@ export function getUserProfile(req, res, next) {
 		where: { username: requestedUser, inactive: { $not: true } },
 		attributes: attributes,
 		// include: [ {model: Link, as: 'links'}, {model: User, as: 'followers', foreignKey: 'follower', attributes: { exclude: ['salt', 'hash', 'apiToken', 'email', 'createdAt', 'updatedAt'] } }, {model: User, as: 'following', foreignKey: 'followee', attributes: { exclude: ['salt', 'hash', 'apiToken', 'email', 'createdAt', 'updatedAt'] }, include: [{model: Link, as: 'links'}]} ]
+		// only populate public follows if necessary
 	})
 	.then(function(userData) {
 		if (!userData) { return res.status(500).json('User not found'); }

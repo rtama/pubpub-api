@@ -19,7 +19,9 @@ protocols: [ HTTPS ]
 baseUri: https://api.pubpub.org
 mediaType: application/json
 
-/user: !include routes/user/user.raml
 /signup: !include routes/signUp/signUp.raml
+/user: !include routes/user/user.raml
 /login: !include routes/login/login.raml
 /logout: !include routes/logout/logout.raml
+/pub: !include routes/pub/pub.raml
+/journal: !include routes/journal/journal.raml

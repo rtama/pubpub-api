@@ -89,14 +89,21 @@ passportLocalSequelize.attachToUser(User, {
 });
 
 const Pub = sequelize.define('Pub', {
-	slug: { type: Sequelize.STRING },
-	publicSlug: { type: Sequelize.STRING }, // Used to share a pub without making it globally public
+	slug: {
+		type: Sequelize.TEXT, 
+		unique: true, 
+		allowNull: false,
+		validate: {
+			isLowercase: true,
+		},
+	},
+	// publicSlug: { type: Sequelize.STRING }, // Used to share a pub without making it globally public
 	title: { type: Sequelize.TEXT, allowNull: false },
 	description: { type: Sequelize.TEXT },
 	previewImage: { type: Sequelize.TEXT },
 	isReply: { type: Sequelize.BOOLEAN },
-	isOpen: { type: Sequelize.BOOLEAN }, // Used for replies.
-	showAuthorsList: { type: Sequelize.BOOLEAN },
+	isClosed: { type: Sequelize.BOOLEAN }, // Used for replies.
+	hideAuthorsList: { type: Sequelize.BOOLEAN },
 	customAuthorList: { type: Sequelize.TEXT },
 	distinguishedClone: { type: Sequelize.BOOLEAN }, // ??TODO: Decide: Used to make a clone a 'distinguished branch'. Maybe this should be done with labels instead? If labels, then we have some weird permissioning conflicts between pub owners
 	inactive: Sequelize.BOOLEAN,
@@ -162,10 +169,11 @@ const Journal = sequelize.define('Journal', {
 		allowNull: false,
 	},
 	slug: { 
-		type: Sequelize.STRING, 
+		type: Sequelize.TEXT, 
+		unique: true, 
 		allowNull: false,
 		validate: {
-			isAlphanumeric: true, // No special characters
+			isLowercase: true,
 		},
 	},
 	shortDescription: { type: Sequelize.TEXT },
@@ -192,8 +200,10 @@ const Contributor = sequelize.define('Contributor', {
 		primaryKey: true, 
 		autoIncrement: true 
 	},
+	canEdit: Sequelize.BOOLEAN,
+	canRead: Sequelize.BOOLEAN,
 	isAuthor: Sequelize.BOOLEAN,
-	isVisible: Sequelize.BOOLEAN, // Whether the contributor shows up on the 'Contributors' list. isAuthor=true forces isVisible true (or isVisible is ignored at least)
+	isHidden: Sequelize.BOOLEAN, // Whether the contributor shows up on the 'Contributors' list. isAuthor=true forces isHidden false (or isHidden is ignored at least)
 	inactive: Sequelize.BOOLEAN, // Used when a contributor is removed so we have a history of contributors and how they were applied/removed
 });
 
@@ -252,6 +262,7 @@ const FollowsLabel = sequelize.define('FollowsLabel', { // Used to connect speci
 
 const ContributorRole = sequelize.define('ContributorRole', {
 	inactive: Sequelize.BOOLEAN, // Used when a contributor is removed so we have a history of contributors and how they were applied/removed
+	// pubID: used so we can grab all roles when querying for pubs. Needed because we can't 'include' on a through table. Issue here: https://github.com/sequelize/sequelize/issues/5358
 }); // Used to connect specific role to a specific contributor
 const PubFeature = sequelize.define('PubFeature', { // Used to connect specific journal to specific pub as featurer
 	isDisplayed: Sequelize.BOOLEAN, // Whether the feature tag is displayed on the front of the pub
@@ -269,8 +280,16 @@ const FileRelation = sequelize.define('FileRelation', {
 }); // Used to connect specific file to specific file
 
 // A user can be an author on many pubs, and a pub can have many authors
-User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'Contributor', foreignKey: 'userId' });
-Pub.belongsToMany(User, { onDelete: 'CASCADE', as: 'contributors', through: 'Contributor', foreignKey: 'pubId' });
+// User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'Contributor', foreignKey: 'userId' });
+// Pub.belongsToMany(User, { onDelete: 'CASCADE', as: 'contributors', through: 'Contributor', foreignKey: 'pubId' });
+
+// A pub can have many contributors, but a contributor belongs to only a single pub
+Pub.hasMany(Contributor, { onDelete: 'CASCADE', as: 'contributors', foreignKey: 'pubId' });
+// Roles can belong to many contributors, and contributors can have many roles
+Contributor.belongsToMany(Role, { onDelete: 'CASCADE', as: 'roles', through: 'ContributorRole', foreignKey: 'contributorId' });
+Role.belongsToMany(Contributor, { onDelete: 'CASCADE', as: 'contributors', through: 'ContributorRole', foreignKey: 'roleId' });
+// A contributor has a single user
+Contributor.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
 
 // A file can be in many versions, and a version can have many files
 File.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'VersionFile', foreignKey: 'fileId' });
@@ -307,22 +326,24 @@ Label.belongsToMany(User, { onDelete: 'CASCADE', as: 'followers', through: 'Foll
 // A pub can have many discussions, but a discussion belongs to only a single parent pub
 Pub.hasMany(Pub, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'replyRootPubId' });
 // A discussion can have many children, but only has a single parent
-Pub.hasMany(Pub, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'replyParentPubId' });
+Pub.hasMany(Pub, { onDelete: 'CASCADE', as: 'childDiscussions', foreignKey: 'replyParentPubId' });
 
 // A journal can own many labels (used to build collections), but a label can have only one Journal
 Journal.hasMany(Label, { onDelete: 'CASCADE', as: 'collections', foreignKey: 'journalId' });
 // A user can have many labels, but a label can have only one User
-User.hasMany(Label, { onDelete: 'CASCADE', as: 'labels', foreignKey: 'userId' });
+User.hasMany(Label, { onDelete: 'CASCADE', as: 'userLabels', foreignKey: 'userId' });
 // A pub can own many (custom discussion) labels, but a label can have only one Pub
-Pub.hasMany(Label, { onDelete: 'CASCADE', as: 'labels', foreignKey: 'pubId' });
+Pub.hasMany(Label, { onDelete: 'CASCADE', as: 'pubLabels', foreignKey: 'pubId' });
 
 // A Pub can have many Labels and a Label can apply to many pubs
 Pub.belongsToMany(Label, { onDelete: 'CASCADE', as: 'labels', through: 'PubLabel', foreignKey: 'pubId' });
 Label.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubLabel', foreignKey: 'labelId' });
 
 // A Contributor can have many roles and a Role can be used for many contributors
-Role.belongsToMany(Contributor, { onDelete: 'CASCADE', as: 'roles', through: 'ContributorRole', foreignKey: 'roleId' });
-Contributor.belongsToMany(Role, { onDelete: 'CASCADE', as: 'contributors', through: 'ContributorRole', foreignKey: 'contributorId' });
+// Role.belongsToMany(Contributor, { onDelete: 'CASCADE', as: 'contributors', through: 'ContributorRole', foreignKey: 'roleId' });
+// Contributor.belongsToMany(Role, { onDelete: 'CASCADE', as: 'roles', through: 'ContributorRole', foreignKey: 'contributorId' });
+// Pub.hasMany(ContributorRole, { onDelete: 'CASCADE', as: 'contributorRoles', foreignKey: 'pubId' });
+// ContributorRole.belongsTo(Role, { onDelete: 'CASCADE', as: 'role', foreignKey: 'roleId' });
 
 // A Pub can be featured by many journals, and a Journal can feature many pubs
 Pub.belongsToMany(Journal, { onDelete: 'CASCADE', as: 'journalsFeatured', through: 'PubFeature', foreignKey: 'pubId' });
@@ -353,9 +374,13 @@ User.hasMany(Highlight, { onDelete: 'CASCADE', as: 'highlights', foreignKey: 'us
 
 // A license can be used on many pubs, but a pub belongs to only a single license
 License.hasMany(Pub, { onDelete: 'CASCADE', as: 'pubs', foreignKey: 'licenseId' });
+// A pub can have one license
+Pub.belongsTo(License, { onDelete: 'CASCADE', as: 'license', foreignKey: 'licenseId' });
 
 // A pub can have many clones, but a clone belongs to only a single parent pub
 Pub.hasMany(Pub, { onDelete: 'CASCADE', as: 'clones', foreignKey: 'cloneParentPubId' });
+Pub.belongsTo(Pub, { onDelete: 'CASCADE', as: 'cloneParent', foreignKey: 'cloneParentPubId' });
+
 // A version can have many clones, but a clone belongs to only a single parent version
 Version.hasMany(Pub, { onDelete: 'CASCADE', as: 'clones', foreignKey: 'cloneParentVersionId' });
 
@@ -367,12 +392,15 @@ Pub.hasMany(InvitedReviewer, { onDelete: 'CASCADE', as: 'invitedReviewers', fore
 
 // A user can be an invited as a reviewer many times, but a review invitation can only have a single user
 User.hasMany(InvitedReviewer, { onDelete: 'CASCADE', as: 'invitations', foreignKey: 'invitedUserId' });
+InvitedReviewer.belongsTo(User, { onDelete: 'CASCADE', as: 'invitedUser', foreignKey: 'invitedUserId' });
 
 // A user can be an the invitor many times, but a review invitation can only have a single inviter
 User.hasMany(InvitedReviewer, { onDelete: 'CASCADE', as: 'invitationsCreated', foreignKey: 'inviterUserId' });
+InvitedReviewer.belongsTo(User, { onDelete: 'CASCADE', as: 'inviterUser', foreignKey: 'inviterUserId' });
 
 // A journal can be an the invitor many times, but a review invitation can only have a single journal
 Journal.hasMany(InvitedReviewer, { onDelete: 'CASCADE', as: 'invitationsCreated', foreignKey: 'inviterJournalId' });
+InvitedReviewer.belongsTo(Journal, { onDelete: 'CASCADE', as: 'inviterJournal', foreignKey: 'inviterJournalId' });
 
 // A user can have many apiKeys, but a key belongs to only a single user
 User.hasMany(ApiKey, { onDelete: 'CASCADE', as: 'apiKeys', foreignKey: 'userId' });
@@ -383,11 +411,13 @@ const db = {
 	Pub: Pub,
 	File: File,
 	Version: Version,
+	Reaction: Reaction,
 	Label: Label,
 	Role: Role,
 	Highlight: Highlight,
 	Journal: Journal,
 	ApiKey: ApiKey,
+	License: License,
 	UserLastReadPub: UserLastReadPub,
 	Contributor: Contributor,
 	VersionFile: VersionFile,
