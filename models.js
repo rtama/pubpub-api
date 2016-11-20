@@ -101,7 +101,7 @@ const Pub = sequelize.define('Pub', {
 	title: { type: Sequelize.TEXT, allowNull: false },
 	description: { type: Sequelize.TEXT },
 	previewImage: { type: Sequelize.TEXT },
-	isReply: { type: Sequelize.BOOLEAN },
+	isReply: { type: Sequelize.BOOLEAN }, // May not be necessary. Presence of rootReplyPubId dictates isReply
 	isClosed: { type: Sequelize.BOOLEAN }, // Used for replies.
 	hideAuthorsList: { type: Sequelize.BOOLEAN },
 	customAuthorList: { type: Sequelize.TEXT },

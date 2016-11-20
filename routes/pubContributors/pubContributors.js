@@ -1,5 +1,5 @@
 import app from '../../server';
-import { Pub, User, Label, File, Journal, Version, Contributor, FollowsPub, License, InvitedReviewer, Reaction, Role } from '../../models';
+import { User, Contributor, Role } from '../../models';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];
 

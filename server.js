@@ -114,6 +114,7 @@ osprey.loadFile(path.join(__dirname, 'api.raml')).then(function (middleware) {
 	require('./routes/logout/logout.js');
 	require('./routes/pub/pub.js');
 	require('./routes/pubContributors/pubContributors.js');
+	require('./routes/pubDiscussions/pubDiscussions.js');
 	
 	/* ------------------- */
 	/* ------------------- */
