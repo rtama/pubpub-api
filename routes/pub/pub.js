@@ -8,7 +8,7 @@ export function getPub(req, res, next) {
 	// Check if authenticated
 	// Make get request
 	// Return
-	const user = req.user || { id: 1 };
+	const user = req.user || {};
 	// console.time('pubQueryTime');
 	Pub.findOne({
 		where: { slug: req.query.slug, inactive: { $not: true } },
@@ -56,7 +56,7 @@ export function postPub(req, res, next) {
 	// Check if authenticated
 	// Make get request
 	// Return
-	const user = req.user || { id: 1 };
+	const user = req.user || {};
 	if (!user) { return res.status(500).json('Not authorized'); }
 
 
@@ -104,7 +104,7 @@ export function putPub(req, res, next) {
 	
 	// Check if authenticated. Update. Return true.
 
-	const user = req.user || { id: 1 };
+	const user = req.user || {};
 	if (!user) { return res.status(500).json('Not authorized'); }
 
 	// Filter to only allow certain fields to be updated
@@ -120,7 +120,7 @@ export function putPub(req, res, next) {
 		raw: true,
 	})
 	.then(function(contributorData) {
-		if (!contributorData.canEdit && !contributorData.isAuthor) {
+		if (!contributorData || (!contributorData.canEdit && !contributorData.isAuthor)) {
 			throw new Error('Not Authorized to update this pub');
 		}
 		return Pub.update(updatedPub, {

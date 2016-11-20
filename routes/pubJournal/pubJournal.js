@@ -16,6 +16,8 @@ app.post('/pub/journal', postJournal);
 
 export function putJournal(req, res, next) {
 	// Is there anything we want to allow to change?
+	// whether the journal is featured on the front of the pub?
+	// Users with edit access can set the PubFeature value for 'isDisplayed'
 }
 app.put('/pub/journal', putJournal);
 
