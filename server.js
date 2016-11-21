@@ -125,6 +125,7 @@ osprey.loadFile(path.join(__dirname, 'api.raml')).then(function (middleware) {
 	require('./routes/journalAdmins/journalAdmins.js');
 	require('./routes/journalFeatures/journalFeatures.js');
 	require('./routes/journalSubmits/journalSubmits.js');
+	require('./routes/journalLabels/journalLabels.js');
 	
 	/* ------------------- */
 	/* ------------------- */

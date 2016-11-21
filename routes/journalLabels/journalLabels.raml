@@ -1,0 +1,106 @@
+displayName: Label
+description: Routes to access data about a journal's labels 
+get: 
+  description: Get all associated labels
+  queryParameters:
+    journalId:
+      type: string
+      required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            [
+              {
+                "id": 1,
+                "title": "My super label",
+                "createdAt": "2016-11-21T21:56:21.111Z",
+                "updatedAt": "2016-11-21T21:56:21.111Z",
+                "journalId": 1,
+                "userId": null,
+                "pubId": null
+              }
+            ]
+    500:
+      body:
+        application/json:
+          example: "Pub not found"
+post:
+  description: Create a new Label
+  body:
+    application/json:
+      formParameters:
+        journalId: 
+          description: id of the journal who will own the label
+          required: true
+        title: 
+          description: title of the label
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+              "id": 1,
+              "journalId": 1,
+              "title": "My super label",
+              "updatedAt": "2016-11-21T21:56:21.111Z",
+              "createdAt": "2016-11-21T21:56:21.111Z",
+              "userId": null,
+              "pubId": null
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating label"
+            }
+put:
+  description: Edit the title of a label
+  body:
+    application/json:
+      formParameters:
+        journalId: 
+          description: id of the journal who owns the label
+          required: true
+        labelId: 
+          description: id of the label to be updated
+        title: 
+          description: new title of the label
+  responses:
+    200:
+      body:
+        application/json:
+          example: true
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating label"
+            }            
+delete:
+  description: Delete the label relationship
+  body:
+    application/json:
+      formParameters:
+        journalId: 
+          description: id of the journal who owns the label
+          required: true
+        labelId: 
+          description: id of the label to be updated
+  responses:
+    200:
+      body:
+        application/json:
+          example: "Label deleted"
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error deleting pub"
+            }
