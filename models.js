@@ -315,6 +315,7 @@ Pub.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'PubV
 // A user can be an admin on many journals, and a journal can have many admins
 User.belongsToMany(Journal, { onDelete: 'CASCADE', as: 'journals', through: 'JournalAdmin', foreignKey: 'userId' });
 Journal.belongsToMany(User, { onDelete: 'CASCADE', as: 'admins', through: 'JournalAdmin', foreignKey: 'journalId' });
+JournalAdmin.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
 
 // A user can follow many users, and a user can be followed by many users
 User.belongsToMany(User, { onDelete: 'CASCADE', as: 'followsUsers', through: 'FollowsUser', foreignKey: 'followerId' });

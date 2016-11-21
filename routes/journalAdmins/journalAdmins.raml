@@ -1,8 +1,82 @@
-displayName: Journal
-description: Routes to access data about Journals
-get:
+displayName: JournalAdmins
+description: Routes to access data about a journal's admins
+get: 
+  description: Get all journal admins
+  queryParameters:
+    journalId:
+      type: string
+      required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            [
+              {
+                  "id": 8
+              }
+            ]
+    500:
+      body:
+        application/json:
+          example: "Contributors not found"
+post:
+  description: Create a new User
+  body:
+    application/json:
+      formParameters:
+        userId: 
+          description: id of the user to be added
+          required: true
+        pubId: 
+          description: id of the pub this contributor is being added to
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+              "id": 5,
+              "createdAt": "2016-11-21T21:08:06.824Z",
+              "updatedAt": "2016-11-21T21:08:06.824Z",
+              "userId": 2,
+              "journalId": 1,
+              "user": {
+                "id": 2,
+                "username": "test-account",
+                "firstName": "Test",
+                "lastName": "Account",
+                "image": "http://image.com/example.jpg"
+              }
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating new contributor"
+            }
+delete:
+  description: Delete a journal admin
+  body:
+    application/json:
+      formParameters:
+        journalId: 
+          description: journal which owns the given admin to be removed
+          required: true
+        journalAdminId: 
+          description: id of the journalAdmin to be removed
+          required: true
   responses:
     200:
       body:
         application/json:
           example: true
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error deleting admin"
+            }
