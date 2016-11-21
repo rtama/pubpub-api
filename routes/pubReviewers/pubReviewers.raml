@@ -1,9 +1,9 @@
-displayName: Reviewer
+displayName: Reviewers
 description: Routes to access data about a pub's reviewers
 get: 
   description: Get pub data. Includes connected user, discussion, label, etc data. If the user's cookie or token is included, private data (private discussions, versions, etc) are included.
   queryParameters:
-    slug:
+    pubId:
       type: string
       required: true
   responses:
@@ -19,21 +19,25 @@ get:
         application/json:
           example: "Pub not found"
 post:
-  description: Create a new User
+  description: Invite a new reviewer. Either email and name, or invitedUserId must be included. 
   body:
     application/json:
       formParameters:
-        slug: 
-          description: slug used for the pub url
+        email: 
+          description: email of the invited reviewer
+        name: 
+          description: name of the invited reviewer
           required: true
-        title: 
-          description: title used for the new pub
+        pubId:
+          description: id of the pub this reviewer is being invited to
           required: true
-        previewImage:
-          description: preview image to be used for the new pub
-          required: true
-        description:
-          description: description of the new pub
+        invitedUserId:
+          description: id of the invited user
+        inviterUserId:
+          description: id of the user who created the invitation
+        inviterJouranlId:
+          description: id of the journal the invitation is on behalf of
+
   responses:
     200:
       body:
@@ -56,25 +60,14 @@ put:
   body:
     application/json:
       formParameters:
-        pubId: 
-          description: id of the pub to be changed
-          required: true
-        slug: 
-          description: new slug 
-        title:
-          description: new title
-        description:
-          description: new description
-        previewImage:
-          description: new image
-        isClosed: 
-          description: new isClosed state
-        hideAuthors: 
-          description: new hideAuthors state
-        customAuthorList: 
-          description: new customAuthorList
-        licenseId: 
-          description: new License state
+        invitationHash: 
+          description: Hash associated with the invitation, used for authenticating
+        invitationAccepted: 
+          description: BOOLEAN
+        invitationRejected: 
+          description: BOOLEAN 
+        rejectionReason:
+          description: Reason for rejecting the review invitation
         
   responses:
     200:
@@ -87,23 +80,4 @@ put:
           example: |
             {
               error : "Error updating pub"
-            }
-delete:
-  description: Delete the pub
-  body:
-    application/json:
-      formParameters:
-        pubId: 
-          description: id of the pub to be deleted
-  responses:
-    200:
-      body:
-        application/json:
-          example: "Pub set inactive"
-    500:
-      body:
-        application/json:
-          example: |
-            {
-              error : "Error deleting pub"
             }
