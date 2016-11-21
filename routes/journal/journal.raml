@@ -1,8 +1,123 @@
 displayName: Journal
 description: Routes to access data about Journals
 get:
+  queryParameters:
+    slug:
+      type: string
+      required: true
   responses:
     200:
       body:
         application/json:
           example: true
+post:
+  description: Create a new Journal
+  body:
+    application/json:
+      formParameters:
+        name: 
+          description: name used for the new journal
+          required: true
+        slug: 
+          description: slug used for the journal url
+          required: true
+        short description: 
+          description: short description used for the new journal
+          required: true
+        longDescription:
+          description: long description to be used for the new journal
+        reviewDescription:
+          description: review description of the new journal
+        logo:
+          description: Large log for the new journal. Can be used in the header of the journal's page
+        icon:
+          description: square icon for the new journal. Used on preview cards
+        website:
+          description: website url
+        twitter:
+          description: twitter account
+        facebook:
+          description: facebook account
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                "id": 15,
+                "slug": "my-journal",
+                "title": "My Journal",
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating journal"
+            }
+put:
+  description: |
+    Used to allow a journal admin to update the journal. 
+  body:
+    application/json:
+      formParameters:
+        journalId: 
+          description: id of the journal to be changed
+          required: true
+        slug: 
+          description: new slug 
+        name:
+          description: new title
+        shortDescription: 
+          description: new shortDescription
+        longDescription: 
+          description: new longDescription
+        revie  Description: 
+          description: new reviewDescription
+        logo: 
+          description: new logo
+        icon: 
+          description: new icon
+        website: 
+          description: new website
+        twitter: 
+          description: new twitter
+        facebook: 
+          description: new facebook
+        headerMode: 
+          description: new headerMode
+        headerAlign: 
+          description: new headerAlign
+        headerImage: 
+          description: new headerImage
+  responses:
+    200:
+      body:
+        application/json:
+          example: true
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error updating journal"
+            }
+delete:
+  description: Delete the journal
+  body:
+    application/json:
+      formParameters:
+        journal: 
+          description: id of the journal to be deleted
+  responses:
+    200:
+      body:
+        application/json:
+          example: "Journal set inactive"
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error deleting journal"
+            }

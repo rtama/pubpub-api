@@ -20,8 +20,7 @@ export function getUser(req, res, next) {
 	
 	User.findOne({ 
 		where: { username: requestedUser, inactive: { $not: true } },
-		attributes: attributes,
-		include: [{ model: Pub, as: 'pubs' }]
+		attributes: attributes
 	})
 	.then(function(userData) {
 		if (!userData) { return res.status(500).json('User not found'); }
@@ -166,30 +165,30 @@ export function deleteUser(req, res, next) {
 }
 app.delete('/user', deleteUser);
 
-// export function getUserProfile(req, res, next) {
-// 	// Check if authenticated
-// 	// Build attribute models for authenticated or not
-// 	// Get and return
-// 	const username = req.query.username ? req.query.username.toLowerCase() : '';
-// 	const requestedUser = username;
-// 	const authenticated = req.user && req.user.username === requestedUser;
-// 	const attributes = authenticated
-// 		? authenticatedUserAttributes
-// 		: unauthenticatedUserAttributes;
+export function getUserProfile(req, res, next) {
+	// Check if authenticated
+	// Build attribute models for authenticated or not
+	// Get and return
+	const username = req.query.username ? req.query.username.toLowerCase() : '';
+	const requestedUser = username;
+	const authenticated = req.user && req.user.username === requestedUser;
+	const attributes = authenticated
+		? authenticatedUserAttributes
+		: unauthenticatedUserAttributes;
 	
-// 	User.findOne({ 
-// 		where: { username: requestedUser, inactive: { $not: true } },
-// 		attributes: attributes,
-// 		include: [{ model: Pub, as: 'pubs' }]
-// 		// only populate public follows if necessary
-// 	})
-// 	.then(function(userData) {
-// 		if (!userData) { return res.status(500).json('User not found'); }
-// 		return res.status(201).json(userData);
-// 	})
-// 	.catch(function(err) {
-// 		console.error('Error in getUser: ', err);
-// 		return res.status(500).json(err.message);
-// 	});
-// }
-// app.get('/user/profile', getUserProfile);
+	User.findOne({ 
+		where: { username: requestedUser, inactive: { $not: true } },
+		attributes: attributes,
+		include: [{ model: Pub, as: 'pubs' }]
+		// only populate public follows if necessary
+	})
+	.then(function(userData) {
+		if (!userData) { return res.status(500).json('User not found'); }
+		return res.status(201).json(userData);
+	})
+	.catch(function(err) {
+		console.error('Error in getUser: ', err);
+		return res.status(500).json(err.message);
+	});
+}
+app.get('/user/profile', getUserProfile);

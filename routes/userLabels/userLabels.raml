@@ -1,12 +1,12 @@
 displayName: User
 description: Routes to access data about Users
-get:
-  description: Get the data for a user's profile. This includes associated pubs, forks, journals, etc. Private pubs, private data included if authenticated.
+get: 
+  description: Get data about a user. If the user's cookie or token is included, private data is included.
   queryParameters:
     username:
       type: string
       required: true
-  responses: 
+  responses:
     200:
       body:
         application/json:
@@ -23,20 +23,12 @@ get:
               orcid: "123-412-1234-123"
               twitter: "@jane"
               website: "https://www.jane.com"
-              googleScholar: "janejane",
-              journals: [],
-              pubs: [],
-              followers: [],
-              following: [],
-
+              googleScholar: "janejane"
             }
-    404:
+    500:
       body:
         application/json:
-          example: |
-            {
-              error : "User not found"
-            }
+          example: "Username not valid"
 post:
   description: Create a new User
   body:
@@ -177,3 +169,41 @@ delete:
             {
               error : "User not found"
             }
+/profile:
+  get:
+    description: Get the data for a user's profile. This includes associated pubs, forks, journals, etc. Private pubs, private data included if authenticated.
+    queryParameters:
+      username:
+        type: string
+        required: true
+    responses: 
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                username: "jane"
+                firstName: "Jane"
+                lastName: "Sanchez"
+                image: "https://images.com/1234"
+                email: "jane@email.com (if authenticated)"
+                bio: "I am a biologist."
+                publicEmail: "jane@public.com"
+                github: "https://github.com/jane"
+                orcid: "123-412-1234-123"
+                twitter: "@jane"
+                website: "https://www.jane.com"
+                googleScholar: "janejane",
+                journals: [],
+                pubs: [],
+                followers: [],
+                following: [],
+
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                error : "User not found"
+              }

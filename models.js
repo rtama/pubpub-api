@@ -164,8 +164,7 @@ const Highlight = sequelize.define('Highlight', {
 
 const Journal = sequelize.define('Journal', {
 	name: {
-		type: Sequelize.STRING,
-		unique: true,
+		type: Sequelize.TEXT,
 		allowNull: false,
 	},
 	slug: { 
@@ -240,6 +239,14 @@ const Reaction = sequelize.define('Reaction', {
 	keywords: Sequelize.TEXT,
 });
 
+const JournalAdmin = sequelize.define('JournalAdmin', {
+	id: { 
+		type: Sequelize.INTEGER, 
+		primaryKey: true, 
+		autoIncrement: true 
+	},
+}); // Used to connect specific users to a specific journal as admin
+
 const VersionFile = sequelize.define('VersionFile', {}); // Used to connect specific files to a specific version
 const FileAttribution = sequelize.define('FileAttribution', {}); // Used to connect specific users to a specific file
 const PubVersion = sequelize.define('PubVersion', {}); // Used to connect specific versions to a specific pub
@@ -267,7 +274,9 @@ const ContributorRole = sequelize.define('ContributorRole', {
 const PubFeature = sequelize.define('PubFeature', { // Used to connect specific journal to specific pub as featurer
 	isDisplayed: Sequelize.BOOLEAN, // Whether the feature tag is displayed on the front of the pub
 });
-const PubSubmit = sequelize.define('PubSubmit', {}); // Used to connect specific journal to specific pub as submit destination
+const PubSubmit = sequelize.define('PubSubmit', {
+	closed: Sequelize.BOOLEAN,
+}); // Used to connect specific journal to specific pub as submit destination
 const PubReaction = sequelize.define('PubReaction', {
 	inactive: Sequelize.BOOLEAN, // Used when a reaction is removed so we have a history of reactions and how they were applied/removed
 }); // Used to connect specific reaction to specific pub (typicaly discussion pub)
@@ -304,8 +313,8 @@ Version.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubVersi
 Pub.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'PubVersion', foreignKey: 'pubId' });
 
 // A user can be an admin on many journals, and a journal can have many admins
-User.belongsToMany(Journal, { onDelete: 'CASCADE', as: 'journals', through: 'JournalAdmins', foreignKey: 'adminId' });
-Journal.belongsToMany(User, { onDelete: 'CASCADE', as: 'admins', through: 'JournalAdmins', foreignKey: 'journalId' });
+User.belongsToMany(Journal, { onDelete: 'CASCADE', as: 'journals', through: 'JournalAdmin', foreignKey: 'userId' });
+Journal.belongsToMany(User, { onDelete: 'CASCADE', as: 'admins', through: 'JournalAdmin', foreignKey: 'journalId' });
 
 // A user can follow many users, and a user can be followed by many users
 User.belongsToMany(User, { onDelete: 'CASCADE', as: 'followsUsers', through: 'FollowsUser', foreignKey: 'followerId' });
@@ -422,6 +431,7 @@ const db = {
 	Role: Role,
 	Highlight: Highlight,
 	Journal: Journal,
+	JournalAdmin: JournalAdmin,
 	ApiKey: ApiKey,
 	License: License,
 	UserLastReadPub: UserLastReadPub,
