@@ -1,8 +1,48 @@
-displayName: Journal
-description: Routes to access data about Journals
-get:
+displayName: Submits
+description: Routes to access data about a journal's submitted pubs
+get: 
+  description: Get submitted pubs
+  queryParameters:
+    journalId:
+      type: string
+      required: true
   responses:
     200:
       body:
         application/json:
-          example: true
+          example: |
+            {
+                id: 9,
+            }
+    500:
+      body:
+        application/json:
+          example: "Journal not found"
+put:
+  description: Change the isRejected value of a pubSubmit
+  body:
+    application/json:
+      formParameters:
+        pubId: 
+          description: id of the pub to be updated
+          required: true
+        journalId: 
+          description: id of the journal 
+          required: true
+        isRejected:
+          description: BOOLEAN dictating whether the submission has been rejected
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                "id": 15,
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating pub"
+            }

@@ -1,8 +1,46 @@
-displayName: Journal
-description: Routes to access data about Journals
-get:
+displayName: Features
+description: Routes to access data about a journals='s featured pubs
+get: 
+  description: Get all features pubsjournals
+  queryParameters:
+    journalId:
+      type: string
+      required: true
   responses:
     200:
       body:
         application/json:
-          example: true
+          example: |
+            {
+                id: 9,
+            }
+    500:
+      body:
+        application/json:
+          example: "Journal not found"
+post:
+  description: Create a new pub feature
+  body:
+    application/json:
+      formParameters:
+        pubId: 
+          description: id of the pub to be featured
+          required: true
+        journalId: 
+          description: id of the journal that will be featuring
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                "id": 15,
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error featuring pub"
+            }

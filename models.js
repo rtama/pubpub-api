@@ -275,7 +275,7 @@ const PubFeature = sequelize.define('PubFeature', { // Used to connect specific 
 	isDisplayed: Sequelize.BOOLEAN, // Whether the feature tag is displayed on the front of the pub
 });
 const PubSubmit = sequelize.define('PubSubmit', {
-	closed: Sequelize.BOOLEAN,
+	isRejected: Sequelize.BOOLEAN,
 }); // Used to connect specific journal to specific pub as submit destination
 const PubReaction = sequelize.define('PubReaction', {
 	inactive: Sequelize.BOOLEAN, // Used when a reaction is removed so we have a history of reactions and how they were applied/removed
