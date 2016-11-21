@@ -3,7 +3,7 @@ description: Routes to access data about a the labels associated with a pub
 get: 
   description: Get pub data. Includes connected user, discussion, label, etc data. If the user's cookie or token is included, private data (private discussions, versions, etc) are included.
   queryParameters:
-    slug:
+    pubId:
       type: string
       required: true
   responses:
@@ -23,17 +23,12 @@ post:
   body:
     application/json:
       formParameters:
-        slug: 
-          description: slug used for the pub url
+        pubId: 
+          description: id of the pub the label is being applied to
           required: true
-        title: 
-          description: title used for the new pub
+        labelId: 
+          description: id of the label to be applied
           required: true
-        previewImage:
-          description: preview image to be used for the new pub
-          required: true
-        description:
-          description: description of the new pub
   responses:
     200:
       body:
@@ -57,24 +52,11 @@ put:
     application/json:
       formParameters:
         pubId: 
-          description: id of the pub to be changed
+          description: id of the pub the label is being applied to
           required: true
-        slug: 
-          description: new slug 
-        title:
-          description: new title
-        description:
-          description: new description
-        previewImage:
-          description: new image
-        isClosed: 
-          description: new isClosed state
-        hideAuthors: 
-          description: new hideAuthors state
-        customAuthorList: 
-          description: new customAuthorList
-        licenseId: 
-          description: new License state
+        labelId: 
+          description: id of the label to be applied
+          required: true
         
   responses:
     200:
@@ -89,12 +71,16 @@ put:
               error : "Error updating pub"
             }
 delete:
-  description: Delete the pub
+  description: Delete the label relationship
   body:
     application/json:
       formParameters:
         pubId: 
-          description: id of the pub to be deleted
+          description: id of the pub the label is being applied to
+          required: true
+        labelId: 
+          description: id of the label to be applied
+          required: true
   responses:
     200:
       body:

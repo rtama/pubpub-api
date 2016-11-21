@@ -1,5 +1,5 @@
 import app from '../../server';
-import { Pub, User, Label, File, Journal, Version, Contributor, FollowsPub, License, InvitedReviewer, Reaction, Role } from '../../models';
+import { Pub, User, Label, File, Version, Contributor, Reaction, Role } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];

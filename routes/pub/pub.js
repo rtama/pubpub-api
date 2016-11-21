@@ -5,6 +5,8 @@ import { Pub, User, Label, File, Journal, Version, Contributor, FollowsPub, Lice
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];
 
 export function getPub(req, res, next) {
+	// Probably should add the option to search by pubId or slug.
+	
 	// Check if authenticated
 	// Make get request
 	// Return
@@ -142,7 +144,7 @@ export function deletePub(req, res, next) {
 	
 	// Check if authenticated, update, return true.
 
-	const user = req.user || { id: 1 };
+	const user = req.user || {};
 	if (!user) { return res.status(500).json('Not authorized'); }
 
 	Contributor.findOne({
