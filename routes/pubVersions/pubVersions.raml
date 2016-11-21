@@ -22,21 +22,28 @@ get:
         application/json:
           example: "Pub not found"
 post:
-  description: Create a new User
+  description: Create a new version. New files are added through this interface
   body:
     application/json:
       formParameters:
-        slug: 
-          description: slug used for the pub url
+        pubId: 
+          description: id of the Pub this version will be attached to
           required: true
-        title: 
-          description: title used for the new pub
+        versionMessage: 
+          description: message for this given version
           required: true
-        previewImage:
-          description: preview image to be used for the new pub
+        isPublished:
+          description: Boolean for whether this version should be published
           required: true
-        description:
-          description: description of the new pub
+        files: 
+          description: All files, those that are new should NOT include an "id" field and they will be added.
+        newFileAttribution: 
+          description: |
+            Array of objects with {source: [file.name], destination: [file.name]}. 
+        newFileRelations: 
+          description: |
+            Array of objects with {fileName: [file.name], userId: [user's id]}. 
+
   responses:
     200:
       body:
@@ -54,8 +61,7 @@ post:
             }
 put:
   description: |
-    Used to allow a pub editor to update the pub. 
-    Things like 'distinguishedClone' or fields that are applied by outside users have their own 
+    Set the isPublished value of a version to TRUE
   body:
     application/json:
       formParameters:

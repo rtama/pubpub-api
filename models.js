@@ -126,7 +126,7 @@ const File = sequelize.define('File', {
 const Version = sequelize.define('Version', {
 	versionMessage: { type: Sequelize.TEXT },
 	isPublished: { type: Sequelize.BOOLEAN },
-	datePublished: { type: Sequelize.DATE },
+	// datePublished: { type: Sequelize.DATE }, // Don't need this, as the updated date has to be the publish date
 	doi: { type: Sequelize.TEXT },
 	// exportPDF: { type: Sequelize.TEXT }, // TODO: Perhaps this is an external service for all of the exports. Maintains it's own cache, can iterate on its own. No dependency in the versions for old export styles
 	// exportMarkdown: { type: Sequelize.TEXT },
@@ -241,7 +241,7 @@ const Reaction = sequelize.define('Reaction', {
 });
 
 const VersionFile = sequelize.define('VersionFile', {}); // Used to connect specific files to a specific version
-const Attribution = sequelize.define('Attribution', {}); // Used to connect specific users to a specific file
+const FileAttribution = sequelize.define('FileAttribution', {}); // Used to connect specific users to a specific file
 const PubVersion = sequelize.define('PubVersion', {}); // Used to connect specific versions to a specific pub
 const FollowsPub = sequelize.define('FollowsPub', { // Used to connect specific user to a specific pub as follower
 	notifyOnNewVersion: Sequelize.BOOLEAN,
@@ -296,8 +296,8 @@ File.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'Ver
 Version.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'VersionFile', foreignKey: 'versionId' });
 
 // A user can be attributed with many files, and a file may attribute many users
-File.belongsToMany(User, { onDelete: 'CASCADE', as: 'users', through: 'Attribution', foreignKey: 'fileId' });
-User.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'Attribution', foreignKey: 'userId' });
+File.belongsToMany(User, { onDelete: 'CASCADE', as: 'users', through: 'FileAttribution', foreignKey: 'fileId' });
+User.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'FileAttribution', foreignKey: 'userId' });
 
 // A version can be used in many pubs, and a pub can have many versions
 Version.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubVersion', foreignKey: 'versionId' });
@@ -423,7 +423,7 @@ const db = {
 	UserLastReadPub: UserLastReadPub,
 	Contributor: Contributor,
 	VersionFile: VersionFile,
-	Attribution: Attribution,
+	FileAttribution: FileAttribution,
 	PubVersion: PubVersion,
 	FollowsPub: FollowsPub,
 	FollowsJournal: FollowsJournal,
