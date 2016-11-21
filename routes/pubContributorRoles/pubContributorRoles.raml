@@ -1,0 +1,87 @@
+displayName: ContributorRoles
+description: Routes to access data about a pub's contributor's roles
+get: 
+  description: Get all associated roles
+  queryParameters:
+    contributorId:
+      type: string
+      required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            [
+              {
+                "id": 1,
+                "title": "My super label",
+                "createdAt": "2016-11-21T21:56:21.111Z",
+                "updatedAt": "2016-11-21T21:56:21.111Z",
+                "journalId": null,
+                "userId": 1,
+                "pubId": null
+              }
+            ]
+    500:
+      body:
+        application/json:
+          example: "Pub not found"
+post:
+  description: Create a new connection from role to contributor
+  body:
+    application/json:
+      formParameters:
+        pubId: 
+          description: id of the pub the contributor belongs to
+          required: true
+        contributorId: 
+          description: id of the contributor
+          required: true
+        roleId: 
+          description: id of the role to be applied
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+              "roleId": 2,
+              "contributorId": 1,
+              "updatedAt": "2016-11-21T23:05:48.610Z",
+              "createdAt": "2016-11-21T23:05:48.610Z",
+              "inactive": null
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating ContributorRole"
+            }          
+delete:
+  description: Delete the label relationship
+  body:
+    application/json:
+      formParameters:
+        pubId: 
+          description: id of the pub the contributor belongs to
+          required: true
+        contributorId: 
+          description: id of the contributor
+          required: true
+        roleId: 
+          description: id of the role to be applied
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: "ContributorRole deleted"
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error deleting pub"
+            }
