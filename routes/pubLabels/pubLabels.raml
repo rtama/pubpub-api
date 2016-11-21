@@ -44,32 +44,6 @@ post:
             {
               error : "Error creating pub"
             }
-put:
-  description: |
-    Used to allow a pub editor to update the pub. 
-    Things like 'distinguishedClone' or fields that are applied by outside users have their own 
-  body:
-    application/json:
-      formParameters:
-        pubId: 
-          description: id of the pub the label is being applied to
-          required: true
-        labelId: 
-          description: id of the label to be applied
-          required: true
-        
-  responses:
-    200:
-      body:
-        application/json:
-          example: true
-    500:
-      body:
-        application/json:
-          example: |
-            {
-              error : "Error updating pub"
-            }
 delete:
   description: Delete the label relationship
   body:

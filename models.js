@@ -361,6 +361,7 @@ User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubsRead', through: 'UserLas
 Pub.belongsToMany(Reaction, { onDelete: 'CASCADE', as: 'reactions', through: 'PubReaction', foreignKey: 'pubId' });
 Reaction.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubReaction', foreignKey: 'reactionId' });
 // Reactions need to be tied to a user. We probably want to do something similar to how contributors is structured
+PubReaction.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
 
 // A File can be related to many other files
 File.belongsToMany(File, { onDelete: 'CASCADE', as: 'destinations', through: 'FileRelation', foreignKey: 'sourceFileId' });

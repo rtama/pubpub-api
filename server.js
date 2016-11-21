@@ -117,6 +117,7 @@ osprey.loadFile(path.join(__dirname, 'api.raml')).then(function (middleware) {
 	require('./routes/pubDiscussions/pubDiscussions.js');
 	require('./routes/pubVersion/pubVersion.js');
 	require('./routes/pubLabels/pubLabels.js');
+	require('./routes/pubReactions/pubReactions.js');
 	
 	/* ------------------- */
 	/* ------------------- */
