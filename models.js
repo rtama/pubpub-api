@@ -352,6 +352,8 @@ Journal.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubsFeatured', through: '
 // A Pub can be submitted to many journals, and a Journal can have many submitted pubs
 Pub.belongsToMany(Journal, { onDelete: 'CASCADE', as: 'journalsSubmitted', through: 'PubSubmit', foreignKey: 'pubId' });
 Journal.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubsSubmitted', through: 'PubSubmit', foreignKey: 'journalId' });
+PubSubmit.belongsTo(Journal, { onDelete: 'CASCADE', as: 'journal', foreignKey: 'journalId' });
+PubSubmit.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 
 // A Pub can be lastRead by many users, and a User can have many lastRead dates for different pubs
 Pub.belongsToMany(User, { onDelete: 'CASCADE', as: 'usersRead', through: 'UserLastReadPub', foreignKey: 'pubId' });

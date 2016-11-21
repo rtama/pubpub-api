@@ -6,7 +6,7 @@ const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];
 
 export function getPub(req, res, next) {
 	// Probably should add the option to search by pubId or slug.
-	
+
 	// Check if authenticated
 	// Make get request
 	// Return
@@ -32,7 +32,7 @@ export function getPub(req, res, next) {
 			{ model: Journal, as: 'journalsFeatured' },
 			{ model: Journal, as: 'journalsSubmitted' },
 			{ model: Pub, as: 'clones' },
-			{ model: InvitedReviewer, as: 'invitedReviewers', include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }, { model: Journal, as: 'inviterJournal' }] },
+			{ model: InvitedReviewer, as: 'invitedReviewers', attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }, { model: Journal, as: 'inviterJournal' }] },
 			{ model: License, as: 'license' },
 			{ model: Pub, as: 'cloneParent' }, // I think we may have to add a belongsTo
 		]
