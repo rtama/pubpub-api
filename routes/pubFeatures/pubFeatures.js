@@ -1,27 +1,60 @@
 import app from '../../server';
-import { Pub, User, Label, File, Journal, Version, Contributor, FollowsPub, License, InvitedReviewer, Reaction, Role } from '../../models';
+import { Journal, Contributor, PubFeature } from '../../models';
 
-// The singular 'Journal' doesn't really make sense here. This should perhaps be 'journalSubmissions'
-export function getJournal(req, res, next) {
-	// Return a single reviewer
+export function getFeatures(req, res, next) {
+	PubFeature.findAll({
+		where: { pubId: req.query.pubId },
+		include: [
+			{ model: Journal, as: 'journal' }
+		]
+	})
+	.then(function(pubFeaturesData) {
+		return res.status(201).json(pubFeaturesData);
+	})
+	.catch(function(err) {
+		console.error('Error in getFeatures: ', err);
+		return res.status(500).json(err.message);
+	});
 }
-app.get('/pub/journal', getJournal);
+app.get('/pub/features', getFeatures);
 
-export function postJournal(req, res, next) {
-	// Create a new journal submission
-	// Return new submission object
+// export function postFeature(req, res, next) {
+// 	// Create a new journal submission
+// 	// Return new submission object
 	
-}
-app.post('/pub/journal', postJournal);
+// }
+// app.post('/pub/features', postFeature);
 
-export function putJournal(req, res, next) {
+export function putFeature(req, res, next) {
 	// Is there anything we want to allow to change?
 	// whether the journal is featured on the front of the pub?
 	// Users with edit access can set the PubFeature value for 'isDisplayed'
-}
-app.put('/pub/journal', putJournal);
+	const user = req.user || {};
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
-export function deleteJournal(req, res, next) {
-	// Set submission inactive
+	Contributor.findOne({
+		where: { pubId: req.body.pubId, userId: user.id },
+		raw: true,
+	})
+	.then(function(contributor) {
+		if (!contributor || (!contributor.canEdit && !contributor.isAuthor)) {
+			throw new Error('Not Authorized to edit this pub');
+		}
+		return PubFeature.update({ isDisplayed: !!req.body.isDisplayed }, {
+			where: { pubId: req.body.pubId, journalId: req.body.journalId }			
+		});
+	})
+	.then(function(countUpdated) {
+		return res.status(201).json(countUpdated);
+	})
+	.catch(function(err) {
+		console.error('Error in putFeature: ', err);
+		return res.status(500).json(err.message);
+	});
 }
-app.delete('/pub/journal', deleteJournal);
+app.put('/pub/features', putFeature);
+
+// export function deleteFeature(req, res, next) {
+// 	// Set submission inactive
+// }
+// app.delete('/pub/features', deleteFeature);
