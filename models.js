@@ -285,6 +285,11 @@ const PubLabel = sequelize.define('PubLabel', {
 }); // Used to connect specific label to specific pub
 
 const FileRelation = sequelize.define('FileRelation', {
+	// id: { 
+	// 	type: Sequelize.INTEGER, 
+	// 	primaryKey: true, 
+	// 	autoIncrement: true 
+	// },
 	type: Sequelize.TEXT, // Used to describe the relationship between to files
 }); // Used to connect specific file to specific file
 

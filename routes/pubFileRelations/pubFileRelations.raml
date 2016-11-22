@@ -1,0 +1,76 @@
+displayName: File Relation
+description: Routes to access data about a pub's file's relations
+get: 
+  description: Get a single file and its relations
+  queryParameters:
+    fileId:
+      type: string
+      required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                id: 9,
+            }
+    500:
+      body:
+        application/json:
+          example: "Pub not found"
+post:
+  description: Create a new FileRelation
+  body:
+    application/json:
+      formParameters:
+        type: 
+          description: type of relation
+          required: true
+        sourceFileId: 
+          description: id of the source file
+          required: true
+        destinationFileId:
+          description: id of the destination file
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+              "type": "Generator",
+              "sourceFileId": 1,
+              "destinationFileId": 2,
+              "updatedAt": "2016-11-22T01:25:42.902Z",
+              "createdAt": "2016-11-22T01:25:42.902Z"
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating pub"
+            }
+delete:
+  description: Delete a file relation
+  body:
+    application/json:
+      formParameters:
+        sourceFileId: 
+          description: id of the source file
+          required: true
+        destinationFileId:
+          description: id of the destination file
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: "true"
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error deleting pub"
+            }
