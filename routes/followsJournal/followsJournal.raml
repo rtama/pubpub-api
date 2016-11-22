@@ -1,0 +1,97 @@
+displayName: Follows Journal
+description: Routes to access data about a Journal's followers
+get: 
+  description: Get a list of all followers
+  queryParameters:
+    journalId:
+      type: string
+      required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            [
+              {
+                  "id": 1,
+                  "username": "jane-doe",
+                  "firstName": "Jane",
+                  "lastName": "Doe",
+                  "image": "http://images.com/example.jpg"
+              }
+            ]
+    500:
+      body:
+        application/json:
+          example: "Journal not found"
+post:
+  description: Create a new Follow
+  body:
+    application/json:
+      formParameters:
+        journalId: 
+          description: id of the journal that will be followed.
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+              "followerId": 1,
+              "journalId": 3,
+              "updatedAt": "2016-11-22T02:10:21.874Z",
+              "createdAt": "2016-11-22T02:10:21.874Z",
+              "notifyOnNewVersion": null,
+              "notifyOnNewFeature": null,
+              "notifyOnNewDiscussions": null
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error following journal"
+            }
+put:
+  description: edit the values of the follow
+  body:
+    application/json:
+      formParameters:
+        journalId: 
+          description: id of the journal that will have follow data updated.
+          required: true
+        notifyOnNewVersion:
+          description: whether notifications are created for new versions. 
+  responses:
+    200:
+      body:
+        application/json:
+          example: "true"
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error updated Follow"
+            }            
+delete:
+  description: Remove a follow
+  body:
+    application/json:
+      formParameters:
+        journalId: 
+          description: id of the journal to remove follow from
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: "true"
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error deleting follow"
+            }

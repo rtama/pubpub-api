@@ -3,6 +3,8 @@ import { User, FileAttribution, File } from '../../models';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];
 
+// TODO: How are file attributions authorizations handled?
+
 export function getFileAttributions(req, res, next) {
 	// Probably should return all labels associated
 	// TODO: how do we privelege files? We probably need to assign them to pubs somehow.

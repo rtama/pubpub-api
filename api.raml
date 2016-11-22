@@ -25,3 +25,10 @@ mediaType: application/json
 /logout: !include routes/logout/logout.raml
 /pub: !include routes/pub/pub.raml
 /journal: !include routes/journal/journal.raml
+/follows:
+  displayName: Follows
+  description: Routes to access data about a followers
+  /pub: !include routes/followsPub/followsPub.raml
+  /journal: !include routes/followsJournal/followsJournal.raml
+  /user: !include routes/followsUser/followsUser.raml
+  /label: !include routes/followsLabel/followsLabel.raml
