@@ -1,0 +1,72 @@
+displayName: File Attribution
+description: Routes to access data about a pub's file's attributions
+get: 
+  description: Get a single file and its attributions
+  queryParameters:
+    fileId:
+      type: string
+      required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                id: 9,
+            }
+    500:
+      body:
+        application/json:
+          example: "Pub not found"
+post:
+  description: Create a new FileRelation
+  body:
+    application/json:
+      formParameters:
+        fileId: 
+          description: id of the source file
+          required: true
+        userId:
+          description: id of the user to be attributed
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+              "fileId": 1,
+              "userId": 1,
+              "updatedAt": "2016-11-22T01:41:11.348Z",
+              "createdAt": "2016-11-22T01:41:11.348Z"
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating pub"
+            }
+delete:
+  description: Delete a file attribution
+  body:
+    application/json:
+      formParameters:
+        fileId: 
+          description: id of the source file
+          required: true
+        userId:
+          description: id of the user to be attributed
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: "true"
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error deleting pub"
+            }

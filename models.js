@@ -285,11 +285,11 @@ const PubLabel = sequelize.define('PubLabel', {
 }); // Used to connect specific label to specific pub
 
 const FileRelation = sequelize.define('FileRelation', {
-	// id: { 
-	// 	type: Sequelize.INTEGER, 
-	// 	primaryKey: true, 
-	// 	autoIncrement: true 
-	// },
+	id: { 
+		type: Sequelize.INTEGER, 
+		primaryKey: true, 
+		autoIncrement: true 
+	},
 	type: Sequelize.TEXT, // Used to describe the relationship between to files
 }); // Used to connect specific file to specific file
 
@@ -310,7 +310,7 @@ File.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'Ver
 Version.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'VersionFile', foreignKey: 'versionId' });
 
 // A user can be attributed with many files, and a file may attribute many users
-File.belongsToMany(User, { onDelete: 'CASCADE', as: 'users', through: 'FileAttribution', foreignKey: 'fileId' });
+File.belongsToMany(User, { onDelete: 'CASCADE', as: 'attributions', through: 'FileAttribution', foreignKey: 'fileId' });
 User.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'FileAttribution', foreignKey: 'userId' });
 
 // A version can be used in many pubs, and a pub can have many versions
