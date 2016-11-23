@@ -72,7 +72,7 @@ export function putContributor(req, res, next) {
 	// Check if authenticated. Update. Return true.
 
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	// Filter to only allow certain fields to be updated
 	const updatedContributor = {};
@@ -108,7 +108,7 @@ export function deleteContributor(req, res, next) {
 	// Check if authenticated. Remove. Return true.
 	
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 
 	Contributor.findOne({

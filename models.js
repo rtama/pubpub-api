@@ -115,6 +115,8 @@ const Pub = sequelize.define('Pub', {
 	// licenseId
 });
 
+// How do files know their history?
+// Do we need to encode parentFile and rootFile to track histories?
 const File = sequelize.define('File', {
 	type: { type: Sequelize.STRING },
 	name: { type: Sequelize.STRING },
@@ -122,7 +124,8 @@ const File = sequelize.define('File', {
 	value: { type: Sequelize.TEXT },
 });
 
-
+// How do versions know their history?
+// Do we need to encode parentVersion and rootVersion to track histories?
 const Version = sequelize.define('Version', {
 	versionMessage: { type: Sequelize.TEXT },
 	isPublished: { type: Sequelize.BOOLEAN },
