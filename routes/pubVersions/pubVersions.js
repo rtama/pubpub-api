@@ -1,7 +1,9 @@
 import Promise from 'bluebird';
+import request from 'request-promise';
 import app from '../../server';
 import { User, Version, File, FileRelation, FileAttribution, Contributor, VersionFile, PubVersion } from '../../models';
 
+const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];
 
 export function getVersions(req, res, next) {
 	// Return a single version
@@ -23,7 +25,7 @@ export function getVersions(req, res, next) {
 		return Version.findOne({
 			where: whereQuery,
 			include: [
-				{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'users' }] }
+				{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'attributions', attributes: userAttributes }] }
 			]
 		});
 	})
@@ -60,6 +62,12 @@ export function postVersion(req, res, next) {
 	// Can have undefined values to start, upload files, complete object
 	// Use object to build attributions, relations, etc
 	// Maybe explcitly get all the files associated with the version, so that we can't unathenticated attributions, 
+
+
+
+
+
+
 	const files = req.body.files || [];
 	const oldFiles = files.filter((file)=> {
 		return file.id !== undefined;
@@ -67,16 +75,29 @@ export function postVersion(req, res, next) {
 	const newFiles = files.filter((file)=> {
 		return file.id === undefined;
 	});
-	const createFiles = File.bulkCreate(newFiles, { returning: true });
-	const createVersion = Version.create({
-		versionMessage: req.body.versionMessage,
-		isPublished: !!req.body.isPublished,
-
+	
+	// Parse contents from files if necessary
+	const readFilePromises = newFiles.map((file)=> {
+		if (file.type === 'text/markdown') { return request(file.url); }
+		return null;
 	});
 
 	let newVersionId;
 
-	Promise.all([createFiles, createVersion])
+	Promise.all(readFilePromises)
+	.then(function(contents) {
+		const newFilesWithContent = newFiles.map((file, index)=> {
+			return { ...file, content: contents[index] };
+		});
+
+		const createFiles = File.bulkCreate(newFilesWithContent, { returning: true });
+		const createVersion = Version.create({
+			versionMessage: req.body.versionMessage,
+			isPublished: !!req.body.isPublished,
+
+		});
+		return Promise.all([createFiles, createVersion]);
+	})
 	.spread(function(addedFiles, addedVersion) {
 		newVersionId = addedVersion.id;
 		const newVersionFileEntries = [...oldFiles, ...addedFiles].map((file)=> {
@@ -90,19 +111,22 @@ export function postVersion(req, res, next) {
 		// Find the files for this given version
 		return Version.findOne({
 			where: { id: newVersionId },
-			include: [{ model: File, as: 'files' }]
+			include: [{ model: File, as: 'files' }],
 		});
 	})
 	.then(function(versionData) { 
 		const nameIdObject = {};
-		versionData.files.map((file)=> {
+		const versionDataFiles = versionData.dataValues.files || [];
+		versionDataFiles.map((file)=> {
 			nameIdObject[file.name] = file.id;
 		});
 
-		const newFileRelations = req.body.newFileRelations.map((newRelation)=> {
+		const newFileRelationsInput = req.body.newFileRelations || [];
+		const newFileRelations = newFileRelationsInput.map((newRelation)=> {
 			return { sourceFileId: nameIdObject[newRelation.source], destinationFileId: nameIdObject[newRelation.destination] };
 		});
-		const newFileAttributions = req.body.newFileAttributions.map((newAttribution)=> {
+		const newFileAttributionsInput = req.body.newFileAttributions || [];
+		const newFileAttributions = newFileAttributionsInput.map((newAttribution)=> {
 			return { fileId: nameIdObject[newAttribution.fileName], userId: newAttribution.userId };
 		});
 
@@ -114,7 +138,7 @@ export function postVersion(req, res, next) {
 		return Version.findOne({
 			where: { id: newVersionId },
 			include: [
-				{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'users' }] }
+				{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'attributions', attributes: userAttributes }] }
 			]
 		});
 	})
@@ -125,6 +149,11 @@ export function postVersion(req, res, next) {
 		console.error('Error in postVersion: ', err);
 		return res.status(500).json(err.message);
 	});
+
+
+
+
+
 
 
 	// Make files
