@@ -1,0 +1,25 @@
+displayName: Licenses
+description: Routes to access licenses available on PubPub
+get: 
+  description: Return array of all licenses, or, if licenseId is provided, return an array with a single specific license
+  queryParameters:
+    licenseId:
+      type: string
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            [
+              {
+              "id": 1,
+              "title": "CC BY 3.0 US",
+              "description": "Share — copy and redistribute the material in any medium or format\nAdapt — remix, transform, and build upon the material\nfor any purpose, even commercially.\nThe licensor cannot revoke these freedoms as long as you follow the license terms.",
+              "url": "https://creativecommons.org/licenses/by/3.0/us/",
+              "image": "https://creativecommons.org/images/deed/by.png"
+              }
+            ]
+    500:
+      body:
+        application/json:
+          example: "No Licenses found"

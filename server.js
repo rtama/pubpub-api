@@ -109,6 +109,7 @@ osprey.loadFile(path.join(__dirname, 'api.raml')).then(function (middleware) {
 	/* API Endpoints */
 	/* ------------------- */
 	require('./routes/search/search.js');
+	require('./routes/licenses/licenses.js');
 	require('./routes/signUp/signUp.js');
 	require('./routes/user/user.js');
 	require('./routes/userLabels/userLabels.js');
