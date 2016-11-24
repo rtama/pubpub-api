@@ -81,6 +81,11 @@ export function postJournal(req, res, next) {
 	})
 	.catch(function(err) {
 		console.error('Error in postJournal: ', err);
+		// const errorSimple = err.message || '';
+		const errorsArray = err.errors || [];
+		const errorSpecific = errorsArray[0] || {};
+
+		if (errorSpecific.message === 'slug must be unique') { return res.status(500).json('Slug already used'); }
 		return res.status(500).json(err.message);
 	});
 }
