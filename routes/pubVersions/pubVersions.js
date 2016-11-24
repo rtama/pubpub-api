@@ -150,12 +150,6 @@ export function postVersion(req, res, next) {
 		return res.status(500).json(err.message);
 	});
 
-
-
-
-
-
-
 	// Make files
 	// Make version
 	// Attach files to version (create VersionFiles records)

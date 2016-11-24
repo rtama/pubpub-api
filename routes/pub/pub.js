@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import app from '../../server';
-import { Pub, User, Label, File, Journal, Version, Contributor, FollowsPub, License, InvitedReviewer, Reaction, Role } from '../../models';
+import { Pub, User, Label, File, Journal, Version, Contributor, FollowsPub, License, InvitedReviewer, Reaction, Role, PubSubmit, PubFeature } from '../../models';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];
 
@@ -29,8 +29,10 @@ export function getPub(req, res, next) {
 			},
 			{ model: Label, as: 'labels', through: { attributes: [] } }, // These are labels applied to the pub
 			{ model: Label, as: 'pubLabels' }, // These are labels owned by the pub, and used for discussions. 
-			{ model: Journal, as: 'journalsFeatured' },
-			{ model: Journal, as: 'journalsSubmitted' },
+			// { model: Journal, as: 'journalsFeatured' },
+			// { model: Journal, as: 'journalsSubmitted' },
+			{ model: PubSubmit, as: 'pubSubmits', include: [{ model: Journal, as: 'journal' }] },
+			{ model: PubFeature, as: 'pubFeatures', include: [{ model: Journal, as: 'journal' }] },
 			{ model: Pub, as: 'clones' },
 			{ model: InvitedReviewer, as: 'invitedReviewers', attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }, { model: Journal, as: 'inviterJournal' }] },
 			{ model: License, as: 'license' },
