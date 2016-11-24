@@ -84,25 +84,6 @@ app.get('/favicon.ico', function(req, res) {
 	res.end();
 });
 
-app.get('/search/user', function(req, res) {
-	User.findAll({
-		where: {
-			$or: [
-				{ firstName: { ilike: '%' + req.query.q + '%' } },
-				{ lastName: { ilike: '%' + req.query.q + '%' } },
-				{ username: { ilike: '%' + req.query.q + '%' } },
-			]
-		},
-		attributes: ['id', 'username', 'firstName', 'lastName', 'image']
-	})
-	.then(function(results) {
-		return res.status(201).json(results);
-	})
-	.catch(function(err) {
-		console.error('Error in searchUser: ', err);
-		return res.status(500).json(err.message);
-	});
-});
 /* ------------------- */
 /* Start osprey server */
 /* ------------------- */
@@ -127,6 +108,7 @@ osprey.loadFile(path.join(__dirname, 'api.raml')).then(function (middleware) {
 	/* ------------------- */
 	/* API Endpoints */
 	/* ------------------- */
+	require('./routes/search/search.js');
 	require('./routes/signUp/signUp.js');
 	require('./routes/user/user.js');
 	require('./routes/userLabels/userLabels.js');
