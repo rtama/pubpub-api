@@ -57,7 +57,7 @@ const User = sequelize.define('User', {
 	lastName: { type: Sequelize.STRING, allowNull: false },
 	image: { type: Sequelize.STRING },
 	email: { 
-		type: Sequelize.STRING, 
+		type: Sequelize.TEXT, 
 		allowNull: false, 
 		unique: true,
 		validate: {
@@ -146,6 +146,7 @@ const License = sequelize.define('License', {
 
 const Label = sequelize.define('Label', {
 	title: { type: Sequelize.TEXT },
+	color: { type: Sequelize.STRING },
 	// isPrivate: { type: Sequelize.BOOLEAN }, // Perhaps some labels could be private. If owned by a journal or user, they could be used to keep track of private organizations
 	// journalId: journalId is used if a label is owned by a particular journal. These labels are used for collections
 	// pubId: pubId is used to allow a pub to set it's own list of privately-editable labels for discussions.
@@ -212,8 +213,7 @@ const Contributor = sequelize.define('Contributor', {
 const InvitedReviewer = sequelize.define('InvitedReviewer', {
 	// email and name only used if not tied to an existing pubpub user
 	email: { 
-		type: Sequelize.STRING, 
-		allowNull: false, 
+		type: Sequelize.TEXT,  
 		validate: {
 			isEmail: true
 		} 

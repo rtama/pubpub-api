@@ -81,7 +81,14 @@ export function postPub(req, res, next) {
 			followerId: user.id,
 			pubId: newPub.dataValues.id
 		});
-		return Promise.all([createContributor, createFollow]);
+		// Create default pub-owned labels
+		const createLabels = Label.bulkCreate([
+			{ pubId: newPub.dataValues.id, title: 'question', color: '#f39c12' },
+			{ pubId: newPub.dataValues.id, title: 'review', color: '#3498db' },
+			{ pubId: newPub.dataValues.id, title: 'copy editing', color: '#3498db' },
+		]);
+		
+		return Promise.all([createContributor, createFollow, createLabels]);
 	})
 	.then(function() {
 		return Pub.findOne({

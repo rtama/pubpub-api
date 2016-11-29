@@ -44,7 +44,18 @@ export function postReviewer(req, res, next) {
 		inviterJournalId: req.body.inviterJournalId
 	})
 	.then(function(newInvitedReviewer) {
-		return res.status(201).json(newInvitedReviewer);
+		return InvitedReviewer.findOne({
+			where: { id: newInvitedReviewer.id },
+			attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId'], 
+			include: [
+				{ model: User, as: 'invitedUser', attributes: userAttributes }, 
+				{ model: User, as: 'inviterUser', attributes: userAttributes }, 
+				{ model: Journal, as: 'inviterJournal' }
+			],
+		});
+	})
+	.then(function(invitedReviewerData) {
+		return res.status(201).json(invitedReviewerData);
 	})
 	.catch(function(err) {
 		console.error('Error in postReviewers: ', err);
