@@ -64,7 +64,7 @@ export function postDiscussion(req, res, next) {
 			where: { slug: newSlug },
 			include: [
 				{ model: Contributor, as: 'contributors', include: [{ model: Role, as: 'roles' }, { model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
-				{ model: Version, as: 'versions', include: [{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'users' }] }] },
+				// { model: Version, as: 'versions', include: [{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'users' }] }] },
 				{ model: Label, as: 'labels' },
 				{ model: Reaction, as: 'reactions' },
 			]
