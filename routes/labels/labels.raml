@@ -1,0 +1,123 @@
+displayName: Labels
+description: Routes to access data about labels
+get: 
+  description: Get all labels
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            [
+              {
+                  "id": 1,
+                  "title": "Biology",
+                  "color": null
+              },
+              {
+                  "id": 2,
+                  "title": "Physics",
+                  "color": "#335529"
+              }
+            ]
+    500:
+      body:
+        application/json:
+          example: "Pub not found"
+post:
+  description: Create a Label. Currently, labels can only be created if associated with a journal, user, of pub.
+  body:
+    application/json:
+      formParameters:
+        userId: 
+          description: id of the user the label is owned by
+        pubId: 
+          description: id of the pub the label is owned by
+        journalId: 
+          description: id of the pub the label is owned by
+        title: 
+          description: title of the label
+          required: true
+        color: 
+          description: color of the label
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+              id: 5,
+              userId: 4,
+              title: "My Physics Label",
+              color: "#ff0000",
+              updatedAt: "2016-11-30T21:50:45.124Z",
+              createdAt: "2016-11-30T21:50:45.124Z",
+              journalId: null,
+              pubId: null
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating label"
+            }
+put:
+  description: Update a Label. Currently, labels can only be updated if associated with a journal, user, of pub.
+  body:
+    application/json:
+      formParameters:
+        userId: 
+          description: id of the user the label is owned by
+        pubId: 
+          description: id of the pub the label is owned by
+        journalId: 
+          description: id of the pub the label is owned by
+        labelId: 
+          description: id of the label to be updated
+          required: true
+        title: 
+          description: title of the updated label
+        color: 
+          description: color of the updated label
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                "id": 15,
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating pub"
+            }
+delete:
+  description: Delete the label
+  body:
+    application/json:
+      formParameters:
+        userId: 
+          description: id of the user the label is owned by
+        pubId: 
+          description: id of the pub the label is owned by
+        journalId: 
+          description: id of the pub the label is owned by
+        labelId: 
+          description: id of the pub the label is being applied to
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: true
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error deleting pub"
+            }

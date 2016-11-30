@@ -1,5 +1,5 @@
 import app from '../../server';
-import { Pub, User, Label, File, Version, Contributor, Reaction, Role } from '../../models';
+import { Pub, User, Label, PubLabel, File, Version, Contributor, Reaction, Role } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];
@@ -56,8 +56,13 @@ export function postDiscussion(req, res, next) {
 			pubId: newDiscussion.dataValues.id,
 			isAuthor: true,
 		});
+		const newLabels = req.body.labels.map((labelId)=> {
+			return { pubId: newDiscussion.dataValues.id, labelId: labelId };
+		});
+		const createPubLabels = PubLabel.bulkCreate(newLabels);
+		
 		// Create versions, labels, files here?
-		return Promise.all([createContributor]);
+		return Promise.all([createContributor, createPubLabels]);
 	})
 	.then(function() {
 		return Pub.findOne({

@@ -31,8 +31,13 @@ export function postLabel(req, res, next) {
 		pubId: req.body.pubId,
 		labelId: req.body.labelId,
 	})
-	.then(function(newLabel) {
-		return res.status(201).json(newLabel);
+	.then(function(newPubLabel) {
+		return Label.findOne({
+			where: { id: newPubLabel.labelId }
+		});
+	})
+	.then(function(addedLabel) {
+		return res.status(201).json(addedLabel);
 	})
 	.catch(function(err) {
 		console.error('Error in postLabels: ', err);
