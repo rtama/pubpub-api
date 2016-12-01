@@ -103,7 +103,7 @@ export function putJournal(req, res, next) {
 	// Filter to only allow certain fields to be updated
 	const updatedJournal = {};
 	Object.keys(req.body).map((key)=> {
-		if (['slug', 'name', 'shortDescription', 'longDescription', 'reviewDescription', 'logo', 'icon', 'website', 'twitter', 'facebook', 'headerMode', 'headerAlign', 'headerImage'].indexOf(key) > -1) {
+		if (['slug', 'name', 'shortDescription', 'longDescription', 'reviewDescription', 'logo', 'icon', 'website', 'twitter', 'facebook', 'headerColor','headerMode', 'headerAlign', 'headerImage'].indexOf(key) > -1) {
 			updatedJournal[key] = req.body[key];
 		} 
 	});

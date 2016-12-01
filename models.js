@@ -187,6 +187,7 @@ const Journal = sequelize.define('Journal', {
 	website: Sequelize.STRING,
 	twitter: Sequelize.STRING,
 	facebook: Sequelize.STRING,
+	headerColor: Sequelize.STRING,
 	headerMode: Sequelize.STRING,
 	headerAlign: Sequelize.STRING,
 	headerImage: Sequelize.STRING,
