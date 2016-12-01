@@ -56,11 +56,12 @@ export function postDiscussion(req, res, next) {
 			pubId: newDiscussion.dataValues.id,
 			isAuthor: true,
 		});
-		const newLabels = req.body.labels.map((labelId)=> {
+		const labels = req.body.labels || [];
+		const newLabels = labels.map((labelId)=> {
 			return { pubId: newDiscussion.dataValues.id, labelId: labelId };
 		});
 		const createPubLabels = PubLabel.bulkCreate(newLabels);
-		
+
 		// Create versions, labels, files here?
 		return Promise.all([createContributor, createPubLabels]);
 	})
