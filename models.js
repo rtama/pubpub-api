@@ -120,6 +120,7 @@ const Pub = sequelize.define('Pub', {
 const File = sequelize.define('File', {
 	type: { type: Sequelize.STRING },
 	name: { type: Sequelize.STRING },
+	path: { type: Sequelize.STRING },
 	url: { type: Sequelize.TEXT },
 	content: { type: Sequelize.TEXT },
 });
