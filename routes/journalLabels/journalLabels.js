@@ -1,15 +1,18 @@
 import app from '../../server';
-import { JournalAdmin, Label } from '../../models';
+import { Label, PubLabel, JournalAdmin, Journal } from '../../models';
 
+// These labels are to allow journal admins to apply labels (collections) to specific pubs. 
+// It is similar to the pubLabels routes, but scoped to the journal's labels (collections).
 export function getLabels(req, res, next) {
-	// Probably should return all labels associated to journal
-	// Do we populate pubs associated with those labels?
-	Label.findAll({
-		where: { journalId: req.query.journalId },
+	Journal.findOne({
+		where: { id: req.query.journalId },
+		include: [
+			{ model: Label, as: 'collections' }, // These are labels owned by the journal
+		]
 	})
 	.then(function(labelsData) {
-		if (!labelsData) { return res.status(500).json('Labels not found'); }
-		return res.status(201).json(labelsData);
+		if (!labelsData || !labelsData.collections.length) { return res.status(500).json('Labels not found'); }
+		return res.status(201).json(labelsData.collections);
 	})
 	.catch(function(err) {
 		console.error('Error in getLabels: ', err);
@@ -19,27 +22,20 @@ export function getLabels(req, res, next) {
 app.get('/journal/labels', getLabels);
 
 export function postLabel(req, res, next) {
-	// Authenticate
-	// Add a new journal-owned label
-	
-	const user = req.user || {};
-	if (!user.id) { return res.status(500).json('Not authorized'); }
-
-	JournalAdmin.findOne({
-		where: { journalId: req.body.journalId, userId: user.id },
-		raw: true,
+	// Add a new journal-owned label (collection) to a pub
+	// These are already existing labels that we're adding
+	// Authenticate. If the label to be applied has the journalId in which the user is an admin of.
+	PubLabel.create({
+		pubId: req.body.pubId,
+		labelId: req.body.labelId,
 	})
-	.then(function(journalAdmin) {
-		if (!journalAdmin) {
-			throw new Error('Not Authorized to edit this journal');
-		}
-		return Label.create({
-			journalId: req.body.journalId,
-			title: req.body.title,
+	.then(function(newPubLabel) {
+		return Label.findOne({
+			where: { id: newPubLabel.labelId }
 		});
 	})
-	.then(function(newLabel) {
-		return res.status(201).json(newLabel);
+	.then(function(addedLabel) {
+		return res.status(201).json(addedLabel);
 	})
 	.catch(function(err) {
 		console.error('Error in postLabels: ', err);
@@ -48,47 +44,12 @@ export function postLabel(req, res, next) {
 }
 app.post('/journal/labels', postLabel);
 
-export function putLabel(req, res, next) {
-	const user = req.user || {};
-	if (!user.id) { return res.status(500).json('Not authorized'); }
-
-	JournalAdmin.findOne({
-		where: { journalId: req.body.journalId, userId: user.id },
-		raw: true,
-	})
-	.then(function(journalAdmin) {
-		if (!journalAdmin) {
-			throw new Error('Not Authorized to edit this journal');
-		}
-		return Label.update({ title: req.body.title }, {
-			where: { id: req.body.labelId, journalId: req.body.journalId }
-		});
-	})
-	.then(function(updatedCount) {
-		return res.status(201).json(updatedCount);
-	})
-	.catch(function(err) {
-		console.error('Error in postLabels: ', err);
-		return res.status(500).json(err.message);
-	});
-}
-app.put('/journal/labels', putLabel);
 
 export function deleteLabel(req, res, next) {
-	const user = req.user || {};
-	if (!user.id) { return res.status(500).json('Not authorized'); }
-
-	JournalAdmin.findOne({
-		where: { journalId: req.body.journalId, userId: user.id },
-		raw: true,
-	})
-	.then(function(journalAdmin) {
-		if (!journalAdmin) {
-			throw new Error('Not Authorized to edit this journal');
-		}
-		Label.destroy({
-			where: { journalId: req.body.journalId, id: req.body.labelId }
-		});
+	// This deletes the label relationship, not the label itself
+	// Authenticate
+	PubLabel.destroy({
+		where: { pubId: req.body.pubId, labelId: req.body.labelId }
 	})
 	.then(function(destroyedCount) {
 		return res.status(201).json(true);
