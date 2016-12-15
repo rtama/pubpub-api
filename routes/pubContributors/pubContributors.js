@@ -1,7 +1,7 @@
 import app from '../../server';
 import { User, Contributor, Role } from '../../models';
 
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];
+const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
 export function getContributors(req, res, next) {
 	// Get user

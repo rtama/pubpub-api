@@ -1,7 +1,7 @@
 import app from '../../server';
 import { FollowsPub, User } from '../../models';
 
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];
+const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
 export function getFollows(req, res, next) {
 	// Return a list of users that are following

@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 import app from '../../server';
 import { Pub, PubSubmit, PubFeature, User, Label, JournalAdmin, Journal, FollowsJournal, InvitedReviewer } from '../../models';
 
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];
+const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
 export function getJournal(req, res, next) {
 	// Probably should add the option to search by pubId or slug.

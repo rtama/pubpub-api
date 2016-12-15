@@ -3,7 +3,7 @@ import request from 'request-promise';
 import app from '../../server';
 import { User, Version, File, FileRelation, FileAttribution, Contributor, VersionFile, PubVersion } from '../../models';
 
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];
+const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
 export function getVersions(req, res, next) {
 	// Return a single version

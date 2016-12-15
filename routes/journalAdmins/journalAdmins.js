@@ -1,7 +1,7 @@
 import app from '../../server';
 import { User, JournalAdmin } from '../../models';
 
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];
+const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
 export function getJournalAdmins(req, res, next) {
 	// Get user

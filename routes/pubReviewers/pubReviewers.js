@@ -2,7 +2,7 @@ import app from '../../server';
 import { User, Journal, InvitedReviewer } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];
+const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
 export function getReviewers(req, res, next) {
 	// Return all reviewers
