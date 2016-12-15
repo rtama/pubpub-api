@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import app from '../../server';
-import { Pub, User, Label, JournalAdmin, Journal, FollowsJournal, InvitedReviewer } from '../../models';
+import { Pub, PubSubmit, PubFeature, User, Label, JournalAdmin, Journal, FollowsJournal, InvitedReviewer } from '../../models';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image'];
 
@@ -14,11 +14,15 @@ export function getJournal(req, res, next) {
 	Journal.findOne({
 		where: { slug: req.query.slug, inactive: { $not: true } },
 		include: [
-			{ model: User, as: 'admins', attributes: userAttributes }, 
+			{ model: JournalAdmin, as: 'admins', include: [{ model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
 			{ model: User, as: 'followers', attributes: userAttributes }, 
 			{ model: Label, as: 'collections' }, // These are labels owned by the pub, and used for discussions. 
-			{ model: Pub, as: 'pubsFeatured', include: [{ model: Label, as: 'labels', through: { attributes: [] } }] },
-			{ model: Pub, as: 'pubsSubmitted' },
+			// { model: Pub, as: 'pubsFeatured', include: [{ model: Label, as: 'labels', through: { attributes: [] } }] },
+			// { model: Pub, as: 'pubsSubmitted' },
+
+			{ model: PubSubmit, as: 'pubSubmits', include: [{ model: Pub, as: 'pub' }] },
+			{ model: PubFeature, as: 'pubFeatures', include: [{ model: Pub, as: 'pub', include: [{ model: Label, as: 'labels', through: { attributes: [] } }] }] },
+
 			{ model: InvitedReviewer, as: 'invitationsCreated', attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }] },
 		]
 		// include: [{ all: true }]

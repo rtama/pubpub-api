@@ -1,5 +1,5 @@
 import app from '../../server';
-import { Pub, PubFeature, JournalAdmin } from '../../models';
+import { Pub, PubFeature, PubSubmit, JournalAdmin } from '../../models';
 // can get all featured
 // Can create feature
 
@@ -35,6 +35,11 @@ export function postFeatures(req, res, next) {
 			throw new Error('Not Authorized to edit this journal');
 		}
 
+		return PubSubmit.update({ isFeatured: true }, {
+			where: { pubId: req.body.pubId, journalId: req.body.journalId }			
+		});
+	})
+	.then(function() {
 		return PubFeature.create({
 			pubId: req.body.pubId,
 			journalId: req.body.journalId
