@@ -118,26 +118,23 @@ app.post('/user', postUser);
 export function putUser(req, res, next) {
 	// Check if authenticated. Update. Find and return.
 
-	const username = req.body.username ? req.body.username.toLowerCase() : '';
-
-	const requestedUser = username;
-	const authenticated = req.user && req.user.username === requestedUser;
+	const userId = req.body.userId;
+	const authenticated = req.user && req.user.id === userId;
 	if (!authenticated) { return res.status(500).json('Unauthorized'); }
 
-	const updatedUser = { ...req.body }; // Remove the items you don't want to let be updated
-	delete updatedUser.id;
-	delete updatedUser.hash;
-	delete updatedUser.salt;
-	delete updatedUser.createdAt;
-	delete updatedUser.updatedAt;
-	delete updatedUser.isUnclaimed;
+	const updatedUser = {};
+	Object.keys(req.body).map((key)=> {
+		if (['username', 'firstName', 'lastName', 'image', 'email', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar'].indexOf(key) > -1) {
+			updatedUser[key] = req.body[key];
+		} 
+	});
 
 	User.update(updatedUser, {
-		where: { username: requestedUser }
+		where: { id: userId }
 	})
 	.then(function(updatedCount) {
 		return User.findOne({ 
-			where: { username: username },
+			where: { id: userId },
 			attributes: authenticatedUserAttributes
 		});
 	})
