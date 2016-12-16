@@ -22,7 +22,7 @@ export function getUser(req, res, next) {
 		where: { username: requestedUser, inactive: { $not: true } },
 		attributes: attributes,
 		include: [
-			{ model: Pub, as: 'pubs' },
+			{ model: Pub, as: 'pubs', include: [{ model: Pub, as: 'replyRootPub' }] },
 			{ model: Journal, as: 'journals' },
 			{ model: User, as: 'followers', attributes: unauthenticatedUserAttributes }, 
 			{ model: Pub, as: 'followsPubs' }, 

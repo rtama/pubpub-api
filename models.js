@@ -351,6 +351,7 @@ FollowsLabel.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'fol
 
 // A pub can have many discussions, but a discussion belongs to only a single parent pub
 Pub.hasMany(Pub, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'replyRootPubId' });
+Pub.belongsTo(Pub, { onDelete: 'CASCADE', as: 'replyRootPub', foreignKey: 'replyRootPubId' });
 // A discussion can have many children, but only has a single parent
 Pub.hasMany(Pub, { onDelete: 'CASCADE', as: 'childDiscussions', foreignKey: 'replyParentPubId' });
 
