@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import passport from 'passport';
 import app from '../../server';
-import { SignUp, User, Pub, Journal } from '../../models';
+import { SignUp, User, Pub, Journal, Label } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 
 const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email'];
@@ -24,6 +24,11 @@ export function getUser(req, res, next) {
 		include: [
 			{ model: Pub, as: 'pubs' },
 			{ model: Journal, as: 'journals' },
+			{ model: User, as: 'followers', attributes: unauthenticatedUserAttributes }, 
+			{ model: Pub, as: 'followsPubs' }, 
+			{ model: User, as: 'followsUsers' }, 
+			{ model: Journal, as: 'followsJournals' }, 
+			{ model: Label, as: 'followsLabels' }, 
 		]
 	})
 	.then(function(userData) {
