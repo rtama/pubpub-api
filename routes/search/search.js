@@ -1,5 +1,8 @@
 import app from '../../server';
+import Promise from 'bluebird';
 import { Pub, User, Label, Journal } from '../../models';
+
+const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
 export function searchUsers(req, res, next) {
 	User.findAll({
@@ -10,7 +13,7 @@ export function searchUsers(req, res, next) {
 				{ username: { ilike: '%' + req.query.q + '%' } },
 			]
 		},
-		attributes: ['id', 'username', 'firstName', 'lastName', 'image']
+		attributes: userAttributes
 	})
 	.then(function(results) {
 		return res.status(201).json(results);
@@ -46,6 +49,7 @@ app.get('/search/journal', searchJournals);
 export function searchPubs(req, res, next) {
 	Pub.findAll({
 		where: {
+			replyRootPubId: null,
 			$or: [
 				{ title: { ilike: '%' + req.query.q + '%' } },
 				{ slug: { ilike: '%' + req.query.q + '%' } },
@@ -85,3 +89,66 @@ export function searchLabels(req, res, next) {
 	});
 }
 app.get('/search/label', searchLabels);
+
+export function searchAll(req, res, next) {
+	const findPubs = Pub.findAll({
+		where: {
+			replyRootPubId: null,
+			$or: [
+				{ title: { ilike: '%' + req.query.q + '%' } },
+				{ slug: { ilike: '%' + req.query.q + '%' } },
+				{ description: { ilike: '%' + req.query.q + '%' } },
+			]
+		},
+		attributes: ['id', 'title', 'slug', 'description', 'previewImage']
+	});
+
+	const findUsers = User.findAll({
+		where: {
+			$or: [
+				{ firstName: { ilike: '%' + req.query.q + '%' } },
+				{ lastName: { ilike: '%' + req.query.q + '%' } },
+				{ username: { ilike: '%' + req.query.q + '%' } },
+			]
+		},
+		attributes: userAttributes
+	});
+
+	const findJournals = Journal.findAll({
+		where: {
+			$or: [
+				{ name: { ilike: '%' + req.query.q + '%' } },
+				{ slug: { ilike: '%' + req.query.q + '%' } },
+				{ shortDescription: { ilike: '%' + req.query.q + '%' } },
+			]
+		},
+		attributes: ['id', 'name', 'slug', 'shortDescription', 'logo', 'icon']
+	});
+
+	const findLabels = Label.findAll({
+		where: {
+			userId: null,
+			pubId: null,
+			journalId: null,
+			$or: [
+				{ title: { ilike: '%' + req.query.q + '%' } },
+			]
+		},
+		attributes: ['id', 'title']
+	});
+
+	Promise.all([findPubs, findUsers, findJournals, findLabels])
+	.then(function(results) {
+		return res.status(201).json({
+			pubs: results[0],
+			users: results[1],
+			journals: results[2],
+			labels: results[3],
+		});
+	})
+	.catch(function(err) {
+		console.error('Error in searchAll: ', err);
+		return res.status(500).json(err.message);
+	});
+}
+app.get('/search/all', searchAll);

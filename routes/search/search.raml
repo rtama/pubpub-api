@@ -98,4 +98,26 @@ description: Routes to access PubPub search features
           body:
             application/json:
               example: "No Labels found"               
+/all:
+    get: 
+      description: Search for pubs, users, journals, and labels by string.
+      queryParameters:
+        q:
+          type: string
+          required: true
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  pubs: [],
+                  users: [],
+                  journals: [],
+                  labels: []
+                }
+        500:
+          body:
+            application/json:
+              example: "No Labels found"               
     
