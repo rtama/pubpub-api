@@ -39,7 +39,7 @@ app.use(session({
 	}),
 	cookie: {
 		path: '/',
-		// domain: '127.0.0.1', // This was causing all sorts of mayhem. 
+		// domain: '127.0.0.1', // This was causing all sorts of mayhem.
 		httpOnly: false,
 		secure: false,
 		maxAge: 30 * 24 * 60 * 60 * 1000// = 30 days.
@@ -60,7 +60,7 @@ passport.use(new LocalStrategy(
 			return done(null, user);
 		})
 		.catch(function(err) {
-			console.log('Passport err', err);
+			console.log('Passport err (Local Auth)', err);
 			return done(err);
 		});
 	}
@@ -68,13 +68,26 @@ passport.use(new LocalStrategy(
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(function(req, res, next) {
-	// If basic auth headers exist
-	// And if req.user does not already have a user set from the cookie
-	// Grab them
-	// Look up User based on those headers
-	// If found, set req.user to the resulting user.
-	next();
+app.use(function(req, res, done) {
+	const authHeaders = new Buffer(req.headers.authorization.split(' ')[1], 'base64').toString();
+	const password = authHeaders.split(':')[1];
+	const username = authHeaders.split(':')[0];
+
+	if (req.user) {
+		done();
+	}
+
+	User.findOne({ where: { username: username } })
+	.then(function(user) {
+		if (!user) { return done(null, false, { message: 'Incorrect username.' }); }
+		if (user.accessToken !== password) { return done(null, false, { message: 'Incorrect password.' }); }
+		req.user = user;
+		return done(null, user);
+	})
+	.catch(function(err) {
+		console.log('Passport err (Basic Auth)', err);
+		return done(err);
+	});
 });
 
 passport.use(User.createStrategy());
@@ -149,7 +162,7 @@ osprey.loadFile(path.join(__dirname, 'api.raml')).then(function (middleware) {
 	require('./routes/followsJournal/followsJournal.js');
 	require('./routes/followsUser/followsUser.js');
 	require('./routes/followsLabel/followsLabel.js');
-	
+
 	/* ------------------- */
 	/* ------------------- */
 
