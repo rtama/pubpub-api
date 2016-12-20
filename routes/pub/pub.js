@@ -28,33 +28,6 @@ export function getPub(req, res, next) {
 					{ model: Reaction, as: 'reactions' },
 				] 
 			},
-			// { model: Pub,
-			// 	as: 'replyChildren',
-			// 	// required: false,
-			// 	include: [
-			// 		{ model: Contributor, as: 'contributors', include: [{ model: Role, as: 'roles' }, { model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
-			// 		// { model: Version, as: 'versions', include: [{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'attributions', attributes: userAttributes }] }] },
-			// 		{ model: Label, as: 'labels' },
-			// 		{ model: Reaction, as: 'reactions' },
-			// 	]
-			// },
-			// { 
-			// 	model: PubReply, 
-			// 	as: 'pubReplies',
-			// 	required: false,
-			// 	include: [
-			// 		{ 
-			// 			model: Pub, 
-			// 			as: 'childPub',
-			// 			include: [
-			// 				{ model: Contributor, as: 'contributors', include: [{ model: Role, as: 'roles' }, { model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
-			// 				// { model: Version, as: 'versions', include: [{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'attributions', attributes: userAttributes }] }] },
-			// 				{ model: Label, as: 'labels' },
-			// 				{ model: Reaction, as: 'reactions' },
-			// 			] 
-			// 		}
-			// 	]
-			// },
 			{ model: Label, as: 'labels', through: { attributes: [] } }, // These are labels applied to the pub
 			{ model: Label, as: 'pubLabels' }, // These are labels owned by the pub, and used for discussions. 
 			// { model: Journal, as: 'journalsFeatured' },

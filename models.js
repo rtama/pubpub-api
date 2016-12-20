@@ -290,10 +290,6 @@ const PubLabel = sequelize.define('PubLabel', {
 	inactive: Sequelize.BOOLEAN, // Used when a label is removed so we have a history of labels and how they were applied/removed
 }); // Used to connect specific label to specific pub
 
-const PubReply = sequelize.define('PubReply', {
-	inactive: Sequelize.BOOLEAN, // Used when a label is removed so we have a history of labels and how they were applied/removed
-}); // Used to connect specific label to specific pub
-
 const FileRelation = sequelize.define('FileRelation', {
 	id: { 
 		type: Sequelize.INTEGER, 
@@ -446,12 +442,6 @@ InvitedReviewer.belongsTo(Journal, { onDelete: 'CASCADE', as: 'inviterJournal', 
 // A user can have many apiKeys, but a key belongs to only a single user
 User.hasMany(ApiKey, { onDelete: 'CASCADE', as: 'apiKeys', foreignKey: 'userId' });
 
-Pub.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'replyRoot', through: 'PubReply', foreignKey: 'childPubId', otherKey: 'rootPubId' });
-Pub.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'replyChildren', through: 'PubReply', foreignKey: 'rootPubId', otherKey: 'childPubId' });
-// Pub.hasMany(PubReply, { onDelete: 'CASCADE', as: 'pubReplies', foreignKey: 'rootPubId' });
-// Pub.hasMany(PubReply, { onDelete: 'CASCADE', as: 'pubRoots', foreignKey: 'childPubId' });
-// PubReply.belongsTo(Pub, { onDelete: 'CASCADE', as: 'childPub', foreignKey: 'childPubId' });
-
 const db = {
 	SignUp: SignUp,
 	User: User,
@@ -482,7 +472,6 @@ const db = {
 	PubReaction: PubReaction,
 	FileRelation: FileRelation,
 	InvitedReviewer: InvitedReviewer,
-	PubReply: PubReply,
 };
 
 db.sequelize = sequelize;
