@@ -30,8 +30,6 @@ export function getPub(req, res, next) {
 			},
 			{ model: Label, as: 'labels', through: { attributes: [] } }, // These are labels applied to the pub
 			{ model: Label, as: 'pubLabels' }, // These are labels owned by the pub, and used for discussions. 
-			// { model: Journal, as: 'journalsFeatured' },
-			// { model: Journal, as: 'journalsSubmitted' },
 			{ model: PubSubmit, as: 'pubSubmits', include: [{ model: Journal, as: 'journal' }] },
 			{ model: PubFeature, as: 'pubFeatures', include: [{ model: Journal, as: 'journal' }] },
 			{ model: Pub, as: 'clones' },

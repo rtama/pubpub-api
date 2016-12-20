@@ -256,20 +256,20 @@ const VersionFile = sequelize.define('VersionFile', {}); // Used to connect spec
 const FileAttribution = sequelize.define('FileAttribution', {}); // Used to connect specific users to a specific file
 const PubVersion = sequelize.define('PubVersion', {}); // Used to connect specific versions to a specific pub
 const FollowsPub = sequelize.define('FollowsPub', { // Used to connect specific user to a specific pub as follower
-	notifyOnNewVersion: Sequelize.BOOLEAN,
-	notifyOnNewFeature: Sequelize.BOOLEAN,
-	notifyOnNewDiscussions: Sequelize.BOOLEAN,
+	notifyOnNewVersion: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnNewFeature: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnNewDiscussions: { type: Sequelize.BOOLEAN, defaultValue: true },
 	// TODO: Fill out the types of notifications for pubs, users, journals
 }); 
 const FollowsJournal = sequelize.define('FollowsJournal', { // Used to connect specific user to a specific journal as follower
-	notifyOnNewFeature: Sequelize.BOOLEAN,
-	notifyOnNewSubmission: Sequelize.BOOLEAN,
+	notifyOnNewFeature: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnNewSubmission: { type: Sequelize.BOOLEAN, defaultValue: true },
 }); 
 const FollowsUser = sequelize.define('FollowsUser', { // Used to connect specific user to a specific user as follower
-	notifyOnNewPub: Sequelize.BOOLEAN,
+	notifyOnNewPub: { type: Sequelize.BOOLEAN, defaultValue: true },
 }); 
 const FollowsLabel = sequelize.define('FollowsLabel', { // Used to connect specific user to a specific label as follower
-	notifyOnNewPub: Sequelize.BOOLEAN,
+	notifyOnNewPub: { type: Sequelize.BOOLEAN, defaultValue: true },
 }); 
 
 const ContributorRole = sequelize.define('ContributorRole', {
