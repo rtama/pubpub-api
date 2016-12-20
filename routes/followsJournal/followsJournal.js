@@ -51,7 +51,7 @@ export function putFollow(req, res, next) {
 
 	const updatedFollow = {};
 	Object.keys(req.body).map((key)=> {
-		if (['notifyOnNewVersion', 'notifyOnNewFeature', 'notifyOnNewSubmission'].indexOf(key) > -1) {
+		if (['notifyOnAdmins', 'notifyOnFeatures', 'notifyOnSubmissions', 'notifyOnFollowers'].indexOf(key) > -1) {
 			updatedFollow[key] = req.body[key];
 		} 
 	});

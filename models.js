@@ -256,20 +256,31 @@ const VersionFile = sequelize.define('VersionFile', {}); // Used to connect spec
 const FileAttribution = sequelize.define('FileAttribution', {}); // Used to connect specific users to a specific file
 const PubVersion = sequelize.define('PubVersion', {}); // Used to connect specific versions to a specific pub
 const FollowsPub = sequelize.define('FollowsPub', { // Used to connect specific user to a specific pub as follower
-	notifyOnNewVersion: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnNewFeature: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnNewDiscussions: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnVersions: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnDiscussions: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnJournals: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnContributors: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnReviewers: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnFollowers: { type: Sequelize.BOOLEAN, defaultValue: true },
 	// TODO: Fill out the types of notifications for pubs, users, journals
 }); 
 const FollowsJournal = sequelize.define('FollowsJournal', { // Used to connect specific user to a specific journal as follower
-	notifyOnNewFeature: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnNewSubmission: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnAdmins: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnFeatures: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnSubmissions: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnFollowers: { type: Sequelize.BOOLEAN, defaultValue: true },
 }); 
 const FollowsUser = sequelize.define('FollowsUser', { // Used to connect specific user to a specific user as follower
-	notifyOnNewPub: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnPubs: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnJournals: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnDiscussions: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnReviews: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnFollows: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnFollowers: { type: Sequelize.BOOLEAN, defaultValue: true },
 }); 
 const FollowsLabel = sequelize.define('FollowsLabel', { // Used to connect specific user to a specific label as follower
-	notifyOnNewPub: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnPubs: { type: Sequelize.BOOLEAN, defaultValue: true },
+	notifyOnFollowers: { type: Sequelize.BOOLEAN, defaultValue: true },
 }); 
 
 const ContributorRole = sequelize.define('ContributorRole', {
