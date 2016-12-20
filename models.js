@@ -345,8 +345,8 @@ Journal.belongsToMany(User, { onDelete: 'CASCADE', as: 'followers', through: 'Fo
 FollowsJournal.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'followerId' });
 
 // A user can follow many labels, and a label can be followed by many users
-User.belongsToMany(Label, { onDelete: 'CASCADE', as: 'followsLabels', through: 'FollowsLabels', foreignKey: 'followerId' });
-Label.belongsToMany(User, { onDelete: 'CASCADE', as: 'followers', through: 'FollowsLabels', foreignKey: 'labelId' });
+User.belongsToMany(Label, { onDelete: 'CASCADE', as: 'followsLabels', through: 'FollowsLabel', foreignKey: 'followerId' });
+Label.belongsToMany(User, { onDelete: 'CASCADE', as: 'followers', through: 'FollowsLabel', foreignKey: 'labelId' });
 FollowsLabel.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'followerId' });
 
 // A pub can have many discussions, but a discussion belongs to only a single parent pub
