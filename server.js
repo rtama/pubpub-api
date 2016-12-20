@@ -68,6 +68,14 @@ passport.use(new LocalStrategy(
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(function(req, res, next) {
+	// If basic auth headers exist
+	// And if req.user does not already have a user set from the cookie
+	// Grab them
+	// Look up User based on those headers
+	// If found, set req.user to the resulting user.
+	next();
+});
 
 passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser()); // use static serialize and deserialize of model for passport session support
