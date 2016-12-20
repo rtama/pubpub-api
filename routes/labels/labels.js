@@ -1,5 +1,7 @@
 import app from '../../server';
-import { Pub, Label, Contributor, JournalAdmin, PubLabel } from '../../models';
+import { Pub, Label, Contributor, JournalAdmin, User } from '../../models';
+
+const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
 export function getLabels(req, res, next) {
 	// Return a single label and the associated pubs
@@ -22,7 +24,10 @@ export function getLabels(req, res, next) {
 	Label.findOne({
 		where: whereParams,
 		attributes: ['id', 'title', 'color', 'journalId', 'userId', 'pubId'],
-		include: [{ model: Pub, as: 'pubs' }],
+		include: [
+			{ model: Pub, as: 'pubs' },
+			{ model: User, as: 'followers', attributes: userAttributes }, 
+		],
 	})
 	.then(function(labelsData) {
 		if (!labelsData) { return res.status(500).json('Label not found'); }

@@ -39,7 +39,7 @@ app.use(session({
 	}),
 	cookie: {
 		path: '/',
-		// domain: '127.0.0.1', // This was causing all sorts of mayhem. 
+		// domain: '127.0.0.1', // This was causing all sorts of mayhem.
 		httpOnly: false,
 		secure: false,
 		maxAge: 30 * 24 * 60 * 60 * 1000// = 30 days.
@@ -60,7 +60,7 @@ passport.use(new LocalStrategy(
 			return done(null, user);
 		})
 		.catch(function(err) {
-			console.log('Passport err', err);
+			console.log('Passport err (Local Auth)', err);
 			return done(err);
 		});
 	}
@@ -68,6 +68,27 @@ passport.use(new LocalStrategy(
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(function(req, res, done) {
+	const authHeaders = new Buffer(req.headers.authorization.split(' ')[1], 'base64').toString();
+	const password = authHeaders.split(':')[1];
+	const username = authHeaders.split(':')[0];
+
+	if (req.user) {
+		done();
+	}
+
+	User.findOne({ where: { username: username } })
+	.then(function(user) {
+		if (!user) { return done(null, false, { message: 'Incorrect username.' }); }
+		if (user.accessToken !== password) { return done(null, false, { message: 'Incorrect password.' }); }
+		req.user = user;
+		return done(null, user);
+	})
+	.catch(function(err) {
+		console.log('Passport err (Basic Auth)', err);
+		return done(err);
+	});
+});
 
 passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser()); // use static serialize and deserialize of model for passport session support
@@ -76,6 +97,10 @@ passport.deserializeUser(User.deserializeUser()); // use static serialize and de
 /* -------------------- */
 
 require('./routes/uploadPolicy');
+
+app.get('/testauth', function(req, res) {
+	return res.status(201).json(req.user || 'No User');
+});
 
 // Catch the browser's favicon request. You can still
 // specify one as long as it doesn't have this exact name and path.
@@ -137,7 +162,7 @@ osprey.loadFile(path.join(__dirname, 'api.raml')).then(function (middleware) {
 	require('./routes/followsJournal/followsJournal.js');
 	require('./routes/followsUser/followsUser.js');
 	require('./routes/followsLabel/followsLabel.js');
-	
+
 	/* ------------------- */
 	/* ------------------- */
 
