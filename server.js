@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+
 import osprey from 'osprey';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -68,25 +70,27 @@ passport.use(new LocalStrategy(
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(function(req, res, done) {
-	const authHeaders = new Buffer(req.headers.authorization.split(' ')[1], 'base64').toString();
-	const password = authHeaders.split(':')[1];
-	const username = authHeaders.split(':')[0];
+app.use(function(req, res, next) {
+	if (req.user) { return next(); }
 
-	if (req.user) {
-		done();
-	}
+	const authorizationHeader = req.headers.authorization || '';
+	const authorizationHeaderArray = authorizationHeader.split(' ');
+	if (authorizationHeaderArray.length < 2) { return next(); }
+
+	const authHeaders = new Buffer(authorizationHeaderArray[1], 'base64').toString();
+	const username = authHeaders.split(':')[0];
+	const password = authHeaders.split(':')[1];
 
 	User.findOne({ where: { username: username } })
 	.then(function(user) {
-		if (!user) { return done(null, false, { message: 'Incorrect username.' }); }
-		if (user.accessToken !== password) { return done(null, false, { message: 'Incorrect password.' }); }
+		if (!user || user.accessToken !== password) { return next(); }
+
 		req.user = user;
-		return done(null, user);
+		return next();
 	})
 	.catch(function(err) {
 		console.log('Passport err (Basic Auth)', err);
-		return done(err);
+		return next(err);
 	});
 });
 
@@ -126,7 +130,8 @@ osprey.loadFile(path.join(__dirname, 'api.raml')).then(function (middleware) {
 
 	app.use(function (err, req, res, next) {
 		// Handle errors.
-		console.log('Error! ' + err + ', ' + next);
+		// console.log('Error! ' + err + ', ' + next);
+		console.log('Error! ' + err);
 		next();
 	});
 
