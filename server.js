@@ -77,6 +77,10 @@ passport.deserializeUser(User.deserializeUser()); // use static serialize and de
 
 require('./routes/uploadPolicy');
 
+app.get('/testauth', function(req, res) {
+	return res.status(201).json(req.user || 'No User');
+});
+
 // Catch the browser's favicon request. You can still
 // specify one as long as it doesn't have this exact name and path.
 app.get('/favicon.ico', function(req, res) {
