@@ -1,0 +1,27 @@
+displayName: Activities
+description: Routes to access activities data
+get: 
+  description: If not logged in, will return a list of global activities. If logged in, will return following activities as well as global activities. Optionally, will include assets of user (pubs and journals), for building a landing page.
+  queryParameters:
+    range: 
+      description: date (?) or count (?) of activities to grab. Allows us to paginate
+    assets: 
+      description: boolean, whether to include user pubs and journals
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+              global: [],
+              following: [],
+              you: [],
+              assets: {
+                pubs: [],
+                journals: [],
+              },
+            }
+    500:
+      body:
+        application/json:
+          example: "Activities not found"

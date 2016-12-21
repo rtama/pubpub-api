@@ -138,6 +138,20 @@ const Version = sequelize.define('Version', {
 	// exportHTML: { type: Sequelize.TEXT },
 });
 
+const Activity = sequelize.define('Activity', {
+	verb: { type: Sequelize.TEXT },
+	// actorJournalId
+	// actorUserId
+	// targetPubId
+	// targetUserId
+	// targetJournalId
+	// targetLabelId
+	// objectPubId
+	// objectUserId
+	// objectJournalId
+	// objectLabelId
+});
+
 const License = sequelize.define('License', {
 	title: { type: Sequelize.TEXT },
 	description: { type: Sequelize.TEXT },
@@ -453,6 +467,20 @@ InvitedReviewer.belongsTo(Journal, { onDelete: 'CASCADE', as: 'inviterJournal', 
 // A user can have many apiKeys, but a key belongs to only a single user
 User.hasMany(ApiKey, { onDelete: 'CASCADE', as: 'apiKeys', foreignKey: 'userId' });
 
+// An activity can have a single User or Journal as the actor
+Activity.belongsTo(User, { onDelete: 'CASCADE', as: 'actorUser', foreignKey: 'actorUserId' });
+Activity.belongsTo(Journal, { onDelete: 'CASCADE', as: 'actorJournal', foreignKey: 'actorJournalId' });
+// An activity can have a single Pub, User, Journal, or Label as the target
+Activity.belongsTo(Pub, { onDelete: 'CASCADE', as: 'actorPub', foreignKey: 'targetPubId' });
+Activity.belongsTo(User, { onDelete: 'CASCADE', as: 'actorUser', foreignKey: 'targetUserId' });
+Activity.belongsTo(Journal, { onDelete: 'CASCADE', as: 'actorJournal', foreignKey: 'targetJournalId' });
+Activity.belongsTo(Label, { onDelete: 'CASCADE', as: 'actorLabel', foreignKey: 'targetLabelId' });
+// An activity can have a single Pub, User, Journal, or Label as the object
+Activity.belongsTo(Pub, { onDelete: 'CASCADE', as: 'actorPub', foreignKey: 'objectPubId' });
+Activity.belongsTo(User, { onDelete: 'CASCADE', as: 'actorUser', foreignKey: 'objectUserId' });
+Activity.belongsTo(Journal, { onDelete: 'CASCADE', as: 'actorJournal', foreignKey: 'objectJournalId' });
+Activity.belongsTo(Label, { onDelete: 'CASCADE', as: 'actorLabel', foreignKey: 'objectLabelId' });
+
 const db = {
 	SignUp: SignUp,
 	User: User,
@@ -483,6 +511,7 @@ const db = {
 	PubReaction: PubReaction,
 	FileRelation: FileRelation,
 	InvitedReviewer: InvitedReviewer,
+	Activity: Activity,
 };
 
 db.sequelize = sequelize;

@@ -83,10 +83,13 @@ export function login(req, res) {
 	const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email'];
 	const loginData = {};
 	const user = req.user || {};
+	// if (!user.id) { return res.status(201).json({}); }
+	
 	for (let index = 0; index < authenticatedUserAttributes.length; index++) {
 		const key = authenticatedUserAttributes[index];
 		loginData[key] = user[key];
 	}
+
 	return res.status(201).json(loginData);
 
 }
