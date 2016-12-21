@@ -1,38 +1,96 @@
+import Promise from 'bluebird';
 import app from '../../server';
-import { Activity, User, Pub, Label, Journal } from '../../models';
+import { Activity, User, Pub, Label, Journal, FollowsPub, FollowsUser, FollowsJournal, FollowsLabel } from '../../models';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
+const activityFinder = function(type, ids) {
+	return Activity.findAll({
+		where: {
+			$or: [
+				{ ['actor' + type + 'Id']: { $in: ids } },
+				{ ['target' + type + 'Id']: { $in: ids } },
+				{ ['object' + type + 'Id']: { $in: ids } },
+			]
+		},
+		include: [
+			{ model: Pub, as: 'actorPub' }, 
+			{ model: Pub, as: 'targetPub' }, 
+			{ model: Pub, as: 'objectPub' }, 
+
+			{ model: User, as: 'actorUser', attributes: userAttributes }, 
+			{ model: User, as: 'targetUser', attributes: userAttributes }, 
+			{ model: User, as: 'objectUser', attributes: userAttributes }, 
+
+			{ model: Journal, as: 'actorJournal' }, 
+			{ model: Journal, as: 'targetJournal' }, 
+			{ model: Journal, as: 'objectJournal' }, 
+
+			{ model: Label, as: 'actorLabel' }, 
+			{ model: Label, as: 'targetLabel' }, 
+			{ model: Label, as: 'objectLabel' }, 
+		]
+	});
+};
 export function getActivities(req, res, next) {
+	// Get user followsPub, followsUser, followsLabel, followsJournal
+	// Get activities of ids that exist in user's Follows
+	// Get global activities?
 	
 	const user = req.user || {};
-	return res.status(201).json('hey!');
-	const whereParams = {};
-	Object.keys(req.query).map((key)=> {
-		if (['id', 'title', 'journalId', 'userId', 'pubId'].indexOf(key) > -1) {
-			whereParams[key] = req.query[key];
-		} 
-	});
+	const assetsInclude = req.query.assets === 'true' 
+		? [
+			{ model: Pub, as: 'pubs', where: { replyRootPubId: null } },
+			{ model: Journal, as: 'journals' },
+		]
+		: {};
 
-	if (whereParams.title && !whereParams.userId) { whereParams.userId = null; }
-	if (whereParams.title && !whereParams.journalId) { whereParams.journalId = null; }
-	if (whereParams.title && !whereParams.pubId) { whereParams.pubId = null; }
-
-	// const whereParameters = Object.keys(queryParams).length
-	// 	? queryParams
-	// 	: { journalId: null, userId: null, pubId: null };
-
-	Label.findOne({
-		where: whereParams,
-		attributes: ['id', 'title', 'color', 'journalId', 'userId', 'pubId'],
+	// console.time('assetQueryTime');
+	User.findOne({
+		where: { id: user.id },
 		include: [
-			{ model: Pub, as: 'pubs' },
-			{ model: User, as: 'followers', attributes: userAttributes }, 
-		],
+			{ model: FollowsPub, as: 'FollowsPubs' }, 
+			{ model: FollowsUser, as: 'FollowsUsers' }, 
+			{ model: FollowsJournal, as: 'FollowsJournals' }, 
+			{ model: FollowsLabel, as: 'FollowsLabels' }, 
+			...assetsInclude
+		]
 	})
-	.then(function(labelsData) {
-		if (!labelsData) { return res.status(500).json('Label not found'); }
-		return res.status(201).json(labelsData);
+	.then(function(userData) {
+		if (!userData) { return [[], {}]; }
+		const assets = {
+			pubs: userData.pubs,
+			journals: userData.journals,
+		};
+
+		const FollowsPubsIds = userData.FollowsPubs.map((item)=> { return item.pubId; });
+		const FollowsJournalsIds = userData.FollowsJournals.map((item)=> { return item.journalId; });
+		const FollowsUsersIds = userData.FollowsUsers.map((item)=> { return item.userId; });
+		const FollowsLabelsIds = userData.FollowsLabels.map((item)=> { return item.labelId; });
+
+		const findActivities = [
+			activityFinder('Pub', FollowsPubsIds),
+			activityFinder('Journal', FollowsJournalsIds),
+			activityFinder('User', FollowsUsersIds),
+			activityFinder('Label', FollowsLabelsIds),
+		];
+
+		return [Promise.all(findActivities), assets];
+		
+	})
+	.spread(function(activitiesData, assets) {
+		const output = {
+			activities: {
+				pubs: activitiesData[0],
+				journals: activitiesData[1],
+				users: activitiesData[2],
+				labels: activitiesData[3],
+			},
+		};
+
+		if (req.query.assets === 'true') { output.assets = assets; }
+		// console.timeEnd('assetQueryTime');
+		return res.status(201).json(output);
 	})
 	.catch(function(err) {
 		console.error('Error in getActivities: ', err);
