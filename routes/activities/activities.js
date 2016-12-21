@@ -36,7 +36,7 @@ export function getActivities(req, res, next) {
 	// Get user followsPub, followsUser, followsLabel, followsJournal
 	// Get activities of ids that exist in user's Follows
 	// Get global activities?
-	
+
 	const user = req.user || {};
 	const assetsInclude = req.query.assets === 'true' 
 		? [
@@ -73,6 +73,9 @@ export function getActivities(req, res, next) {
 			activityFinder('Journal', FollowsJournalsIds),
 			activityFinder('User', FollowsUsersIds),
 			activityFinder('Label', FollowsLabelsIds),
+			activityFinder('User', [user.id]), // You activities
+			// How do we define global activities? We grab top journals, users, and pubs - and populate them?
+			// Make on-the-fly following list essentially. We could have global be 'editors pick'
 		];
 
 		return [Promise.all(findActivities), assets];
@@ -85,6 +88,7 @@ export function getActivities(req, res, next) {
 				journals: activitiesData[1],
 				users: activitiesData[2],
 				labels: activitiesData[3],
+				you: activitiesData[4]
 			},
 		};
 
