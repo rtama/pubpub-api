@@ -32,18 +32,41 @@ const activityFinder = function(type, ids) {
 		]
 	});
 };
+
+const filterPrivate = function(activitiesData, pubs, journals) {
+	// Iterate through all of the activities
+	// If the activity has a pub that is private, and the user doesn't own them, remove
+	
+	const pubsData = pubs || [];
+	const pubIds = pubsData.map((pub)=> { return pub.id; });
+	// const journalsData = journals || [];
+	// const journalIds = journalsData.map((journal)=> { return journal.id; });
+
+	return activitiesData.filter((activity)=> {
+		const actorPub = activity.actorPub || {};
+		const targetPub = activity.targetPub || {};
+		const objectPub = activity.objectPub || {};
+		if (actorPub.id && !actorPub.isPublished && !pubIds.includes(actorPub.id)) { return false; }
+		if (targetPub.id && !targetPub.isPublished && !pubIds.includes(targetPub.id)) { return false; }
+		if (objectPub.id && !objectPub.isPublished && !pubIds.includes(objectPub.id)) { return false; }
+
+		return true;
+	});
+
+};
+
 export function getActivities(req, res, next) {
 	// Get user followsPub, followsUser, followsLabel, followsJournal
 	// Get activities of ids that exist in user's Follows
 	// Get global activities?
 
 	const user = req.user || {};
-	const assetsInclude = req.query.assets === 'true' 
-		? [
-			{ model: Pub, as: 'pubs', where: { replyRootPubId: null } },
-			{ model: Journal, as: 'journals' },
-		]
-		: {};
+	// const assetsInclude = req.query.assets === 'true' 
+	// 	? [
+	// 		{ model: Pub, as: 'pubs', where: { replyRootPubId: null } },
+	// 		{ model: Journal, as: 'journals' },
+	// 	]
+	// 	: {};
 
 	// console.time('assetQueryTime');
 	User.findOne({
@@ -53,7 +76,8 @@ export function getActivities(req, res, next) {
 			{ model: FollowsUser, as: 'FollowsUsers' }, 
 			{ model: FollowsJournal, as: 'FollowsJournals' }, 
 			{ model: FollowsLabel, as: 'FollowsLabels' }, 
-			...assetsInclude
+			{ model: Pub, as: 'pubs', where: { replyRootPubId: null } },
+			{ model: Journal, as: 'journals' },
 		]
 	})
 	.then(function(userData) {
@@ -68,11 +92,16 @@ export function getActivities(req, res, next) {
 		const FollowsUsersIds = userData.FollowsUsers.map((item)=> { return item.userId; });
 		const FollowsLabelsIds = userData.FollowsLabels.map((item)=> { return item.labelId; });
 
+		const myPubsIds = userData.pubs.map((item)=> { return item.id; });
+		const myJournalsIds = userData.journals.map((item)=> { return item.id; });
+
 		const findActivities = [
 			activityFinder('Pub', FollowsPubsIds),
 			activityFinder('Journal', FollowsJournalsIds),
 			activityFinder('User', FollowsUsersIds),
 			activityFinder('Label', FollowsLabelsIds),
+			activityFinder('Pub', myPubsIds),
+			activityFinder('Journal', myJournalsIds),
 			activityFinder('User', [user.id]), // You activities
 			// How do we define global activities? We grab top journals, users, and pubs - and populate them?
 			// Make on-the-fly following list essentially. We could have global be 'editors pick'
@@ -84,11 +113,13 @@ export function getActivities(req, res, next) {
 	.spread(function(activitiesData, assets) {
 		const output = {
 			activities: {
-				pubs: activitiesData[0],
-				journals: activitiesData[1],
-				users: activitiesData[2],
-				labels: activitiesData[3],
-				you: activitiesData[4]
+				pubs: filterPrivate(activitiesData[0], assets.pubs, assets.journals),
+				journals: filterPrivate(activitiesData[1], assets.pubs, assets.journals),
+				users: filterPrivate(activitiesData[2], assets.pubs, assets.journals),
+				labels: filterPrivate(activitiesData[3], assets.pubs, assets.journals),
+				myPubs: activitiesData[4],
+				myJournals: activitiesData[5],
+				myUsers: activitiesData[6],
 			},
 		};
 
