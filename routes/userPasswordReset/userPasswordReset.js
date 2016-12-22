@@ -30,16 +30,29 @@ export function requestReset(req, res) {
 			resetHash += possible.charAt(Math.floor(Math.random() * possible.length));
 		}
 
+		console.log(user.resetHashExpiration)
 		const expiration = Date.now() + 1000 * 60 * 60 * 24; // Expires in 24 hours.
 
-		// TO-DO: Make sure this is the right query
-		User.update({ email: req.body.email }, { resetHash: resetHash, resetHashExpiration: expiration }, function(errUserUpdate, result) {if (errUserUpdate) return console.log(errUserUpdate);});
+		user.resetHash = resetHash;
+		user.resetHashExpiration = expiration;
 
+
+		// TO-DO: Make sure this is the right query
+		// User.update({ email: req.body.email }, { resetHash: resetHash, resetHashExpiration: expiration }, function(errUserUpdate, result) {if (errUserUpdate) return console.log(errUserUpdate);});
+
+		return user.save()
+	}).then(function(user){
 		// Send reset email
 		sendResetEmail(user.email, resetHash, user.username, function(errSendRest, success) {
-			if (errSendRest) { console.log(errSendRest); return res.status(500).json(errSendRest); }
+			if (errSendRest) {
+				console.log(errSendRest);
+				return res.status(500).json(errSendRest);
+			}
 			return res.status(200).json(success);
 		});
+	})
+	.catch(function(error){
+
 	});
 
 	return res.status(200).json({});
@@ -50,11 +63,16 @@ app.post('/user/password/reset', requestReset);
 export function checkResetHash(req, res) {
 	console.log('checkResetHash hit')
 
-	User.findOne({resetHash: req.body.resetHash, username: req.body.username}).exec(function(err, user) {
+
+		User.findOne({
+			where:{ email: req.body.email, resetHash: req.body.resetHash }
+		}).then(function(user){
+
 		const currentTime = Date.now();
 		if (!user || user.resetHashExpiration < currentTime) {
 			return res.status(200).json('invalid');
 		}
+		console.log("We good?")
 
 		return res.status(200).json('valid');
 	});
