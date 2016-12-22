@@ -16,10 +16,12 @@ export function requestReset(req, res) {
 	const resetPasswordData = {};
 	const success = false;
 
-	User.findOne({ email: req.body.email }).exec(function(err, user) {
+	User.findOne({
+		where:{ email: req.body.email }
+	}).then(function(user) {
 
 		if (!user) {
-			return res.status(201).json('User Not Found');
+			return res.status(200).json('User Not Found');
 		}
 		let resetHash = '';
 		const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -36,11 +38,11 @@ export function requestReset(req, res) {
 		// Send reset email
 		sendResetEmail(user.email, resetHash, user.username, function(errSendRest, success) {
 			if (errSendRest) { console.log(errSendRest); return res.status(500).json(errSendRest); }
-			return res.status(201).json(success);
+			return res.status(200).json(success);
 		});
 	});
 
-	return res.status(201).json({});
+	return res.status(200).json({});
 
 }
 app.post('/user/password/reset', requestReset);
@@ -51,10 +53,10 @@ export function checkResetHash(req, res) {
 	User.findOne({resetHash: req.body.resetHash, username: req.body.username}).exec(function(err, user) {
 		const currentTime = Date.now();
 		if (!user || user.resetHashExpiration < currentTime) {
-			return res.status(201).json('invalid');
+			return res.status(200).json('invalid');
 		}
 
-		return res.status(201).json('valid');
+		return res.status(200).json('valid');
 	});
 }
 app.get('/user/password/reset', checkResetHash);

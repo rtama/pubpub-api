@@ -167,6 +167,10 @@ osprey.loadFile(path.join(__dirname, 'api.raml')).then(function (middleware) {
 	require('./routes/followsJournal/followsJournal.js');
 	require('./routes/followsUser/followsUser.js');
 	require('./routes/followsLabel/followsLabel.js');
+	require('./routes/userPassword/userPassword.js');
+	require('./routes/userPasswordReset/userPasswordReset.js');
+
+
 
 	/* ------------------- */
 	/* ------------------- */
