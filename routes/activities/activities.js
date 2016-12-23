@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import app from '../../server';
-import { Activity, User, Pub, Label, Journal, FollowsPub, FollowsUser, FollowsJournal, FollowsLabel } from '../../models';
+import { Activity, User, Pub, Label, Journal, FollowsPub, FollowsUser, FollowsJournal, FollowsLabel, Contributor, JournalAdmin } from '../../models';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
@@ -42,7 +42,7 @@ const filterPrivate = function(activities, pubs, journals) {
 	// const journalsData = journals || [];
 	// const journalIds = journalsData.map((journal)=> { return journal.id; });
 	const activitiesData = activities || [];
-	
+
 	return activitiesData.filter((activity)=> {
 		const actorPub = activity.actorPub || {};
 		const targetPub = activity.targetPub || {};
@@ -77,15 +77,21 @@ export function getActivities(req, res, next) {
 			{ model: FollowsUser, as: 'FollowsUsers' }, 
 			{ model: FollowsJournal, as: 'FollowsJournals' }, 
 			{ model: FollowsLabel, as: 'FollowsLabels' }, 
-			{ model: Pub, as: 'pubs', where: { replyRootPubId: null } },
-			{ model: Journal, as: 'journals' },
+			// { model: Pub, as: 'pubs', where: { replyRootPubId: null } },
+			{ model: Contributor, separate: true, as: 'contributions', include: [{ model: Pub, as: 'pub' }] },
+			// { model: Journal, as: 'journals' },
+			{ model: JournalAdmin, separate: true, as: 'journalAdmins', include: [{ model: Journal, as: 'journal' }] },
 		]
 	})
 	.then(function(userData) {
 		if (!userData) { return [[], {}]; }
+		const contributions = userData.contributions || [];
+		const journalAdmins = userData.journalAdmins || [];
 		const assets = {
-			pubs: userData.pubs,
-			journals: userData.journals,
+			pubs: contributions.map((item)=> { return item.pub; }).filter((item)=> { return item.replyRootPubId === null; }),
+			// pubs: userData.pubs,
+			journals: journalAdmins.map((item)=> { return item.journal; }),
+			// journals: userData.journals || [],
 		};
 
 		const FollowsPubsIds = userData.FollowsPubs.map((item)=> { return item.pubId; });
@@ -93,8 +99,8 @@ export function getActivities(req, res, next) {
 		const FollowsUsersIds = userData.FollowsUsers.map((item)=> { return item.userId; });
 		const FollowsLabelsIds = userData.FollowsLabels.map((item)=> { return item.labelId; });
 
-		const myPubsIds = userData.pubs.map((item)=> { return item.id; });
-		const myJournalsIds = userData.journals.map((item)=> { return item.id; });
+		const myPubsIds = assets.pubs.map((item)=> { return item.id; });
+		const myJournalsIds = assets.journals.map((item)=> { return item.id; });
 
 		const findActivities = [
 			activityFinder('Pub', FollowsPubsIds),

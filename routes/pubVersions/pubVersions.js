@@ -76,6 +76,12 @@ export function postVersion(req, res, next) {
 		return file.id === undefined;
 	});
 	
+	// Separate old files (ones already parsed on the PubPub end) from new ones
+	// If the url is not a pubpub url, duplicate the content onto PubPub servers
+	// If file.contents is empty, and it's of a type that we know has content, read the file and parse. Store parsed content in file.content
+
+
+
 	// Parse contents from files if necessary
 	const readFilePromises = newFiles.map((file)=> {
 		if (file.type === 'text/markdown') { return request(file.url); }
@@ -115,6 +121,7 @@ export function postVersion(req, res, next) {
 		});
 	})
 	.then(function(versionData) { 
+		// Create file attributions and file relations if any exist
 		const nameIdObject = {};
 		const versionDataFiles = versionData.dataValues.files || [];
 		versionDataFiles.map((file)=> {
