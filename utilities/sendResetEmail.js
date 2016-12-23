@@ -22,7 +22,7 @@ export function sendResetEmail(obj){ return new Promise(
 		personalization.addTo(toEmail);
 		mail.addPersonalization(personalization);
 
-		const resetURL = 'http://www.pubpub.org/resetpassword/' + obj.hash + '/' + obj.username;
+		const resetURL = 'http://www.pubpub.org/setpassword/' + obj.hash + '/' + obj.username;
 
 		const contentText = new helper.Content('text/plain', 'Reset Password. We\'ve received a password reset request for your account. To reset, visit ' + resetURL + ' . If you did not request this reset - simply delete this email.');
 		const contentHtml = new helper.Content('text/html', '<h1 style="color: #373737;">Reset Password</h1> <p style="color: #373737;">We\'ve received a password reset request for your account.</p> <p style="color: #373737;">To reset, visit <a href="' + resetURL + '">' + resetURL + '</a></p> <p style="color: #373737;">If you did not request this reset - simply delete this email.</p>');
