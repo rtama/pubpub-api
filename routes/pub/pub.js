@@ -1,6 +1,7 @@
 import Promise from 'bluebird';
 import app from '../../server';
 import { Pub, User, Label, File, Journal, Version, PubReply, Contributor, FollowsPub, License, InvitedReviewer, Reaction, Role, PubSubmit, PubFeature } from '../../models';
+import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
@@ -40,6 +41,9 @@ export function getPub(req, res, next) {
 		// include: [{ all: true }]
 	})
 	.then(function(pubData) {
+		return [pubData, createActivity('forkedPub', 7, 38)];
+	})
+	.spread(function(pubData, activity) {
 		// Filter through to see if contributor, set isAuthorized
 		// Filter versions, if 0 versions available and not authorized, throw error
 		// Filter contributors
