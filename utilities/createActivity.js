@@ -5,11 +5,11 @@ const activities = {
 	followedPub: ['actorUserId', 'targetPubId'],
 	followedJournal: ['actorUserId', 'targetJournalId'],
 	followedLabel: ['actorUserId', 'targetLabelId'],
-	// 'createsPub': eh - we would only be notifying yourself, so this feels less interesting
-	// 'deletesPub': eh - we would only be notifying yourself, so this feels less interesting
+	publishedPub: ['actorUserId', 'targetPubId'],
+	// 'deletesPub': eh - we would only be notifying you yourself, so this feels less interesting
 	forkedPub: ['actorUserId', 'targetPubId'],
 	addedContributor: ['actorUserId', 'objectUserId', 'targetPubId'], // Jane(actor) added Steve(object) to Pub(target)
-	newVersion: ['actorUserId', 'targetPubId'],
+	newVersion: ['actorUserId', 'targetPubId'], // Barry(actor) added a new version to Pub(target)
 	newDiscussion: ['actorUserId', 'objectPubId', 'targetPubId'], // Allan(actor) added a new Discussion(object) to Pub (target)
 	newReply: ['actorUserId', 'objectPubId', 'targetPubId'], // Allan(actor) replied to a new Discussion(object) on Pub (target)
 	newPubLabel: ['actorUserId', 'objectPubId', 'targetLabelId'], // Betsy(actor) added Pub(object) to Physics(target)
