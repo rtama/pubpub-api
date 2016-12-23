@@ -34,14 +34,12 @@ export function requestReset(req, res) {
 		return user.save();
 	}).then(function(user) {
 		// Send reset email
-		console.log("sending reset email");
 		return sendResetEmail({ email: user.email, hash: user.resetHash, username: user.username });
 	})
 	.then(function(){
 		return res.status(200).json({});
 	})
 	.catch(function(err) {
-		console.log("Ahh an error " +err)
 		return res.status(401).json(err.message);
 	});
 }

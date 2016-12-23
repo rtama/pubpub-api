@@ -5,22 +5,6 @@ import passport from 'passport';
 import app from '../../server';
 
 import { User } from '../../models';
-//
-// export function setPassword(req, res) {
-// 	console.log('checkResetHash hit')
-//
-// 	User.findOne({
-// 		where:{ username: req.body.username, resetHash: req.body.resetHash }
-// 	}).then(function(user){
-//
-// 		const currentTime = Date.now();
-// 		if (!user || user.resetHashExpiration < currentTime) {
-// 			return res.status(200).json('invalid');
-// 		}
-// 		return res.status(200).json('valid');
-// 	});
-// }
-// app.post('/user/password/set', setPassword);
 
 
 // If a User is authenticated then change their password
