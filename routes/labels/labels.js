@@ -98,7 +98,7 @@ export function postLabel(req, res, next) {
 	authenticateAndCreate
 	.then(function(newLabel) {
 		if (newLabel.journalId) {
-			return [newLabel, createActivity('createdJournalLabel', user.id, req.body.journalId)];	
+			return [newLabel, createActivity('createdJournalLabel', newLabel.journalId, newLabel.id)];	
 		}
 		return [newLabel, {}];
 	})

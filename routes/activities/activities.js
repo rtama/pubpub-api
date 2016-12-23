@@ -33,7 +33,7 @@ const activityFinder = function(type, ids) {
 	});
 };
 
-const filterPrivate = function(activitiesData, pubs, journals) {
+const filterPrivate = function(activities, pubs, journals) {
 	// Iterate through all of the activities
 	// If the activity has a pub that is private, and the user doesn't own them, remove
 	
@@ -41,7 +41,8 @@ const filterPrivate = function(activitiesData, pubs, journals) {
 	const pubIds = pubsData.map((pub)=> { return pub.id; });
 	// const journalsData = journals || [];
 	// const journalIds = journalsData.map((journal)=> { return journal.id; });
-
+	const activitiesData = activities || [];
+	
 	return activitiesData.filter((activity)=> {
 		const actorPub = activity.actorPub || {};
 		const targetPub = activity.targetPub || {};

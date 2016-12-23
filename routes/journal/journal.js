@@ -76,7 +76,7 @@ export function postJournal(req, res, next) {
 		return Journal.findOne({
 			where: { slug: req.body.slug, inactive: { $not: true } },
 			include: [
-				{ model: User, as: 'admins', attributes: userAttributes }, 
+				{ model: JournalAdmin, as: 'admins', include: [{ model: User, as: 'user', attributes: userAttributes }] },
 				{ model: User, as: 'followers', attributes: userAttributes }, 
 			]
 		});

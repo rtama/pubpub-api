@@ -60,7 +60,7 @@ export function postContributor(req, res, next) {
 		});
 	})
 	.then(function(newContributorData) {
-		return [newContributorData, createActivity('addedContributor', user.id, req.body.pubId, newContributorData.id)];
+		return [newContributorData, createActivity('addedContributor', user.id, req.body.pubId, newContributorData.userId)];
 	})
 	.spread(function(newContributorData, newActivity) {
 		return res.status(201).json(newContributorData);
