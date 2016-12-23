@@ -1,6 +1,7 @@
 import app from '../../server';
 import { Pub, User, Label, PubLabel, File, Version, Contributor, Reaction, Role } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
+import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
@@ -38,7 +39,7 @@ export function postDiscussion(req, res, next) {
 	// Create files, versions, attach those to pub
 	// Handle labels
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 	const newSlug = generateHash().toLowerCase();
 
 	Pub.create({
@@ -51,6 +52,12 @@ export function postDiscussion(req, res, next) {
 		license: 1, // Set to CCBY
 	})
 	.then(function(newDiscussion) {
+		if (req.body.replyRootPubId !== req.body.replyParentPubId) {
+			return [newDiscussion, createActivity('newReply', user.id, req.body.replyRootPubId, newDiscussion.id)];	
+		}
+		return [newDiscussion, createActivity('newDiscussion', user.id, req.body.replyRootPubId, newDiscussion.id)];
+	})
+	.spread(function(newDiscussion, newActivity) {
 		const createContributor = Contributor.create({
 			userId: user.id,
 			pubId: newDiscussion.dataValues.id,

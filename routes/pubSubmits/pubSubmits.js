@@ -1,5 +1,7 @@
 import app from '../../server';
 import { Journal, Contributor, PubSubmit } from '../../models';
+import { createActivity } from '../../utilities/createActivity';
+
 
 export function getSubmits(req, res, next) {
 	PubSubmit.findAll({
@@ -44,6 +46,9 @@ export function postSubmit(req, res, next) {
 		});
 	})
 	.then(function(newPubSubmitData) {
+		return [newPubSubmitData, createActivity('submittedPub', user.id, req.body.journalId, req.body.pubId)];
+	})
+	.spread(function(newPubSubmitData, newActivity) {
 		return res.status(201).json(newPubSubmitData);
 	})
 	.catch(function(err) {

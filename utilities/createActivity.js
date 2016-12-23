@@ -24,7 +24,7 @@ const activities = {
 
 export function createActivity(verb, actorId, targetId, objectId) {
 	// For a given verb, validate that it is accepted and create the activity.
-	
+	console.log(verb, actorId, targetId, objectId);
 	if (verb in activities === false) { throw new Error('Invalid Verb'); }
 	const verbKeys = activities[verb];
 	
@@ -35,7 +35,9 @@ export function createActivity(verb, actorId, targetId, objectId) {
 	};
 	// If the activity requires three keys, then it must require the objectId, so add that to newActivity
 	if (verbKeys.length === 3) { 
-		newActivity[verb[1]] = objectId; 
+		console.log('in verbkeys.length');
+		console.log(verbKeys[1], objectId);
+		newActivity[verbKeys[1]] = objectId; 
 	}
 
 	return Activity.create(newActivity);

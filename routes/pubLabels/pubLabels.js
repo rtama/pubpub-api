@@ -1,5 +1,6 @@
 import app from '../../server';
 import { Pub, Label, PubLabel } from '../../models';
+import { createActivity } from '../../utilities/createActivity';
 
 export function getLabels(req, res, next) {
 	// Probably should return all labels associated
@@ -27,6 +28,8 @@ export function postLabel(req, res, next) {
 	// These are already existing labels that we're adding
 	// Authenticate. If the label to be applied has the userId of the user making the request, 
 	// or if the request is by a pub editor, it is valid.
+	const user = req.user || {};
+
 	PubLabel.create({
 		pubId: req.body.pubId,
 		labelId: req.body.labelId,
@@ -37,6 +40,12 @@ export function postLabel(req, res, next) {
 		});
 	})
 	.then(function(addedLabel) {
+		if (addedLabel.journalId === null && addedLabel.pubId === null && addedLabel.userId === null) {
+			return [addedLabel, createActivity('newPubLabel', user.id, req.body.labelId, req.body.pubId)];	
+		}
+		return [addedLabel, {}];
+	})
+	.spread(function(addedLabel, newActivity) {
 		return res.status(201).json(addedLabel);
 	})
 	.catch(function(err) {

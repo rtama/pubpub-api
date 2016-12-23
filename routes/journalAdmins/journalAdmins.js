@@ -1,5 +1,6 @@
 import app from '../../server';
 import { User, JournalAdmin } from '../../models';
+import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
@@ -54,6 +55,9 @@ export function postJournalAdmin(req, res, next) {
 		});
 	})
 	.then(function(newJournalAdminData) {
+		return [newJournalAdminData, createActivity('addedAdmin', user.id, req.body.journalId, req.body.userId)];
+	})
+	.spread(function(newJournalAdminData, newActivity) {
 		return res.status(201).json(newJournalAdminData);
 	})
 	.catch(function(err) {

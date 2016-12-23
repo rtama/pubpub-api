@@ -29,7 +29,7 @@ export function postReaction(req, res, next) {
 	// These are already existing reactions that we're adding
 	// Or perhaps just add a new one with a set user
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	PubReaction.create({
 		pubId: req.body.pubId,
@@ -56,7 +56,7 @@ export function deleteReaction(req, res, next) {
 	// This deletes the reaction relationship, not the reaction itself
 	// Authenticate
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	PubReaction.destroy({
 		where: { pubId: req.body.pubId, reactionId: req.body.reactionId, userId: user.id }

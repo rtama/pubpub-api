@@ -1,6 +1,7 @@
 import Promise from 'bluebird';
 import app from '../../server';
 import { Pub, PubSubmit, PubFeature, User, Label, JournalAdmin, Journal, FollowsJournal, InvitedReviewer } from '../../models';
+import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
@@ -81,6 +82,9 @@ export function postJournal(req, res, next) {
 		});
 	})
 	.then(function(journalData) {
+		return [journalData, createActivity('createdJournal', user.id, journalData.id)];
+	})
+	.spread(function(journalData, newActivity) {
 		return res.status(201).json(journalData);
 	})
 	.catch(function(err) {
@@ -102,7 +106,7 @@ export function putJournal(req, res, next) {
 	// Check if authenticated. Update. Return true.
 
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	// Filter to only allow certain fields to be updated
 	const updatedJournal = {};

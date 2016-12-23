@@ -1,5 +1,6 @@
 import app from '../../server';
 import { Pub, Label, Contributor, JournalAdmin, User } from '../../models';
+import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
@@ -96,6 +97,12 @@ export function postLabel(req, res, next) {
 	
 	authenticateAndCreate
 	.then(function(newLabel) {
+		if (newLabel.journalId) {
+			return [newLabel, createActivity('createdJournalLabel', user.id, req.body.journalId)];	
+		}
+		return [newLabel, {}];
+	})
+	.spread(function(newLabel, newActivity) {
 		return res.status(201).json(newLabel);
 	})
 	.catch(function(err) {

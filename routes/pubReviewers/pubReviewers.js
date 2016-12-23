@@ -1,6 +1,7 @@
 import app from '../../server';
 import { User, Journal, InvitedReviewer } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
+import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
@@ -32,7 +33,7 @@ export function postReviewer(req, res, next) {
 	// attach to pub?
 	// Return new review object
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	InvitedReviewer.create({
 		email: req.body.email,
@@ -55,6 +56,12 @@ export function postReviewer(req, res, next) {
 		});
 	})
 	.then(function(invitedReviewerData) {
+		if (req.body.invitedUserId) {
+			return [invitedReviewerData, createActivity('invitedReviewer', user.id, req.body.pubId, req.body.invitedUserId)];	
+		}
+		return [invitedReviewerData, {}];
+	})
+	.spread(function(invitedReviewerData, newActivity) {
 		return res.status(201).json(invitedReviewerData);
 	})
 	.catch(function(err) {
@@ -69,7 +76,7 @@ export function putReviewer(req, res, next) {
 	// Can set review to accepted/declined
 	// Authenticate that the person making this change is allowed. 
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	const updatedReviewer = {
 		invitationAccepted: req.body.invitationAccepted,
@@ -78,9 +85,18 @@ export function putReviewer(req, res, next) {
 	};
 
 	InvitedReviewer.update(updatedReviewer, {
-		where: { invitationHash: req.body.invitationHash }
+		where: { 
+			invitationHash: req.body.invitationHash
+		},
+		returning: true,
 	})
-	.then(function(updatedCount) {
+	.then(function(updatedInvitation) {
+		if (req.body.invitationAccepted && updatedInvitation[1][0]) {
+			return [updatedInvitation, createActivity('acceptedReviewInvitation', user.id, updatedInvitation[1][0].pubId, updatedInvitation[1][0].inviterJournalId || updatedInvitation[1][0].inviterUserId)];	
+		}
+		return [updatedInvitation, {}];
+	})
+	.spread(function(updatedInvitation, newActivity) {
 		return res.status(201).json(true);
 	})
 	.catch(function(err) {

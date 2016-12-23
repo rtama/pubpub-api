@@ -1,5 +1,6 @@
 import app from '../../server';
 import { FollowsPub, User } from '../../models';
+import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
@@ -36,6 +37,9 @@ export function postFollow(req, res, next) {
 		pubId: req.body.pubId
 	})
 	.then(function(newFollow) {
+		return [newFollow, createActivity('followedPub', user.id, req.body.pubId)];
+	})
+	.spread(function(newFollow, newActivity) {
 		return res.status(201).json(newFollow);
 	})
 	.catch(function(err) {

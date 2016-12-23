@@ -1,5 +1,6 @@
 import app from '../../server';
 import { Pub, PubFeature, PubSubmit, JournalAdmin } from '../../models';
+import { createActivity } from '../../utilities/createActivity';
 // can get all featured
 // Can create feature
 
@@ -52,6 +53,9 @@ export function postFeatures(req, res, next) {
 		});
 	})
 	.then(function(newPubFeatureData) {
+		return [newPubFeatureData, createActivity('featuredPub', req.body.journalId, req.body.pubId)];
+	})
+	.spread(function(newPubFeatureData, newActivity) {
 		return res.status(201).json(newPubFeatureData);
 	})
 	.catch(function(err) {

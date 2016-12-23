@@ -41,9 +41,6 @@ export function getPub(req, res, next) {
 		// include: [{ all: true }]
 	})
 	.then(function(pubData) {
-		return [pubData, createActivity('forkedPub', 7, 38)];
-	})
-	.spread(function(pubData, activity) {
 		// Filter through to see if contributor, set isAuthorized
 		// Filter versions, if 0 versions available and not authorized, throw error
 		// Filter contributors
@@ -64,7 +61,7 @@ export function postPub(req, res, next) {
 	// Make get request
 	// Return
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 
 	Pub.create({
@@ -119,7 +116,7 @@ export function putPub(req, res, next) {
 	// Check if authenticated. Update. Return true.
 
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	// Filter to only allow certain fields to be updated
 	const updatedPub = {};
@@ -157,7 +154,7 @@ export function deletePub(req, res, next) {
 	// Check if authenticated, update, return true.
 
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	Contributor.findOne({
 		where: { userId: user.id, pubId: req.body.pubId },
