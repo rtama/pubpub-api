@@ -11,18 +11,16 @@ import { User } from '../../models';
 // GET to check the hash
 
 export function requestReset(req, res) {
-	console.log('requestReset hit')
-	const authenticatedUserAttributes = ['email'];
-	const resetPasswordData = {};
-	const success = false;
+	// const authenticatedUserAttributes = ['email'];
+	// const resetPasswordData = {};
+	// const success = false;
 
 	User.findOne({
 		where:{ email: req.body.email }
 	}).then(function(user) {
+		if (!user ){ throw new Error("User doesn't exist"); }
 
-		if (!user) {
-			return res.status(200).json('User Not Found');
-		}
+
 		let resetHash = '';
 		const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -30,32 +28,30 @@ export function requestReset(req, res) {
 			resetHash += possible.charAt(Math.floor(Math.random() * possible.length));
 		}
 
-		console.log(user.resetHashExpiration)
 		const expiration = Date.now() + 1000 * 60 * 60 * 24; // Expires in 24 hours.
 
 		user.resetHash = resetHash;
 		user.resetHashExpiration = expiration;
 
+		console.log(`New reset hash:\n\t${resetHash}`);
 
-		// TO-DO: Make sure this is the right query
-		// User.update({ email: req.body.email }, { resetHash: resetHash, resetHashExpiration: expiration }, function(errUserUpdate, result) {if (errUserUpdate) return console.log(errUserUpdate);});
-
-		return user.save()
-	}).then(function(user){
+		return user.save();
+	}).then(function(user) {
 		// Send reset email
-		sendResetEmail(user.email, resetHash, user.username, function(errSendRest, success) {
-			if (errSendRest) {
-				console.log(errSendRest);
-				return res.status(500).json(errSendRest);
-			}
-			return res.status(200).json(success);
-		});
+		// sendResetEmail(user.email, user.resetHash, user.username, function(errSendRest, success) {
+		// 	if (errSendRest) {
+		// 		console.log(errSendRest);
+		// 		return res.status(500).json(errSendRest);
+		// 	}
+		// 	return res.status(200).json(success);
+		// });
+		return res.status(200).json({});
 	})
-	.catch(function(error){
-
+	.catch(function(err){
+		console.log("Erorr " +err)
+		return res.status(500).json(err.message);
 	});
 
-	return res.status(200).json({});
 
 }
 app.post('/user/password/reset', requestReset);
@@ -72,8 +68,6 @@ export function checkResetHash(req, res) {
 		if (!user || user.resetHashExpiration < currentTime) {
 			return res.status(200).json('invalid');
 		}
-		console.log("We good?")
-
 		return res.status(200).json('valid');
 	});
 }
