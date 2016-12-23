@@ -34,15 +34,10 @@ export function requestReset(req, res) {
 		return user.save();
 	}).then(function(user) {
 		// Send reset email
-		console.log("sending reset email")
-		sendResetEmail(user.email, user.resetHash, user.username, function(errSendRest, success) {
-			console.log("Send reset email " + errSendRest + "..." + success)
-			if (errSendRest) {
-				console.log(errSendRest);
-				return res.status(500).json(errSendRest);
-			}
-			return res.status(200).json(success);
-		});
+		console.log("sending reset email");
+		return sendResetEmail({ email: user.email, hash: user.resetHash, username: user.username });
+	})
+	.then(function(){
 		return res.status(200).json({});
 	})
 	.catch(function(err) {
