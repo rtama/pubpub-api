@@ -5,22 +5,37 @@ import passport from 'passport';
 import app from '../../server';
 
 import { User } from '../../models';
+//
+// export function setPassword(req, res) {
+// 	console.log('checkResetHash hit')
+//
+// 	User.findOne({
+// 		where:{ username: req.body.username, resetHash: req.body.resetHash }
+// 	}).then(function(user){
+//
+// 		const currentTime = Date.now();
+// 		if (!user || user.resetHashExpiration < currentTime) {
+// 			return res.status(200).json('invalid');
+// 		}
+// 		return res.status(200).json('valid');
+// 	});
+// }
+// app.post('/user/password/set', setPassword);
 
 
 // If a User is authenticated then change their password
-export function passwordReset(req, res) {
-	console.log('passwordReset hit');
-
+export function setPassword(req, res) {
+	const hash = req.body.resetHash;
+	const username = req.body.username;
 	User.findOne({
-		where: { resetHash: req.body.resetHash, username: req.body.username },
-		attributes: authenticatedUserAttributes
+		where: { resetHash: hash, username: username },
 	}).then(function(user) {
 		const currentTime = Date.now();
-		if (!user || user.resetHashExpiration < currentTime) {
-			return res.status(200).json('invalid');
-		}
 
-		console.log('User set password - not certain this is implemented but should be bc passport');
+		if (!user){ throw new Error('User doesn\'t exist'); }
+
+		if (user.resetHashExpiration < currentTime) { throw new Error('Hash is expired'); }
+
 		// Update user
 		user.setPassword(req.body.password, function() {
 			user.resetHash = '';
@@ -28,8 +43,8 @@ export function passwordReset(req, res) {
 			user.save();
 			return res.status(200).json('success');
 		});
-	}).catch(function(error) {
-		console.log('Got an error');
+	}).catch(function(err) {
+		return res.status(401).json(err.message);
 	});
 }
-app.post('/user/password', passwordReset);
+app.post('/user/password', setPassword);

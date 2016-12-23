@@ -46,6 +46,7 @@
     "raml2html": "3.0.0",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
+    "sendgrid": "^4.7.1",
     "sequelize": "^3.24.2"
   }
 }
