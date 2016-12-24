@@ -36,7 +36,7 @@ export function getPub(req, res, next) {
 			{ model: Pub, as: 'clones' },
 			{ model: InvitedReviewer, as: 'invitedReviewers', attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }, { model: Journal, as: 'inviterJournal' }] },
 			{ model: License, as: 'license' },
-			{ model: Pub, as: 'cloneParent' }, // I think we may have to add a belongsTo
+			{ model: Pub, as: 'cloneParent' },
 		]
 		// include: [{ all: true }]
 	})
