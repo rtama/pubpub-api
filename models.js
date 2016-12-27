@@ -107,6 +107,7 @@ const Pub = sequelize.define('Pub', {
 	customAuthorList: { type: Sequelize.TEXT },
 	distinguishedClone: { type: Sequelize.BOOLEAN }, // ??TODO: Decide: Used to make a clone a 'distinguished branch'. Maybe this should be done with labels instead? If labels, then we have some weird permissioning conflicts between pub owners
 	inactive: Sequelize.BOOLEAN,
+	isPublished: Sequelize.BOOLEAN,
 	// cloneParentPubId
 	// cloneParentVersionId // Is cloneParentPubId needed if we are tracking clones by version?
 	// rootReplyPubId
@@ -130,6 +131,7 @@ const File = sequelize.define('File', {
 const Version = sequelize.define('Version', {
 	versionMessage: { type: Sequelize.TEXT },
 	isPublished: { type: Sequelize.BOOLEAN },
+	hash: { type: Sequelize.TEXT },
 	// datePublished: { type: Sequelize.DATE }, // Don't need this, as the updated date has to be the publish date
 	doi: { type: Sequelize.TEXT },
 	// exportPDF: { type: Sequelize.TEXT }, // TODO: Perhaps this is an external service for all of the exports. Maintains it's own cache, can iterate on its own. No dependency in the versions for old export styles
