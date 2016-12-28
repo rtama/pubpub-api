@@ -69,9 +69,8 @@ export function postVersion(req, res, next) {
 	// Maybe explcitly get all the files associated with the version, so that we can't unathenticated attributions, 
 
 	// TODO
-	// Add pubId to File and Version
-	// Add hash to files on upload (how)
-	// Add hash to versions on upload (A hash of all the file hashes. Sort hashes alphabetically, concatenate, and then hash)
+	// Return error if no version message!
+
 
 
 	const files = req.body.files || [];
