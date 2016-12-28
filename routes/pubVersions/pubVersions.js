@@ -1,9 +1,10 @@
 import Promise from 'bluebird';
-import request from 'request-promise';
 import app from '../../server';
+import { processFile } from '../../utilities/processFile';
 import { User, Version, File, FileRelation, FileAttribution, Contributor, VersionFile, PubVersion } from '../../models';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
+
 
 export function getVersions(req, res, next) {
 	// Return a single version
@@ -57,6 +58,7 @@ export function postVersion(req, res, next) {
 	// By confirming their hashes with the hash in the db.
 	// If somebody has a file with the wrong id, it will not throw any errors at the moment
 	// and will instead associate the wrong (potentially unpublished) file to the version.
+	// SOLUTION: hash the file all the time, and compare the URL/hash/id match?
 
 	// create an object with key=filename, value=id
 	// Can have undefined values to start, upload files, complete object
@@ -66,6 +68,10 @@ export function postVersion(req, res, next) {
 
 
 
+	// TODO
+	// Add pubId to File and Version
+	// Add hash to files on upload (how)
+	// Add hash to versions on upload (A hash of all the file hashes. Sort hashes alphabetically, concatenate, and then hash)
 
 
 	const files = req.body.files || [];
@@ -79,21 +85,18 @@ export function postVersion(req, res, next) {
 	// Separate old files (ones already parsed on the PubPub end) from new ones
 	// If the url is not a pubpub url, duplicate the content onto PubPub servers
 	// If file.contents is empty, and it's of a type that we know has content, read the file and parse. Store parsed content in file.content
+	// Create a hash for the version
 
-
-
-	// Parse contents from files if necessary
-	const readFilePromises = newFiles.map((file)=> {
-		if (file.type === 'text/markdown') { return request(file.url); }
-		return null;
+	const processFilePromises = newFiles.map((file)=> {
+		return processFile(file);
 	});
 
 	let newVersionId;
 
-	Promise.all(readFilePromises)
-	.then(function(contents) {
+	Promise.all(processFilePromises)
+	.then(function(promiseResults) {
 		const newFilesWithContent = newFiles.map((file, index)=> {
-			return { ...file, content: contents[index] };
+			return { ...file, ...promiseResults[index] };
 		});
 
 		const createFiles = File.bulkCreate(newFilesWithContent, { returning: true });

@@ -124,6 +124,7 @@ const File = sequelize.define('File', {
 	path: { type: Sequelize.STRING },
 	url: { type: Sequelize.TEXT },
 	content: { type: Sequelize.TEXT },
+	hash: { type: Sequelize.TEXT },
 });
 
 // How do versions know their history?
@@ -347,6 +348,12 @@ Version.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'Versio
 // A user can be attributed with many files, and a file may attribute many users
 File.belongsToMany(User, { onDelete: 'CASCADE', as: 'attributions', through: 'FileAttribution', foreignKey: 'fileId' });
 User.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'FileAttribution', foreignKey: 'userId' });
+
+
+// A file belongs to a single Pub
+// File.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
+// A version belongs to a single Pub
+// Version.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 
 // A version can be used in many pubs, and a pub can have many versions
 Version.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubVersion', foreignKey: 'versionId' });
