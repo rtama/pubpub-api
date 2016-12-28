@@ -1,4 +1,7 @@
 import Promise from 'bluebird';
+import SHA1 from 'crypto-js/sha1';
+import encHex from 'crypto-js/enc-hex';
+
 import app from '../../server';
 import { processFile } from '../../utilities/processFile';
 import { User, Version, File, FileRelation, FileAttribution, Contributor, VersionFile, PubVersion } from '../../models';
@@ -65,9 +68,6 @@ export function postVersion(req, res, next) {
 	// Use object to build attributions, relations, etc
 	// Maybe explcitly get all the files associated with the version, so that we can't unathenticated attributions, 
 
-
-
-
 	// TODO
 	// Add pubId to File and Version
 	// Add hash to files on upload (how)
@@ -76,7 +76,7 @@ export function postVersion(req, res, next) {
 
 	const files = req.body.files || [];
 	const oldFiles = files.filter((file)=> {
-		return file.id !== undefined;
+		return file.id !== undefined && file.hash !== undefined;
 	});
 	const newFiles = files.filter((file)=> {
 		return file.id === undefined;
@@ -95,15 +95,28 @@ export function postVersion(req, res, next) {
 
 	Promise.all(processFilePromises)
 	.then(function(promiseResults) {
+		const filesHashes = oldFiles.map((file)=> { return file.hash; });
+
 		const newFilesWithContent = newFiles.map((file, index)=> {
+			filesHashes.push(promiseResults[index].hash);
 			return { ...file, ...promiseResults[index] };
 		});
+
+		// To generate the version hash, take the hash of all the files, sort them alphabetically, concatenate them, and then hash that string.
+		const fileHashString = filesHashes.sort((foo, bar)=> {
+			if (foo > bar) { return 1; }
+			if (foo < bar) { return -1; }
+			return 0;
+		})
+		.reduce((previous, current)=> {
+			return previous + current;
+		}, '');
 
 		const createFiles = File.bulkCreate(newFilesWithContent, { returning: true });
 		const createVersion = Version.create({
 			versionMessage: req.body.versionMessage,
 			isPublished: !!req.body.isPublished,
-
+			hash: SHA1(fileHashString).toString(encHex),
 		});
 		return Promise.all([createFiles, createVersion]);
 	})
