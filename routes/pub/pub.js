@@ -1,7 +1,6 @@
 import Promise from 'bluebird';
 import app from '../../server';
 import { Pub, User, Label, File, Journal, Version, PubReply, PubReaction, Contributor, FollowsPub, License, InvitedReviewer, Reaction, Role, PubSubmit, PubFeature } from '../../models';
-import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 

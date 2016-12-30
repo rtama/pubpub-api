@@ -4,6 +4,7 @@ import encHex from 'crypto-js/enc-hex';
 
 import app from '../../server';
 import { processFile } from '../../utilities/processFile';
+import { createActivity } from '../../utilities/createActivity';
 import { User, Version, File, FileRelation, FileAttribution, Contributor, VersionFile, Pub } from '../../models';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
@@ -201,14 +202,25 @@ export function putVersion(req, res, next) {
 		});
 	})
 	.then(function(updatedCount) {
-		// If updatedCount > 0, that means we published a version.
-		// Set the pub to isPublished. Doesn't matter if already published.
 		if (updatedCount[0] === 0) { throw new Error('Error updating version isPublished'); }
-		return Pub.update({ isPublished: true }, {
-			where: { id: req.body.pubId }
+		// If updatedCount > 0, that means we published a version.
+		// Grab the parent pub, to see if we should be setting it to published (and firing the activity)
+		return Pub.findOne({
+			where: { id: req.body.pubId },
+			raw: true
 		});
 	})
-	.then(function(updatedCount) {
+	.then(function(pubData) {
+		if (pubData.isPublished) {
+			return createActivity('newVersion', user.id, req.body.pubId);
+		}
+
+		return Promise.all([
+			createActivity('publishedPub', user.id, req.body.pubId),
+			Pub.update({ isPublished: true }, { where: { id: req.body.pubId } })
+		]);
+	})
+	.then(function(promiseResults) {
 		return res.status(201).json(true);
 	})
 	.catch(function(err) {
