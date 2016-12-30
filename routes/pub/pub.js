@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import app from '../../server';
-import { Pub, User, Label, File, Journal, Version, PubReply, Contributor, FollowsPub, License, InvitedReviewer, Reaction, Role, PubSubmit, PubFeature } from '../../models';
+import { Pub, User, Label, File, Journal, Version, PubReply, PubReaction, Contributor, FollowsPub, License, InvitedReviewer, Reaction, Role, PubSubmit, PubFeature } from '../../models';
 import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
@@ -13,41 +13,44 @@ export function getPub(req, res, next) {
 	// Return
 	const user = req.user || {};
 	// console.time('pubQueryTime');
-	Pub.findOne({
-		where: { slug: req.query.slug, inactive: { $not: true } },
-		include: [
-			{ model: Contributor, as: 'contributors', include: [{ model: Role, as: 'roles' }, { model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
-			{ model: User, as: 'followers', attributes: userAttributes }, // Filter to remove FollowsPub data from all but user
-			{ model: Version, as: 'versions', include: [{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'attributions', attributes: userAttributes }] }] },
-			{ model: Pub, 
-				as: 'discussions', 
-				separate: true,
-				include: [
-					{ model: Contributor, as: 'contributors', include: [{ model: Role, as: 'roles' }, { model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
-					// { model: Version, as: 'versions', include: [{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'attributions', attributes: userAttributes }] }] },
-					{ model: Label, as: 'labels' },
-					{ model: Reaction, as: 'reactions' },
-				] 
-			},
-			{ model: Label, as: 'labels', through: { attributes: [] } }, // These are labels applied to the pub
-			{ model: Label, as: 'pubLabels' }, // These are labels owned by the pub, and used for discussions. 
-			{ model: PubSubmit, as: 'pubSubmits', include: [{ model: Journal, as: 'journal' }] },
-			{ model: PubFeature, as: 'pubFeatures', include: [{ model: Journal, as: 'journal' }] },
-			{ model: Pub, as: 'clones' },
-			{ model: InvitedReviewer, as: 'invitedReviewers', attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }, { model: Journal, as: 'inviterJournal' }] },
-			{ model: License, as: 'license' },
-			{ model: Pub, as: 'cloneParent' },
-		]
-		// include: [{ all: true }]
-	})
-	.then(function(pubData) {
+	Promise.all([
+		Pub.findOne({
+			where: { slug: req.query.slug, inactive: { $not: true } },
+			include: [
+				{ model: Contributor, as: 'contributors', include: [{ model: Role, as: 'roles' }, { model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
+				{ model: User, as: 'followers', attributes: userAttributes }, // Filter to remove FollowsPub data from all but user
+				{ model: Version, as: 'versions', include: [{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'attributions', attributes: userAttributes }] }] },
+				{ model: Pub, 
+					as: 'discussions', 
+					separate: true,
+					include: [
+						{ model: Contributor, as: 'contributors', include: [{ model: Role, as: 'roles' }, { model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
+						// { model: Version, as: 'versions', include: [{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'attributions', attributes: userAttributes }] }] },
+						{ model: Label, as: 'labels' },
+						{ model: PubReaction, as: 'pubReactions', include: [{ model: Reaction, as: 'reaction' }] },
+					] 
+				},
+				{ model: Label, as: 'labels', through: { attributes: [] } }, // These are labels applied to the pub
+				{ model: Label, as: 'pubLabels' }, // These are labels owned by the pub, and used for discussions. 
+				{ model: PubSubmit, as: 'pubSubmits', include: [{ model: Journal, as: 'journal' }] },
+				{ model: PubFeature, as: 'pubFeatures', include: [{ model: Journal, as: 'journal' }] },
+				{ model: Pub, as: 'clones' },
+				{ model: InvitedReviewer, as: 'invitedReviewers', attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }, { model: Journal, as: 'inviterJournal' }] },
+				{ model: License, as: 'license' },
+				{ model: Pub, as: 'cloneParent' },
+			]
+			// include: [{ all: true }]
+		}),
+		Reaction.findAll({ raw: true })
+	])
+	.spread(function(pubData, reactionsData) {
 		// Filter through to see if contributor, set isAuthorized
 		// Filter versions, if 0 versions available and not authorized, throw error
 		// Filter contributors
 		// Filter discussions
 		// console.timeEnd('pubQueryTime');
 		if (!pubData) { return res.status(500).json('Pub not found'); }
-		return res.status(201).json(pubData);
+		return res.status(201).json({ ...pubData.toJSON(), allReactions: reactionsData });
 	})
 	.catch(function(err) {
 		console.error('Error in getPub: ', err);

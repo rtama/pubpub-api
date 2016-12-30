@@ -257,6 +257,7 @@ const ApiKey = sequelize.define('ApiKey', {
 const Reaction = sequelize.define('Reaction', {
 	title: Sequelize.TEXT,
 	keywords: Sequelize.TEXT,
+	image: Sequelize.TEXT,
 });
 
 const JournalAdmin = sequelize.define('JournalAdmin', {
@@ -408,10 +409,14 @@ Pub.belongsToMany(User, { onDelete: 'CASCADE', as: 'usersRead', through: 'UserLa
 User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubsRead', through: 'UserLastReadPub', foreignKey: 'userId' });
 
 // A Pub can have many reactions, and a Reaction can be used on many Pubs.
-Pub.belongsToMany(Reaction, { onDelete: 'CASCADE', as: 'reactions', through: 'PubReaction', foreignKey: 'pubId' });
-Reaction.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubReaction', foreignKey: 'reactionId' });
+// Pub.belongsToMany(Reaction, { onDelete: 'CASCADE', as: 'reactions', through: 'PubReaction', foreignKey: 'pubId' });
+// Reaction.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubReaction', foreignKey: 'reactionId' });
 // Reactions need to be tied to a user. We probably want to do something similar to how contributors is structured
 PubReaction.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
+PubReaction.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
+PubReaction.belongsTo(Reaction, { onDelete: 'CASCADE', as: 'reaction', foreignKey: 'reactionId' });
+Pub.hasMany(PubReaction, { onDelete: 'CASCADE', as: 'pubReactions', foreignKey: 'pubId' });
+
 
 // A File can be related to many other files
 File.belongsToMany(File, { onDelete: 'CASCADE', as: 'destinations', through: 'FileRelation', foreignKey: 'sourceFileId' });

@@ -3,18 +3,18 @@ import { Pub, PubReaction, Reaction } from '../../models';
 
 // The singular 'Reaction' doesn't really make sense here. This should perhaps be 'reactions'
 export function getReactions(req, res, next) {
-	// Return a single reaction
+	// Return a single pub's reactions
 	// Probably should return all reactions associated
 	Pub.findOne({
 		where: { id: req.query.pubId },
 		include: [
-			{ model: Reaction, as: 'reactions' },
+			{ model: PubReaction, as: 'pubReactions' },
 		]
 	})
 	.then(function(reactionsData) {
 		// Filter through and remove userIds
-		if (!reactionsData || !reactionsData.reactions.length) { return res.status(500).json('Reactions not found'); }
-		return res.status(201).json(reactionsData.reactions);
+		if (!reactionsData || !reactionsData.pubReactions.length) { return res.status(500).json('Reactions not found'); }
+		return res.status(201).json(reactionsData.pubReactions);
 	})
 	.catch(function(err) {
 		console.error('Error in getReactions: ', err);
@@ -37,7 +37,19 @@ export function postReaction(req, res, next) {
 		userId: user.id,
 	})
 	.then(function(newPubReaction) {
-		return res.status(201).json(newPubReaction);
+		return PubReaction.findOne({
+			where: { 
+				userId: newPubReaction.userId,
+				pubId: newPubReaction.pubId,
+				reactionId: newPubReaction.reactionId,
+			},
+			include: [
+				{ model: Reaction, as: 'reaction' }
+			]
+		});
+	})
+	.then(function(pubReactionData) {
+		return res.status(201).json(pubReactionData);
 	})
 	.catch(function(err) {
 		console.error('Error in postReactions: ', err);
