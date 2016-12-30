@@ -75,6 +75,7 @@ export function postPub(req, res, next) {
 			userId: user.id,
 			pubId: newPub.dataValues.id,
 			isAuthor: true,
+			canEdit: true,
 		});
 
 		const createFollow = FollowsPub.create({
