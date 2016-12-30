@@ -4,7 +4,7 @@ import encHex from 'crypto-js/enc-hex';
 
 import app from '../../server';
 import { processFile } from '../../utilities/processFile';
-import { User, Version, File, FileRelation, FileAttribution, Contributor, VersionFile, PubVersion } from '../../models';
+import { User, Version, File, FileRelation, FileAttribution, Contributor, VersionFile, Pub } from '../../models';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
@@ -198,6 +198,14 @@ export function putVersion(req, res, next) {
 		}
 		return Version.update({ isPublished: true }, {
 			where: { id: req.body.versionId }
+		});
+	})
+	.then(function(updatedCount) {
+		// If updatedCount > 0, that means we published a version.
+		// Set the pub to isPublished. Doesn't matter if already published.
+		if (updatedCount[0] === 0) { throw new Error('Error updating version isPublished'); }
+		return Pub.update({ isPublished: true }, {
+			where: { id: req.body.pubId }
 		});
 	})
 	.then(function(updatedCount) {
