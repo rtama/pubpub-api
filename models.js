@@ -342,12 +342,12 @@ Contributor.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'user
 Contributor.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 
 // A file can be in many versions, and a version can have many files
-// File.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'VersionFile', foreignKey: 'fileId' });
-// Version.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'VersionFile', foreignKey: 'versionId' });
+File.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'VersionFile', foreignKey: 'fileId' });
+Version.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'VersionFile', foreignKey: 'versionId' });
 
-// A file can belong to a single version, but a version can have many files
+// A file can belong to a single pub, but a pub can have many files
 // File.belongsTo(Version, { onDelete: 'CASCADE', as: 'version', foreignKey: 'versionId' });
-Version.hasMany(File, { onDelete: 'CASCADE', as: 'files', foreignKey: 'versionId' });
+// Version.hasMany(File, { onDelete: 'CASCADE', as: 'files', foreignKey: 'versionId' });
 Pub.hasMany(File, { onDelete: 'CASCADE', as: 'files', foreignKey: 'pubId' });
 
 // A user can be attributed with many files, and a file may attribute many users

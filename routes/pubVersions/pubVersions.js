@@ -47,58 +47,64 @@ export function getVersions(req, res, next) {
 app.get('/pub/versions', getVersions);
 
 export function postVersion(req, res, next) {
-	// Authenticating here is a bit tricky.
-	// Files don't necessarily have their own permissions
-	// There is nothing to stop someone from guessing a fileId and having that included in their document
-	// Even if that fileId is part of a private pub, we haven't checked for that yet.
+	// Authenticate user
+	// Authenticate old files
+	// Make files
+	// Make version
+	// Attach files to version (create VersionFiles records)
+	// Get files based on version
+	// build name:id object
+	// Build FileRelations entries
+	// Build Attributions entries
 
-	// authenticate
-	// What happens if you clone a file, we just duplicate the pointer, but are you then
-	// allowed to update it's attributions?
-	// Check that all parameters that need to exist do.
+	const user = req.user || {};
+	if (!user.id) { return res.status(500).json('Not authorized'); }
+	if (!req.body.versionMessage) { return res.status(500).json('Version Message Required'); }
 
-	// We should be hashing the content of files here. We should also be verifying the 'existing' files that are uploaded
-	// By confirming their hashes with the hash in the db.
-	// If somebody has a file with the wrong id, it will not throw any errors at the moment
-	// and will instead associate the wrong (potentially unpublished) file to the version.
-	// SOLUTION: hash the file all the time, and compare the URL/hash/id match?
-
-	// create an object with key=filename, value=id
-	// Can have undefined values to start, upload files, complete object
-	// Use object to build attributions, relations, etc
-	// Maybe explcitly get all the files associated with the version, so that we can't unathenticated attributions, 
-
-	// TODO
-	// Return error if no version message!
-
-
-
-	const files = req.body.files || [];
-	const oldFiles = files.filter((file)=> {
-		return file.id !== undefined && file.hash !== undefined;
-	});
-	const newFiles = files.filter((file)=> {
-		return file.id === undefined;
-	});
-	
 	// Separate old files (ones already parsed on the PubPub end) from new ones
-	// If the url is not a pubpub url, duplicate the content onto PubPub servers
-	// If file.contents is empty, and it's of a type that we know has content, read the file and parse. Store parsed content in file.content
-	// Create a hash for the version
-
-	const processFilePromises = newFiles.map((file)=> {
-		return processFile(file);
-	});
+	const files = req.body.files || [];
+	const oldFiles = files.filter((file)=> { return file.id !== undefined; });
+	const newFiles = files.filter((file)=> { return file.id === undefined; });
 
 	let newVersionId;
 
-	Promise.all(processFilePromises)
+	Contributor.findOne({
+		where: { userId: user.id, pubId: req.body.pubId },
+		raw: true,
+	})
+	.then(function(contributorData) {
+		if (!contributorData || (!contributorData.canEdit && !contributorData.isAuthor)) {
+			throw new Error('Not Authorized to update this pub');
+		}
+
+		// Verify old files by checking that id, pubId, hash, and url are valid.
+		// This ensures that there are no mistakes about whether a old file already exists as submitted
+		// Also prevents someone from submitting an id that they don't own, in a hope to get access to unpublished work.
+		const oldFileQueries = oldFiles.map((file)=> {
+			return { id: file.id, hash: file.hash, pubId: req.body.pubId, url: file.url };
+		});
+		return File.findAll({
+			where: { $or: oldFileQueries }
+		});
+		
+	})
+	.then(function(oldFileResults) {
+		// If there are fewer files found than submitted, one of the 'oldFiles' submitted does not actually exist in our system
+		if (oldFileResults.length !== oldFiles.length) {
+			throw new Error('Invalid existing files submitted');
+		}
+
+		const processFilePromises = newFiles.map((file)=> {
+			return processFile(file);
+		});
+		return Promise.all(processFilePromises);
+	})
 	.then(function(promiseResults) {
 		const filesHashes = oldFiles.map((file)=> { return file.hash; });
 
 		const newFilesWithContent = newFiles.map((file, index)=> {
 			filesHashes.push(promiseResults[index].hash);
-			return { ...file, ...promiseResults[index] };
+			return { ...file, ...promiseResults[index], pubId: req.body.pubId };
 		});
 
 		// To generate the version hash, take the hash of all the files, sort them alphabetically, concatenate them, and then hash that string.
@@ -111,7 +117,7 @@ export function postVersion(req, res, next) {
 			return previous + current;
 		}, '');
 
-		// const createFiles = File.bulkCreate(newFilesWithContent, { returning: true });
+		const createFiles = File.bulkCreate(newFilesWithContent, { returning: true });
 		const createVersion = Version.create({
 			versionMessage: req.body.versionMessage,
 			isPublished: !!req.body.isPublished,
@@ -119,28 +125,16 @@ export function postVersion(req, res, next) {
 			pubId: req.body.pubId,
 		});
 
-		return Promise.all([createVersion, newFilesWithContent]);
+		return Promise.all([createVersion, createFiles]);
 	})
-	.spread(function(newVersion, newFilesWithContent) {
-		newVersionId = newVersion.id;
-		const newFilesWithVersionId = newFilesWithContent.map((file)=> {
-			return { ...file, versionId: newVersionId, pubId: req.body.pubId };
+	.spread(function(addedVersion, addedFiles) {
+		newVersionId = addedVersion.id;
+		const newVersionFileEntries = [...oldFiles, ...addedFiles].map((file)=> {
+			return { versionId: newVersionId, fileId: file.id };
 		});
-
-		return File.bulkCreate(newFilesWithVersionId);
+		return VersionFile.bulkCreate(newVersionFileEntries);
 	})
-	// .spread(function(addedFiles, addedVersion) {
-	// 	newVersionId = addedVersion.id;
-	// 	const newVersionFileEntries = [...oldFiles, ...addedFiles].map((file)=> {
-	// 		return { versionId: newVersionId, fileId: file.id || file.dataValues.id };
-	// 	});
-	// 	const createVersionFiles = VersionFile.bulkCreate(newVersionFileEntries);
-	// 	const createPubVersion = PubVersion.create({ pubId: req.body.pubId, versionId: newVersionId });
-	// 	return Promise.all([createVersionFiles, createPubVersion]);
-	// })
-	// .spread(function(newVersionFiles, newPubVersion) {
-	.then(function(newFilesCount) {
-		// Find the files for this given version
+	.then(function(newVersionFilesCount) {
 		return Version.findOne({
 			where: { id: newVersionId },
 			include: [{ model: File, as: 'files' }],
@@ -182,28 +176,6 @@ export function postVersion(req, res, next) {
 		console.error('Error in postVersion: ', err);
 		return res.status(500).json(err.message);
 	});
-
-	// Make files
-	// Make version
-	// Attach files to version (create VersionFiles records)
-	// Attach version to pub (create PubVersion entry)
-	// Get files based on version
-	// build name:id object
-	// Build FileRelations entries
-	// Build Attributions entries
-
-
-	// create new version
-	// attach version to pub
-	// attach files to new version
-	// add any new files that are necessary
-	// If files have relations, have to make those too
-	// If files have attributions, have to make those too 
-	//
-	// Perhaps the files list that is sent up has a list of fileIDs, and then files.
-	// If the item is a typeof(number) then we just add, otherwise we add files in bulk
-	// Do we also hash each file to check if it already exists in the DB?
-
 }
 app.post('/pub/versions', postVersion);
 
