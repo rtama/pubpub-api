@@ -43,7 +43,8 @@ export function postFeatures(req, res, next) {
 	.then(function() {
 		return PubFeature.create({
 			pubId: req.body.pubId,
-			journalId: req.body.journalId
+			journalId: req.body.journalId,
+			isDisplayed: true,
 		});
 	})
 	.then(function(newPubFeature) {
