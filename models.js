@@ -8,7 +8,6 @@ const passportLocalSequelize = require('passport-local-sequelize');
 const sequelize = new Sequelize(process.env.DATABASE_URL, { logging: false, dialectOptions: { ssl: true } });
 
 // Change to true to update the model in the database.
-// TODO: Review inviters get notified when approve/reject an invitation. Journals/Users updated when a reviewer posts a review.
 // NOTE: This being set to true will erase your data.
 sequelize.sync({ force: false });
 
@@ -39,7 +38,6 @@ SignUp.hook('afterUpdate', function(user, options) {
 	// If completed is still false, send email!
 	// Call email service.
 });
-// console.log(SignUp);
 
 
 const User = sequelize.define('User', {
@@ -271,35 +269,12 @@ const JournalAdmin = sequelize.define('JournalAdmin', {
 
 const VersionFile = sequelize.define('VersionFile', {}); // Used to connect specific files to a specific version
 const FileAttribution = sequelize.define('FileAttribution', {}); // Used to connect specific users to a specific file
-const PubVersion = sequelize.define('PubVersion', {}); // Used to connect specific versions to a specific pub
-const FollowsPub = sequelize.define('FollowsPub', { // Used to connect specific user to a specific pub as follower
-	// notifyOnVersions: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// notifyOnDiscussions: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// notifyOnJournals: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// notifyOnContributors: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// notifyOnReviewers: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// notifyOnFollowers: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// TODO: Fill out the types of notifications for pubs, users, journals
-}); 
-const FollowsJournal = sequelize.define('FollowsJournal', { // Used to connect specific user to a specific journal as follower
-	// notifyOnAdmins: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// notifyOnFeatures: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// notifyOnSubmissions: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// notifyOnFollowers: { type: Sequelize.BOOLEAN, defaultValue: true },
-}); 
-const FollowsUser = sequelize.define('FollowsUser', { // Used to connect specific user to a specific user as follower
-	// notifyOnPubs: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// notifyOnJournals: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// notifyOnDiscussions: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// notifyOnReviews: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// notifyOnFollows: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// notifyOnFollowers: { type: Sequelize.BOOLEAN, defaultValue: true },
-}); 
-const FollowsLabel = sequelize.define('FollowsLabel', { // Used to connect specific user to a specific label as follower
-	// notifyOnPubs: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// notifyOnFollowers: { type: Sequelize.BOOLEAN, defaultValue: true },
-}); 
 
+const FollowsPub = sequelize.define('FollowsPub', {}); // Used to connect specific user to a specific pub as follower
+const FollowsJournal = sequelize.define('FollowsJournal', {}); // Used to connect specific user to a specific journal as follower
+const FollowsUser = sequelize.define('FollowsUser', {}); // Used to connect specific user to a specific user as follower
+const FollowsLabel = sequelize.define('FollowsLabel', {}); // Used to connect specific user to a specific label as follower
+	
 const ContributorRole = sequelize.define('ContributorRole', {
 	inactive: Sequelize.BOOLEAN, // Used when a contributor is removed so we have a history of contributors and how they were applied/removed
 	// pubID: used so we can grab all roles when querying for pubs. Needed because we can't 'include' on a through table. Issue here: https://github.com/sequelize/sequelize/issues/5358
@@ -346,23 +321,11 @@ File.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'Ver
 Version.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'VersionFile', foreignKey: 'versionId' });
 
 // A file can belong to a single pub, but a pub can have many files
-// File.belongsTo(Version, { onDelete: 'CASCADE', as: 'version', foreignKey: 'versionId' });
-// Version.hasMany(File, { onDelete: 'CASCADE', as: 'files', foreignKey: 'versionId' });
 Pub.hasMany(File, { onDelete: 'CASCADE', as: 'files', foreignKey: 'pubId' });
 
 // A user can be attributed with many files, and a file may attribute many users
 File.belongsToMany(User, { onDelete: 'CASCADE', as: 'attributions', through: 'FileAttribution', foreignKey: 'fileId' });
 User.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'FileAttribution', foreignKey: 'userId' });
-
-
-// A file belongs to a single Pub
-// File.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
-// A version belongs to a single Pub
-// Version.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
-
-// A version can be used in many pubs, and a pub can have many versions
-// Version.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubVersion', foreignKey: 'versionId' });
-// Pub.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'PubVersion', foreignKey: 'pubId' });
 
 // A version belongs to a single pub, but a pub can have many versions
 Pub.hasMany(Version, { onDelete: 'CASCADE', as: 'versions', foreignKey: 'pubId' });
@@ -527,7 +490,6 @@ const db = {
 	Contributor: Contributor,
 	VersionFile: VersionFile,
 	FileAttribution: FileAttribution,
-	PubVersion: PubVersion,
 	FollowsPub: FollowsPub,
 	FollowsJournal: FollowsJournal,
 	FollowsUser: FollowsUser,
