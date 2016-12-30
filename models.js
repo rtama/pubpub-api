@@ -281,6 +281,7 @@ const ContributorRole = sequelize.define('ContributorRole', {
 }); // Used to connect specific role to a specific contributor
 const PubFeature = sequelize.define('PubFeature', { // Used to connect specific journal to specific pub as featurer
 	isDisplayed: Sequelize.BOOLEAN, // Whether the feature tag is displayed on the front of the pub
+	isContext: Sequelize.BOOLEAN, // Whether the feature is the default context
 });
 const PubSubmit = sequelize.define('PubSubmit', {
 	isRejected: Sequelize.BOOLEAN,

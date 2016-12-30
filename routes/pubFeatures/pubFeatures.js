@@ -28,7 +28,7 @@ app.get('/pub/features', getFeatures);
 export function putFeature(req, res, next) {
 	// Is there anything we want to allow to change?
 	// whether the journal is featured on the front of the pub?
-	// Users with edit access can set the PubFeature value for 'isDisplayed'
+	// Users with edit access can set the PubFeature value for 'isDisplayed' and 'isContext'
 	const user = req.user || {};
 	if (!user.id) { return res.status(500).json('Not authorized'); }
 
@@ -40,7 +40,15 @@ export function putFeature(req, res, next) {
 		if (!contributor || (!contributor.canEdit && !contributor.isAuthor)) {
 			throw new Error('Not Authorized to edit this pub');
 		}
-		return PubFeature.update({ isDisplayed: !!req.body.isDisplayed }, {
+
+		const updatedFeature = {};
+		Object.keys(req.body).map((key)=> {
+			if (['isDisplayed', 'isContext'].indexOf(key) > -1) {
+				updatedFeature[key] = req.body[key];
+			} 
+		});
+
+		return PubFeature.update(updatedFeature, {
 			where: { pubId: req.body.pubId, journalId: req.body.journalId }			
 		});
 	})
