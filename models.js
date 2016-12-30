@@ -342,8 +342,13 @@ Contributor.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'user
 Contributor.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 
 // A file can be in many versions, and a version can have many files
-File.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'VersionFile', foreignKey: 'fileId' });
-Version.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'VersionFile', foreignKey: 'versionId' });
+// File.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'VersionFile', foreignKey: 'fileId' });
+// Version.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'VersionFile', foreignKey: 'versionId' });
+
+// A file can belong to a single version, but a version can have many files
+// File.belongsTo(Version, { onDelete: 'CASCADE', as: 'version', foreignKey: 'versionId' });
+Version.hasMany(File, { onDelete: 'CASCADE', as: 'files', foreignKey: 'versionId' });
+Pub.hasMany(File, { onDelete: 'CASCADE', as: 'files', foreignKey: 'pubId' });
 
 // A user can be attributed with many files, and a file may attribute many users
 File.belongsToMany(User, { onDelete: 'CASCADE', as: 'attributions', through: 'FileAttribution', foreignKey: 'fileId' });
@@ -356,8 +361,11 @@ User.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'FileAttri
 // Version.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 
 // A version can be used in many pubs, and a pub can have many versions
-Version.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubVersion', foreignKey: 'versionId' });
-Pub.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'PubVersion', foreignKey: 'pubId' });
+// Version.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubVersion', foreignKey: 'versionId' });
+// Pub.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'PubVersion', foreignKey: 'pubId' });
+
+// A version belongs to a single pub, but a pub can have many versions
+Pub.hasMany(Version, { onDelete: 'CASCADE', as: 'versions', foreignKey: 'pubId' });
 
 // A user can be an admin on many journals, and a journal can have many admins
 User.belongsToMany(Journal, { onDelete: 'CASCADE', as: 'journals', through: 'JournalAdmin', foreignKey: 'userId' });
@@ -461,11 +469,11 @@ Pub.belongsTo(License, { onDelete: 'CASCADE', as: 'license', foreignKey: 'licens
 Pub.hasMany(Pub, { onDelete: 'CASCADE', as: 'clones', foreignKey: 'cloneParentPubId' });
 Pub.belongsTo(Pub, { onDelete: 'CASCADE', as: 'cloneParent', foreignKey: 'cloneParentPubId' });
 
+// TODO: These were causing cyclic dependency issues. Find the right structure for what a clone/pr is.
 // A version can have many clones, but a clone belongs to only a single parent version
-Version.hasMany(Pub, { onDelete: 'CASCADE', as: 'clones', foreignKey: 'cloneParentVersionId' });
-
+// Version.hasMany(Pub, { onDelete: 'CASCADE', as: 'clones', foreignKey: 'cloneParentVersionId' });
 // A discussion Pub can have a single PR
-Pub.belongsTo(Version, { onDelete: 'CASCADE', as: 'pullRequest', foreignKey: 'pullRequestVersionId' });
+// Pub.belongsTo(Version, { onDelete: 'CASCADE', as: 'pullRequest', foreignKey: 'pullRequestVersionId' });
 
 // A pub can have many invited reviewers, but an invited reviewer belongs to only a single pub
 Pub.hasMany(InvitedReviewer, { onDelete: 'CASCADE', as: 'invitedReviewers', foreignKey: 'pubId' });

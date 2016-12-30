@@ -111,24 +111,35 @@ export function postVersion(req, res, next) {
 			return previous + current;
 		}, '');
 
-		const createFiles = File.bulkCreate(newFilesWithContent, { returning: true });
+		// const createFiles = File.bulkCreate(newFilesWithContent, { returning: true });
 		const createVersion = Version.create({
 			versionMessage: req.body.versionMessage,
 			isPublished: !!req.body.isPublished,
 			hash: SHA1(fileHashString).toString(encHex),
+			pubId: req.body.pubId,
 		});
-		return Promise.all([createFiles, createVersion]);
+
+		return Promise.all([createVersion, newFilesWithContent]);
 	})
-	.spread(function(addedFiles, addedVersion) {
-		newVersionId = addedVersion.id;
-		const newVersionFileEntries = [...oldFiles, ...addedFiles].map((file)=> {
-			return { versionId: newVersionId, fileId: file.id || file.dataValues.id };
+	.spread(function(newVersion, newFilesWithContent) {
+		newVersionId = newVersion.id;
+		const newFilesWithVersionId = newFilesWithContent.map((file)=> {
+			return { ...file, versionId: newVersionId, pubId: req.body.pubId };
 		});
-		const createVersionFiles = VersionFile.bulkCreate(newVersionFileEntries);
-		const createPubVersion = PubVersion.create({ pubId: req.body.pubId, versionId: newVersionId });
-		return Promise.all([createVersionFiles, createPubVersion]);
+
+		return File.bulkCreate(newFilesWithVersionId);
 	})
-	.spread(function(newVersionFiles, newPubVersion) {
+	// .spread(function(addedFiles, addedVersion) {
+	// 	newVersionId = addedVersion.id;
+	// 	const newVersionFileEntries = [...oldFiles, ...addedFiles].map((file)=> {
+	// 		return { versionId: newVersionId, fileId: file.id || file.dataValues.id };
+	// 	});
+	// 	const createVersionFiles = VersionFile.bulkCreate(newVersionFileEntries);
+	// 	const createPubVersion = PubVersion.create({ pubId: req.body.pubId, versionId: newVersionId });
+	// 	return Promise.all([createVersionFiles, createPubVersion]);
+	// })
+	// .spread(function(newVersionFiles, newPubVersion) {
+	.then(function(newFilesCount) {
 		// Find the files for this given version
 		return Version.findOne({
 			where: { id: newVersionId },
