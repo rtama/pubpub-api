@@ -37,6 +37,8 @@ post:
           required: true
         files: 
           description: All files, those that are new should NOT include an "id" field and they will be added.
+        defaultFile:
+          description: Default file for this version
         newFileAttribution: 
           description: |
             Array of objects with {source: [file.name], destination: [file.name]}. 
