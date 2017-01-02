@@ -133,6 +133,7 @@ const Version = sequelize.define('Version', {
 	hash: { type: Sequelize.TEXT },
 	// datePublished: { type: Sequelize.DATE }, // Don't need this, as the updated date has to be the publish date
 	doi: { type: Sequelize.TEXT },
+	defaultFile: Sequelize.TEXT,
 	// exportPDF: { type: Sequelize.TEXT }, // TODO: Perhaps this is an external service for all of the exports. Maintains it's own cache, can iterate on its own. No dependency in the versions for old export styles
 	// exportMarkdown: { type: Sequelize.TEXT },
 	// exportXML: { type: Sequelize.TEXT },
@@ -179,6 +180,10 @@ const Highlight = sequelize.define('Highlight', {
 	// userId: userId is used to mark who created the highlight
 	// pubId: pubId is used to mark which pub the highlight is from
 	// versionId: versionId is used to mark which version the highlight is from
+	// versionHash: hash of the version the highlight is from
+	// fileId
+	// fileHash
+	// fileName
 });
 
 

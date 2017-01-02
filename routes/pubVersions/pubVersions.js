@@ -187,38 +187,47 @@ export function putVersion(req, res, next) {
 	// TODO: need to validate that the versionId supplied is actually a part of the pubId supplied
 	const user = req.user || {};
 
+	const updatedVersion = {};
+	Object.keys(req.body).map((key)=> {
+		if (['isPublished', 'doi', 'defaultFile'].indexOf(key) > -1) {
+			updatedVersion[key] = req.body[key];
+		} 
+	});
+
 	Contributor.findOne({
 		where: { userId: user.id, pubId: req.body.pubId },
 		raw: true,
 	})
 	.then(function(contributorData) {
-		const canEdit = contributorData && (contributorData.canEdit || contributorData.isAuthor);
-
-		if (!canEdit) {
-			throw new Error('Not Authorized to update this version');
+		if (!contributorData || (!contributorData.canEdit && !contributorData.isAuthor)) {
+			throw new Error('Not Authorized to update this pub');
 		}
-		return Version.update({ isPublished: true }, {
+		return Version.update(updatedVersion, {
 			where: { id: req.body.versionId }
 		});
 	})
 	.then(function(updatedCount) {
-		if (updatedCount[0] === 0) { throw new Error('Error updating version isPublished'); }
-		// If updatedCount > 0, that means we published a version.
-		// Grab the parent pub, to see if we should be setting it to published (and firing the activity)
-		return Pub.findOne({
-			where: { id: req.body.pubId },
-			raw: true
-		});
-	})
-	.then(function(pubData) {
-		if (pubData.isPublished) {
-			return createActivity('newVersion', user.id, req.body.pubId);
-		}
+		if (req.body.isPublished && updatedCount[0] > 0) { 
+			// if isPublished and updatedCount > 0, that means we set isPublished to true.
+			// So grab the parent pub to see if we need to update it's isPublished also. 
+			// Note, this will generate duplicate isPublished activities, since we're not checking the state of isPublished before calling update
+			// And it could be updated because of other values in the body, such as req.body.doi. 
+			// So, best practice is to not include the isPublished key if you're not publishing
+			return Pub.findOne({
+				where: { id: req.body.pubId },
+				raw: true
+			}).then(function(pubData) {
+				if (pubData.isPublished) {
+					return createActivity('newVersion', user.id, req.body.pubId);
+				}
 
-		return Promise.all([
-			createActivity('publishedPub', user.id, req.body.pubId),
-			Pub.update({ isPublished: true }, { where: { id: req.body.pubId } })
-		]);
+				return Promise.all([
+					createActivity('publishedPub', user.id, req.body.pubId),
+					Pub.update({ isPublished: true }, { where: { id: req.body.pubId } })
+				]);
+			});
+		}
+		return true;
 	})
 	.then(function(promiseResults) {
 		return res.status(201).json(true);
