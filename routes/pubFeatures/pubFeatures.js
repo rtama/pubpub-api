@@ -28,7 +28,7 @@ app.get('/pub/features', getFeatures);
 export function putFeature(req, res, next) {
 	// Is there anything we want to allow to change?
 	// whether the journal is featured on the front of the pub?
-	// Users with edit access can set the PubFeature value for 'isDisplayed' and 'isContext'
+	// Users with edit access can set the PubFeature value for 'isDisplayed' 
 	const user = req.user || {};
 	if (!user.id) { return res.status(500).json('Not authorized'); }
 
@@ -43,7 +43,7 @@ export function putFeature(req, res, next) {
 
 		const updatedFeature = {};
 		Object.keys(req.body).map((key)=> {
-			if (['isDisplayed', 'isContext'].indexOf(key) > -1) {
+			if (['isDisplayed'].indexOf(key) > -1) {
 				updatedFeature[key] = req.body[key];
 			} 
 		});

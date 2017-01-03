@@ -112,6 +112,7 @@ const Pub = sequelize.define('Pub', {
 	// parentReplyPubId
 	// pullRequestVersionId
 	// licenseId
+	// defaultContext
 });
 
 // How do files know their history?
@@ -287,7 +288,7 @@ const ContributorRole = sequelize.define('ContributorRole', {
 }); // Used to connect specific role to a specific contributor
 const PubFeature = sequelize.define('PubFeature', { // Used to connect specific journal to specific pub as featurer
 	isDisplayed: Sequelize.BOOLEAN, // Whether the feature tag is displayed on the front of the pub
-	isContext: Sequelize.BOOLEAN, // Whether the feature is the default context
+	// isContext: Sequelize.BOOLEAN, // Whether the feature is the default context
 });
 const PubSubmit = sequelize.define('PubSubmit', {
 	isRejected: Sequelize.BOOLEAN,
@@ -438,6 +439,9 @@ User.hasMany(Highlight, { onDelete: 'CASCADE', as: 'highlights', foreignKey: 'us
 License.hasMany(Pub, { onDelete: 'CASCADE', as: 'pubs', foreignKey: 'licenseId' });
 // A pub can have one license
 Pub.belongsTo(License, { onDelete: 'CASCADE', as: 'license', foreignKey: 'licenseId' });
+
+// A pub can have one default context
+Pub.belongsTo(Journal, { onDelete: 'CASCADE', as: 'defaultContextJournal', foreignKey: 'defaultContext' });
 
 // A pub can have many clones, but a clone belongs to only a single parent pub
 Pub.hasMany(Pub, { onDelete: 'CASCADE', as: 'clones', foreignKey: 'cloneParentPubId' });
