@@ -16,6 +16,7 @@
     "build-docs": "raml2html -t template/template.nunjucks api.raml > index.html"
   },
   "dependencies": {
+    "aws-sdk": "^2.7.19",
     "babel-core": "^6.13.2",
     "babel-eslint": "^7.1.0",
     "babel-plugin-add-module-exports": "^0.2.1",
@@ -30,6 +31,7 @@
     "connect-session-sequelize": "^3.1.0",
     "cookie-parser": "^1.4.3",
     "crypto": "0.0.3",
+    "crypto-js": "^3.1.9-1",
     "eslint": "^3.10.0",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-loader": "^1.6.1",
@@ -38,6 +40,7 @@
     "eslint-plugin-react": "^6.6.0",
     "express": "^4.14.0",
     "express-session": "^1.14.1",
+    "hash-files": "^1.1.1",
     "nodemon": "^1.11.0",
     "osprey": "^0.3.2",
     "passport-local": "^1.0.0",
@@ -47,6 +50,6 @@
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
     "sendgrid": "^4.7.1",
-    "sequelize": "^3.24.2"
+    "tmp-promise": "^1.0.2"
   }
 }

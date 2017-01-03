@@ -37,6 +37,8 @@ post:
           required: true
         files: 
           description: All files, those that are new should NOT include an "id" field and they will be added.
+        defaultFile:
+          description: Default file for this version
         newFileAttribution: 
           description: |
             Array of objects with {source: [file.name], destination: [file.name]}. 
@@ -68,23 +70,13 @@ put:
         pubId: 
           description: id of the pub to be changed
           required: true
-        slug: 
-          description: new slug 
-        title:
-          description: new title
-        description:
-          description: new description
-        previewImage:
-          description: new image
-        isClosed: 
-          description: new isClosed state
-        hideAuthors: 
-          description: new hideAuthors state
-        customAuthorList: 
-          description: new customAuthorList
-        licenseId: 
-          description: new License state
-        
+        versionId: 
+          description: id of the version to be changed
+          required: true
+        doi: 
+          description: new DOI for a given version
+        defaultFile: 
+          description: new defautlFile for a given version
   responses:
     200:
       body:

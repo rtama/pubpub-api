@@ -1,5 +1,6 @@
 import app from '../../server';
 import { FollowsUser, User } from '../../models';
+import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
@@ -29,13 +30,16 @@ app.get('/follows/user', getFollows);
 
 export function postFollow(req, res, next) {
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	FollowsUser.create({
 		followerId: user.id,
 		userId: req.body.userId
 	})
 	.then(function(newFollow) {
+		return [newFollow, createActivity('followedUser', user.id, req.body.userId)];
+	})
+	.spread(function(newFollow, newActivity) {
 		return res.status(201).json(newFollow);
 	})
 	.catch(function(err) {
@@ -47,7 +51,7 @@ app.post('/follows/user', postFollow);
 
 export function putFollow(req, res, next) {
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	const updatedFollow = {};
 	Object.keys(req.body).map((key)=> {
@@ -71,7 +75,7 @@ app.put('/follows/user', putFollow);
 
 export function deleteFollow(req, res, next) {
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	FollowsUser.destroy({
 		where: { followerId: user.id, userId: req.body.userId }

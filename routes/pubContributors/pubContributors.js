@@ -1,5 +1,6 @@
 import app from '../../server';
 import { User, Contributor, Role } from '../../models';
+import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
@@ -59,6 +60,9 @@ export function postContributor(req, res, next) {
 		});
 	})
 	.then(function(newContributorData) {
+		return [newContributorData, createActivity('addedContributor', user.id, req.body.pubId, newContributorData.userId)];
+	})
+	.spread(function(newContributorData, newActivity) {
 		return res.status(201).json(newContributorData);
 	})
 	.catch(function(err) {

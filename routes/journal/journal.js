@@ -1,6 +1,7 @@
 import Promise from 'bluebird';
 import app from '../../server';
 import { Pub, PubSubmit, PubFeature, User, Label, JournalAdmin, Journal, FollowsJournal, InvitedReviewer } from '../../models';
+import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
@@ -75,12 +76,15 @@ export function postJournal(req, res, next) {
 		return Journal.findOne({
 			where: { slug: req.body.slug, inactive: { $not: true } },
 			include: [
-				{ model: User, as: 'admins', attributes: userAttributes }, 
+				{ model: JournalAdmin, as: 'admins', include: [{ model: User, as: 'user', attributes: userAttributes }] },
 				{ model: User, as: 'followers', attributes: userAttributes }, 
 			]
 		});
 	})
 	.then(function(journalData) {
+		return [journalData, createActivity('createdJournal', user.id, journalData.id)];
+	})
+	.spread(function(journalData, newActivity) {
 		return res.status(201).json(journalData);
 	})
 	.catch(function(err) {
@@ -102,12 +106,12 @@ export function putJournal(req, res, next) {
 	// Check if authenticated. Update. Return true.
 
 	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	// Filter to only allow certain fields to be updated
 	const updatedJournal = {};
 	Object.keys(req.body).map((key)=> {
-		if (['slug', 'name', 'shortDescription', 'longDescription', 'reviewDescription', 'logo', 'icon', 'website', 'twitter', 'facebook', 'headerColor','headerMode', 'headerAlign', 'headerImage'].indexOf(key) > -1) {
+		if (['slug', 'name', 'shortDescription', 'longDescription', 'reviewDescription', 'logo', 'icon', 'website', 'twitter', 'facebook', 'headerColor', 'headerMode', 'headerAlign', 'headerImage'].indexOf(key) > -1) {
 			updatedJournal[key] = req.body[key];
 		} 
 	});

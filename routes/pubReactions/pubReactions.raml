@@ -23,17 +23,12 @@ post:
   body:
     application/json:
       formParameters:
-        slug: 
-          description: slug used for the pub url
+        pubId: 
+          description: id of the pub this reaction is being added to
           required: true
-        title: 
-          description: title used for the new pub
+        reactionId: 
+          description: id of the reaction to be added
           required: true
-        previewImage:
-          description: preview image to be used for the new pub
-          required: true
-        description:
-          description: description of the new pub
   responses:
     200:
       body:
@@ -49,52 +44,17 @@ post:
             {
               error : "Error creating pub"
             }
-put:
-  description: |
-    Used to allow a pub editor to update the pub. 
-    Things like 'distinguishedClone' or fields that are applied by outside users have their own 
-  body:
-    application/json:
-      formParameters:
-        pubId: 
-          description: id of the pub to be changed
-          required: true
-        slug: 
-          description: new slug 
-        title:
-          description: new title
-        description:
-          description: new description
-        previewImage:
-          description: new image
-        isClosed: 
-          description: new isClosed state
-        hideAuthors: 
-          description: new hideAuthors state
-        customAuthorList: 
-          description: new customAuthorList
-        licenseId: 
-          description: new License state
-        
-  responses:
-    200:
-      body:
-        application/json:
-          example: true
-    500:
-      body:
-        application/json:
-          example: |
-            {
-              error : "Error updating pub"
-            }
 delete:
   description: Delete the pub
   body:
     application/json:
       formParameters:
         pubId: 
-          description: id of the pub to be deleted
+          description: id of the pub this reaction is being removed from
+          required: true
+        reactionId: 
+          description: id of the reaction to be removed
+          required: true
   responses:
     200:
       body:

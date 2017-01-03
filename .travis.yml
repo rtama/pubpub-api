@@ -10,7 +10,7 @@ before_script:
   mkdir build ;
 
 script:
-  raml2html -t template/template.nunjucks api.raml -o build/index.html ;
+  npm run build-docs ;
 
 deploy:
   provider: s3

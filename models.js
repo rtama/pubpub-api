@@ -8,7 +8,6 @@ const passportLocalSequelize = require('passport-local-sequelize');
 const sequelize = new Sequelize(process.env.DATABASE_URL, { logging: false, dialectOptions: { ssl: true } });
 
 // Change to true to update the model in the database.
-// TODO: Review inviters get notified when approve/reject an invitation. Journals/Users updated when a reviewer posts a review.
 // NOTE: This being set to true will erase your data.
 sequelize.sync({ force: false });
 
@@ -39,7 +38,6 @@ SignUp.hook('afterUpdate', function(user, options) {
 	// If completed is still false, send email!
 	// Call email service.
 });
-// console.log(SignUp);
 
 
 const User = sequelize.define('User', {
@@ -107,12 +105,14 @@ const Pub = sequelize.define('Pub', {
 	customAuthorList: { type: Sequelize.TEXT },
 	distinguishedClone: { type: Sequelize.BOOLEAN }, // ??TODO: Decide: Used to make a clone a 'distinguished branch'. Maybe this should be done with labels instead? If labels, then we have some weird permissioning conflicts between pub owners
 	inactive: Sequelize.BOOLEAN,
+	isPublished: Sequelize.BOOLEAN,
 	// cloneParentPubId
 	// cloneParentVersionId // Is cloneParentPubId needed if we are tracking clones by version?
 	// rootReplyPubId
 	// parentReplyPubId
 	// pullRequestVersionId
 	// licenseId
+	// defaultContext
 });
 
 // How do files know their history?
@@ -123,6 +123,7 @@ const File = sequelize.define('File', {
 	path: { type: Sequelize.STRING },
 	url: { type: Sequelize.TEXT },
 	content: { type: Sequelize.TEXT },
+	hash: { type: Sequelize.TEXT },
 });
 
 // How do versions know their history?
@@ -130,12 +131,28 @@ const File = sequelize.define('File', {
 const Version = sequelize.define('Version', {
 	versionMessage: { type: Sequelize.TEXT },
 	isPublished: { type: Sequelize.BOOLEAN },
+	hash: { type: Sequelize.TEXT },
 	// datePublished: { type: Sequelize.DATE }, // Don't need this, as the updated date has to be the publish date
 	doi: { type: Sequelize.TEXT },
+	defaultFile: Sequelize.TEXT,
 	// exportPDF: { type: Sequelize.TEXT }, // TODO: Perhaps this is an external service for all of the exports. Maintains it's own cache, can iterate on its own. No dependency in the versions for old export styles
 	// exportMarkdown: { type: Sequelize.TEXT },
 	// exportXML: { type: Sequelize.TEXT },
 	// exportHTML: { type: Sequelize.TEXT },
+});
+
+const Activity = sequelize.define('Activity', {
+	verb: { type: Sequelize.TEXT },
+	// actorJournalId
+	// actorUserId
+	// targetPubId
+	// targetUserId
+	// targetJournalId
+	// targetLabelId
+	// objectPubId
+	// objectUserId
+	// objectJournalId
+	// objectLabelId
 });
 
 const License = sequelize.define('License', {
@@ -164,6 +181,10 @@ const Highlight = sequelize.define('Highlight', {
 	// userId: userId is used to mark who created the highlight
 	// pubId: pubId is used to mark which pub the highlight is from
 	// versionId: versionId is used to mark which version the highlight is from
+	// versionHash: hash of the version the highlight is from
+	// fileId
+	// fileHash
+	// fileName
 });
 
 
@@ -242,6 +263,7 @@ const ApiKey = sequelize.define('ApiKey', {
 const Reaction = sequelize.define('Reaction', {
 	title: Sequelize.TEXT,
 	keywords: Sequelize.TEXT,
+	image: Sequelize.TEXT,
 });
 
 const JournalAdmin = sequelize.define('JournalAdmin', {
@@ -254,41 +276,19 @@ const JournalAdmin = sequelize.define('JournalAdmin', {
 
 const VersionFile = sequelize.define('VersionFile', {}); // Used to connect specific files to a specific version
 const FileAttribution = sequelize.define('FileAttribution', {}); // Used to connect specific users to a specific file
-const PubVersion = sequelize.define('PubVersion', {}); // Used to connect specific versions to a specific pub
-const FollowsPub = sequelize.define('FollowsPub', { // Used to connect specific user to a specific pub as follower
-	notifyOnVersions: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnDiscussions: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnJournals: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnContributors: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnReviewers: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnFollowers: { type: Sequelize.BOOLEAN, defaultValue: true },
-	// TODO: Fill out the types of notifications for pubs, users, journals
-}); 
-const FollowsJournal = sequelize.define('FollowsJournal', { // Used to connect specific user to a specific journal as follower
-	notifyOnAdmins: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnFeatures: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnSubmissions: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnFollowers: { type: Sequelize.BOOLEAN, defaultValue: true },
-}); 
-const FollowsUser = sequelize.define('FollowsUser', { // Used to connect specific user to a specific user as follower
-	notifyOnPubs: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnJournals: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnDiscussions: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnReviews: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnFollows: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnFollowers: { type: Sequelize.BOOLEAN, defaultValue: true },
-}); 
-const FollowsLabel = sequelize.define('FollowsLabel', { // Used to connect specific user to a specific label as follower
-	notifyOnPubs: { type: Sequelize.BOOLEAN, defaultValue: true },
-	notifyOnFollowers: { type: Sequelize.BOOLEAN, defaultValue: true },
-}); 
 
+const FollowsPub = sequelize.define('FollowsPub', {}); // Used to connect specific user to a specific pub as follower
+const FollowsJournal = sequelize.define('FollowsJournal', {}); // Used to connect specific user to a specific journal as follower
+const FollowsUser = sequelize.define('FollowsUser', {}); // Used to connect specific user to a specific user as follower
+const FollowsLabel = sequelize.define('FollowsLabel', {}); // Used to connect specific user to a specific label as follower
+	
 const ContributorRole = sequelize.define('ContributorRole', {
 	inactive: Sequelize.BOOLEAN, // Used when a contributor is removed so we have a history of contributors and how they were applied/removed
 	// pubID: used so we can grab all roles when querying for pubs. Needed because we can't 'include' on a through table. Issue here: https://github.com/sequelize/sequelize/issues/5358
 }); // Used to connect specific role to a specific contributor
 const PubFeature = sequelize.define('PubFeature', { // Used to connect specific journal to specific pub as featurer
 	isDisplayed: Sequelize.BOOLEAN, // Whether the feature tag is displayed on the front of the pub
+	// isContext: Sequelize.BOOLEAN, // Whether the feature is the default context
 });
 const PubSubmit = sequelize.define('PubSubmit', {
 	isRejected: Sequelize.BOOLEAN,
@@ -316,49 +316,60 @@ Pub.belongsToMany(User, { onDelete: 'CASCADE', as: 'contributors', through: 'Con
 
 // A pub can have many contributors, but a contributor belongs to only a single pub
 Pub.hasMany(Contributor, { onDelete: 'CASCADE', as: 'contributors', foreignKey: 'pubId' });
+User.hasMany(Contributor, { onDelete: 'CASCADE', as: 'contributions', foreignKey: 'userId' });
 // Roles can belong to many contributors, and contributors can have many roles
 Contributor.belongsToMany(Role, { onDelete: 'CASCADE', as: 'roles', through: 'ContributorRole', foreignKey: 'contributorId' });
 Role.belongsToMany(Contributor, { onDelete: 'CASCADE', as: 'contributors', through: 'ContributorRole', foreignKey: 'roleId' });
 // A contributor has a single user
 Contributor.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
+Contributor.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 
 // A file can be in many versions, and a version can have many files
 File.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'VersionFile', foreignKey: 'fileId' });
 Version.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'VersionFile', foreignKey: 'versionId' });
 
+// A file can belong to a single pub, but a pub can have many files
+Pub.hasMany(File, { onDelete: 'CASCADE', as: 'files', foreignKey: 'pubId' });
+
 // A user can be attributed with many files, and a file may attribute many users
 File.belongsToMany(User, { onDelete: 'CASCADE', as: 'attributions', through: 'FileAttribution', foreignKey: 'fileId' });
 User.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'FileAttribution', foreignKey: 'userId' });
 
-// A version can be used in many pubs, and a pub can have many versions
-Version.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubVersion', foreignKey: 'versionId' });
-Pub.belongsToMany(Version, { onDelete: 'CASCADE', as: 'versions', through: 'PubVersion', foreignKey: 'pubId' });
+// A version belongs to a single pub, but a pub can have many versions
+Pub.hasMany(Version, { onDelete: 'CASCADE', as: 'versions', foreignKey: 'pubId' });
 
 // A user can be an admin on many journals, and a journal can have many admins
 User.belongsToMany(Journal, { onDelete: 'CASCADE', as: 'journals', through: 'JournalAdmin', foreignKey: 'userId' });
 Journal.belongsToMany(User, { onDelete: 'CASCADE', as: 'admins', through: 'JournalAdmin', foreignKey: 'journalId' });
+
 JournalAdmin.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
+JournalAdmin.belongsTo(Journal, { onDelete: 'CASCADE', as: 'journal', foreignKey: 'journalId' });
 Journal.hasMany(JournalAdmin, { onDelete: 'CASCADE', as: 'admins', foreignKey: 'journalId' });
+User.hasMany(JournalAdmin, { onDelete: 'CASCADE', as: 'journalAdmins', foreignKey: 'userId' });
 
 // A user can follow many users, and a user can be followed by many users
 User.belongsToMany(User, { onDelete: 'CASCADE', as: 'followsUsers', through: 'FollowsUser', foreignKey: 'followerId' });
 User.belongsToMany(User, { onDelete: 'CASCADE', as: 'followers', through: 'FollowsUser', foreignKey: 'userId' });
 FollowsUser.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'followerId' });
+User.hasMany(FollowsUser, { onDelete: 'CASCADE', as: 'FollowsUsers', foreignKey: 'followerId' });
 
 // A user can follow many journals, and a journal can be followed by many users
 User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'followsPubs', through: 'FollowsPub', foreignKey: 'followerId' });
 Pub.belongsToMany(User, { onDelete: 'CASCADE', as: 'followers', through: 'FollowsPub', foreignKey: 'pubId' });
 FollowsPub.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'followerId' });
+User.hasMany(FollowsPub, { onDelete: 'CASCADE', as: 'FollowsPubs', foreignKey: 'followerId' });
 
 // A user can follow many journals, and a journal can be followed by many users
 User.belongsToMany(Journal, { onDelete: 'CASCADE', as: 'followsJournals', through: 'FollowsJournal', foreignKey: 'followerId' });
 Journal.belongsToMany(User, { onDelete: 'CASCADE', as: 'followers', through: 'FollowsJournal', foreignKey: 'journalId' });
 FollowsJournal.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'followerId' });
+User.hasMany(FollowsJournal, { onDelete: 'CASCADE', as: 'FollowsJournals', foreignKey: 'followerId' });
 
 // A user can follow many labels, and a label can be followed by many users
 User.belongsToMany(Label, { onDelete: 'CASCADE', as: 'followsLabels', through: 'FollowsLabel', foreignKey: 'followerId' });
 Label.belongsToMany(User, { onDelete: 'CASCADE', as: 'followers', through: 'FollowsLabel', foreignKey: 'labelId' });
 FollowsLabel.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'followerId' });
+User.hasMany(FollowsLabel, { onDelete: 'CASCADE', as: 'FollowsLabels', foreignKey: 'followerId' });
 
 // A pub can have many discussions, but a discussion belongs to only a single parent pub
 Pub.hasMany(Pub, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'replyRootPubId' });
@@ -404,10 +415,14 @@ Pub.belongsToMany(User, { onDelete: 'CASCADE', as: 'usersRead', through: 'UserLa
 User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubsRead', through: 'UserLastReadPub', foreignKey: 'userId' });
 
 // A Pub can have many reactions, and a Reaction can be used on many Pubs.
-Pub.belongsToMany(Reaction, { onDelete: 'CASCADE', as: 'reactions', through: 'PubReaction', foreignKey: 'pubId' });
-Reaction.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubReaction', foreignKey: 'reactionId' });
+// Pub.belongsToMany(Reaction, { onDelete: 'CASCADE', as: 'reactions', through: 'PubReaction', foreignKey: 'pubId' });
+// Reaction.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubReaction', foreignKey: 'reactionId' });
 // Reactions need to be tied to a user. We probably want to do something similar to how contributors is structured
 PubReaction.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
+PubReaction.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
+PubReaction.belongsTo(Reaction, { onDelete: 'CASCADE', as: 'reaction', foreignKey: 'reactionId' });
+Pub.hasMany(PubReaction, { onDelete: 'CASCADE', as: 'pubReactions', foreignKey: 'pubId' });
+
 
 // A File can be related to many other files
 File.belongsToMany(File, { onDelete: 'CASCADE', as: 'destinations', through: 'FileRelation', foreignKey: 'sourceFileId' });
@@ -425,15 +440,18 @@ License.hasMany(Pub, { onDelete: 'CASCADE', as: 'pubs', foreignKey: 'licenseId' 
 // A pub can have one license
 Pub.belongsTo(License, { onDelete: 'CASCADE', as: 'license', foreignKey: 'licenseId' });
 
+// A pub can have one default context
+Pub.belongsTo(Journal, { onDelete: 'CASCADE', as: 'defaultContextJournal', foreignKey: 'defaultContext' });
+
 // A pub can have many clones, but a clone belongs to only a single parent pub
 Pub.hasMany(Pub, { onDelete: 'CASCADE', as: 'clones', foreignKey: 'cloneParentPubId' });
 Pub.belongsTo(Pub, { onDelete: 'CASCADE', as: 'cloneParent', foreignKey: 'cloneParentPubId' });
 
+// TODO: These were causing cyclic dependency issues. Find the right structure for what a clone/pr is.
 // A version can have many clones, but a clone belongs to only a single parent version
-Version.hasMany(Pub, { onDelete: 'CASCADE', as: 'clones', foreignKey: 'cloneParentVersionId' });
-
+// Version.hasMany(Pub, { onDelete: 'CASCADE', as: 'clones', foreignKey: 'cloneParentVersionId' });
 // A discussion Pub can have a single PR
-Pub.belongsTo(Version, { onDelete: 'CASCADE', as: 'pullRequest', foreignKey: 'pullRequestVersionId' });
+// Pub.belongsTo(Version, { onDelete: 'CASCADE', as: 'pullRequest', foreignKey: 'pullRequestVersionId' });
 
 // A pub can have many invited reviewers, but an invited reviewer belongs to only a single pub
 Pub.hasMany(InvitedReviewer, { onDelete: 'CASCADE', as: 'invitedReviewers', foreignKey: 'pubId' });
@@ -453,6 +471,22 @@ InvitedReviewer.belongsTo(Journal, { onDelete: 'CASCADE', as: 'inviterJournal', 
 // A user can have many apiKeys, but a key belongs to only a single user
 User.hasMany(ApiKey, { onDelete: 'CASCADE', as: 'apiKeys', foreignKey: 'userId' });
 
+// An activity can have a single User or Journal as the actor. No realuse for Pub or Label actors yet, but added for consistency
+Activity.belongsTo(Pub, { onDelete: 'CASCADE', as: 'actorPub', foreignKey: 'actorPubId' });
+Activity.belongsTo(User, { onDelete: 'CASCADE', as: 'actorUser', foreignKey: 'actorUserId' });
+Activity.belongsTo(Journal, { onDelete: 'CASCADE', as: 'actorJournal', foreignKey: 'actorJournalId' });
+Activity.belongsTo(Label, { onDelete: 'CASCADE', as: 'actorLabel', foreignKey: 'actorLabelId' });
+// An activity can have a single Pub, User, Journal, or Label as the target
+Activity.belongsTo(Pub, { onDelete: 'CASCADE', as: 'targetPub', foreignKey: 'targetPubId' });
+Activity.belongsTo(User, { onDelete: 'CASCADE', as: 'targetUser', foreignKey: 'targetUserId' });
+Activity.belongsTo(Journal, { onDelete: 'CASCADE', as: 'targetJournal', foreignKey: 'targetJournalId' });
+Activity.belongsTo(Label, { onDelete: 'CASCADE', as: 'targetLabel', foreignKey: 'targetLabelId' });
+// An activity can have a single Pub, User, Journal, or Label as the object
+Activity.belongsTo(Pub, { onDelete: 'CASCADE', as: 'objectPub', foreignKey: 'objectPubId' });
+Activity.belongsTo(User, { onDelete: 'CASCADE', as: 'objectUser', foreignKey: 'objectUserId' });
+Activity.belongsTo(Journal, { onDelete: 'CASCADE', as: 'objectJournal', foreignKey: 'objectJournalId' });
+Activity.belongsTo(Label, { onDelete: 'CASCADE', as: 'objectLabel', foreignKey: 'objectLabelId' });
+
 const db = {
 	SignUp: SignUp,
 	User: User,
@@ -471,7 +505,6 @@ const db = {
 	Contributor: Contributor,
 	VersionFile: VersionFile,
 	FileAttribution: FileAttribution,
-	PubVersion: PubVersion,
 	FollowsPub: FollowsPub,
 	FollowsJournal: FollowsJournal,
 	FollowsUser: FollowsUser,
@@ -483,6 +516,7 @@ const db = {
 	PubReaction: PubReaction,
 	FileRelation: FileRelation,
 	InvitedReviewer: InvitedReviewer,
+	Activity: Activity,
 };
 
 db.sequelize = sequelize;
