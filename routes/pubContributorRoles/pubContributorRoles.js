@@ -55,7 +55,7 @@ export function deleteContributorRole(req, res, next) {
 	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	Contributor.findOne({
-		where: { pubId: req.body.pubId, userId: user.id, id: req.body.contributorId },
+		where: { pubId: req.body.pubId, userId: user.id },
 		raw: true,
 	})
 	.then(function(contributor) {

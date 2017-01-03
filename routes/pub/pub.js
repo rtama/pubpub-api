@@ -40,16 +40,17 @@ export function getPub(req, res, next) {
 			]
 			// include: [{ all: true }]
 		}),
-		Reaction.findAll({ raw: true })
+		Reaction.findAll({ raw: true }),
+		Role.findAll({ raw: true })
 	])
-	.spread(function(pubData, reactionsData) {
+	.spread(function(pubData, reactionsData, rolesData) {
 		// Filter through to see if contributor, set isAuthorized
 		// Filter versions, if 0 versions available and not authorized, throw error
 		// Filter contributors
 		// Filter discussions
 		// console.timeEnd('pubQueryTime');
 		if (!pubData) { return res.status(500).json('Pub not found'); }
-		return res.status(201).json({ ...pubData.toJSON(), allReactions: reactionsData });
+		return res.status(201).json({ ...pubData.toJSON(), allReactions: reactionsData, allRoles: rolesData });
 	})
 	.catch(function(err) {
 		console.error('Error in getPub: ', err);
