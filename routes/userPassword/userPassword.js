@@ -16,7 +16,7 @@ export function setPassword(req, res) {
 	}).then(function(user) {
 		const currentTime = Date.now();
 
-		if (!user){ throw new Error('User doesn\'t exist'); }
+		if (!user) { throw new Error('User doesn\'t exist'); }
 
 		if (user.resetHashExpiration < currentTime) { throw new Error('Hash is expired'); }
 

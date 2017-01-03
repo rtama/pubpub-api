@@ -18,9 +18,9 @@ export function requestReset(req, res) {
 	// const success = false;
 
 	User.findOne({
-		where:{ email: req.body.email }
+		where: { email: req.body.email }
 	}).then(function(user) {
-		if (!user ){ throw new Error("User doesn't exist"); }
+		if (!user) { throw new Error("User doesn't exist"); }
 
 
 		const resetHash = generateHash();
@@ -36,7 +36,7 @@ export function requestReset(req, res) {
 		// Send reset email
 		return sendResetEmail({ email: user.email, hash: user.resetHash, username: user.username });
 	})
-	.then(function(){
+	.then(function() {
 		return res.status(200).json({});
 	})
 	.catch(function(err) {
@@ -44,3 +44,27 @@ export function requestReset(req, res) {
 	});
 }
 app.post('/user/password/reset', requestReset);
+
+export function resetHashCheck(req, res) {
+	const hash = req.query.hash;
+	const username = req.query.username;
+
+	User.findOne({
+		where: { username: username },
+	}).then(function(user) {
+		const currentTime = Date.now();
+
+		if (!user) { throw new Error('User doesn\'t exist'); }
+
+		if (user.resetHash !== hash) { throw new Error('Hash is invalid ' + hash + ', ' + user.resetHash); }
+
+		if (user.resetHashExpiration < currentTime) { throw new Error('Hash is expired'); }
+
+		return res.status(200).json({ valid: true });
+	}).catch(function(err) {
+		return res.status(401).json(err.message);
+	});
+
+}
+
+app.get('/user/password/reset', resetHashCheck);
