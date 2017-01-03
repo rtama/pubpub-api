@@ -2,33 +2,41 @@ import Promise from 'bluebird';
 import app from '../../server';
 import { User } from '../../models';
 
-// If a User is authenticated with reset hash then change their password
 export function postPassword(req, res) {
-	const hash = req.body.resetHash;
+	const user = req.user || {};
+	const resetHash = req.body.resetHash;
 	const username = req.body.username;
 	const currentTime = Date.now();
+
+	const whereQuery = user.id
+		? { id: user.id }
+		: { resetHash: resetHash, username: username };
+
 	User.findOne({
-		where: { resetHash: hash, username: username },
+		where: whereQuery,
 	})
-	.then(function(user) {
-		if (!user) { throw new Error('User doesn\'t exist'); }
-		if (user.resetHashExpiration < currentTime) { throw new Error('Hash is expired'); }
+	.then(function(userData) {
+		if (!userData) { throw new Error('User doesn\'t exist'); }
+		if (!user.id && resetHash && userData.resetHashExpiration < currentTime) { throw new Error('Hash is expired'); }
 
 		// Promisify the setPassword function, and use .update to match API convention
-		const setPassword = Promise.promisify(user.setPassword, { context: User });
+		const setPassword = Promise.promisify(userData.setPassword, { context: userData });
 		return setPassword(req.body.password);
+
 	})
 	.then(function(passwordResetData) {
 		const updateData = {
+			hash: passwordResetData.dataValues.hash,
+			salt: passwordResetData.dataValues.salt,
 			resetHash: '',
 			resetHashExpiration: currentTime,
 		};
 		return User.update(updateData, {
-			where: { username: username },
+			where: whereQuery,
 		});
 	})
 	.then(function(updatedCount) {
-		return res.status(200).json('success');
+		return res.status(200).json(true);
 	})
 	.catch(function(err) {
 		return res.status(401).json(err.message);
