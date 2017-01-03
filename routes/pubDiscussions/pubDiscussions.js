@@ -1,5 +1,5 @@
 import app from '../../server';
-import { Pub, User, Label, PubLabel, File, Version, Contributor, Reaction, Role } from '../../models';
+import { Pub, User, Label, PubLabel, File, Version, Contributor, Reaction, Role, PubReaction } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 import { createActivity } from '../../utilities/createActivity';
 
@@ -16,7 +16,7 @@ export function getDiscussions(req, res, next) {
 			{ model: Contributor, as: 'contributors', include: [{ model: Role, as: 'roles' }, { model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
 			{ model: Version, as: 'versions', include: [{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'users' }] }] },
 			{ model: Label, as: 'labels' },
-			{ model: Reaction, as: 'reactions' },
+			{ model: PubReaction, as: 'pubReactions', include: [{ model: Reaction, as: 'reaction' }] },
 		]
 	})
 	.then(function(discussionsData) {
@@ -33,23 +33,47 @@ export function getDiscussions(req, res, next) {
 app.get('/pub/discussions', getDiscussions);
 
 export function postDiscussion(req, res, next) {
-	// authenticate
-	// create new pub
-	// attach to parent pub
-	// Create files, versions, attach those to pub
-	// Handle labels
 	const user = req.user || {};
 	if (!user.id) { return res.status(500).json('Not authorized'); }
+	
 	const newSlug = generateHash().toLowerCase();
-
-	Pub.create({
-		title: req.body.title,
-		slug: newSlug,
-		description: req.body.description,
-		previewImage: 'https://assets.pubpub.org/_site/pub.png', 
-		replyRootPubId: req.body.replyRootPubId,
-		replyParentPubId: req.body.replyParentPubId,
-		license: 1, // Set to CCBY
+	
+	let findThreadNumber;
+	if (req.body.replyRootPubId === req.body.replyParentPubId) {
+		// If it is a top-level discussion, find its new threadNumber
+		findThreadNumber = Pub.max('threadNumber', {
+			where: { 
+				replyRootPubId: req.body.replyRootPubId,
+				isPublished: !req.body.isPrivate
+			}
+		})
+		.then(function(maxThreadNumber) {
+			return maxThreadNumber ? maxThreadNumber + 1 : 1;
+		});
+	} else {
+		// If it's a child, find it's parent's thread number
+		findThreadNumber = Pub.findOne({
+			where: { id: req.body.replyParentPubId },
+			attributes: ['threadNumber']
+		})
+		.then(function(pubData) {
+			return pubData.get('threadNumber');
+		});
+	}
+	
+	findThreadNumber
+	.then(function(threadNumber) {
+		return Pub.create({
+			title: req.body.title,
+			slug: newSlug,
+			description: req.body.description,
+			previewImage: 'https://assets.pubpub.org/_site/pub.png', 
+			replyRootPubId: req.body.replyRootPubId,
+			replyParentPubId: req.body.replyParentPubId,
+			isPublished: !req.body.isPrivate,
+			threadNumber: threadNumber,
+			license: 1, // Set to CCBY
+		});
 	})
 	.then(function(newDiscussion) {
 		if (req.body.replyRootPubId !== req.body.replyParentPubId) {
@@ -79,7 +103,7 @@ export function postDiscussion(req, res, next) {
 				{ model: Contributor, as: 'contributors', include: [{ model: Role, as: 'roles' }, { model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
 				// { model: Version, as: 'versions', include: [{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'users' }] }] },
 				{ model: Label, as: 'labels' },
-				{ model: Reaction, as: 'reactions' },
+				{ model: PubReaction, as: 'pubReactions', include: [{ model: Reaction, as: 'reaction' }] },
 			]
 		});
 	})

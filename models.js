@@ -106,6 +106,7 @@ const Pub = sequelize.define('Pub', {
 	distinguishedClone: { type: Sequelize.BOOLEAN }, // ??TODO: Decide: Used to make a clone a 'distinguished branch'. Maybe this should be done with labels instead? If labels, then we have some weird permissioning conflicts between pub owners
 	inactive: Sequelize.BOOLEAN,
 	isPublished: Sequelize.BOOLEAN,
+	threadNumber: Sequelize.INTEGER, // Used for discussions, to mark top-level discussion with a unique (per-pub, per published/unpublished) number
 	// cloneParentPubId
 	// cloneParentVersionId // Is cloneParentPubId needed if we are tracking clones by version?
 	// rootReplyPubId
