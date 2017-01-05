@@ -7,7 +7,7 @@
     <meta name="robots" content="noindex,nofollow">
 
     <meta name="generator" content="https://github.com/kevinrenskers/raml2html {{ config.raml2HtmlVersion }}">
-    <link rel="shortcut icon" type="image/png" href="https://s3.amazonaws.com/tw-desk/i/346753/docfavicon/225812.20160809072613033.225812.20160809072613033jIv7R.png">
+    <link rel="shortcut icon" href="/favicon.ico">
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/styles/default.min.css">
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
