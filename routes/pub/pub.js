@@ -32,7 +32,7 @@ export function getPub(req, res, next) {
 				{ model: Label, as: 'labels', through: { attributes: [] } }, // These are labels applied to the pub
 				{ model: Label, as: 'pubLabels' }, // These are labels owned by the pub, and used for discussions. 
 				{ model: PubSubmit, as: 'pubSubmits', include: [{ model: Journal, as: 'journal' }] },
-				{ model: PubFeature, as: 'pubFeatures', include: [{ model: Journal, as: 'journal' }] },
+				{ model: PubFeature, as: 'pubFeatures', include: [{ model: Journal, as: 'journal', include: [{ model: Label, as: 'collections' }] }] },
 				{ model: Pub, as: 'clones' },
 				{ model: InvitedReviewer, as: 'invitedReviewers', attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }, { model: Journal, as: 'inviterJournal' }] },
 				{ model: License, as: 'license' },

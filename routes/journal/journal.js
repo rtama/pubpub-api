@@ -17,7 +17,7 @@ export function getJournal(req, res, next) {
 		include: [
 			{ model: JournalAdmin, as: 'admins', include: [{ model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
 			{ model: User, as: 'followers', attributes: userAttributes }, 
-			{ model: Label, as: 'collections' }, // These are labels owned by the pub, and used for discussions. 
+			{ model: Label, as: 'collections' }, // These are labels owned by the journal
 			// { model: Pub, as: 'pubsFeatured', include: [{ model: Label, as: 'labels', through: { attributes: [] } }] },
 			// { model: Pub, as: 'pubsSubmitted' },
 
@@ -34,7 +34,7 @@ export function getJournal(req, res, next) {
 		return res.status(201).json(journalData);
 	})
 	.catch(function(err) {
-		console.error('Error in getPub: ', err);
+		console.error('Error in getJournal: ', err);
 		return res.status(500).json(err.message);
 	});
 }
@@ -132,7 +132,7 @@ export function putJournal(req, res, next) {
 		return res.status(201).json(true);
 	})
 	.catch(function(err) {
-		console.error('Error in putUser: ', err);
+		console.error('Error in putJournal: ', err);
 		return res.status(500).json(err.message);
 	});
 }
@@ -162,7 +162,7 @@ export function deleteJournal(req, res, next) {
 		return res.status(201).json(true);
 	})
 	.catch(function(err) {
-		console.error('Error in putUser: ', err);
+		console.error('Error in deleteJournal: ', err);
 		return res.status(500).json(err.message);
 	});
 }
