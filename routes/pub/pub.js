@@ -44,10 +44,6 @@ export function getPub(req, res, next) {
 		Role.findAll({ raw: true })
 	])
 	.spread(function(pubData, reactionsData, rolesData) {
-		// Filter through to see if contributor, set isAuthorized
-		// Filter versions, if 0 versions available and not authorized, throw error
-		// Filter contributors
-		// Filter discussions
 		// console.timeEnd('pubQueryTime');
 		if (!pubData) { return res.status(500).json('Pub not found'); }
 

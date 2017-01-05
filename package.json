@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon api.js",
-    "build-docs": "raml2html -t template/template.nunjucks api.raml > index.html"
+    "build-docs": "mkdir -p dist; raml2html -t template/template.nunjucks api.raml > dist/index.html"
   },
   "dependencies": {
     "aws-sdk": "^2.7.19",
