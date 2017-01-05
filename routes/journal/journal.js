@@ -53,7 +53,6 @@ export function postJournal(req, res, next) {
 		slug: req.body.slug,
 		shortDescription: req.body.shortDescription,
 		longDescription: req.body.longDescription,
-		reviewDescription: req.body.reviewDescription,
 		logo: req.body.logo,
 		icon: req.body.icon,
 		website: req.body.website,
@@ -111,7 +110,7 @@ export function putJournal(req, res, next) {
 	// Filter to only allow certain fields to be updated
 	const updatedJournal = {};
 	Object.keys(req.body).map((key)=> {
-		if (['slug', 'name', 'shortDescription', 'longDescription', 'reviewDescription', 'logo', 'icon', 'website', 'twitter', 'facebook', 'headerColor', 'headerMode', 'headerAlign', 'headerImage'].indexOf(key) > -1) {
+		if (['slug', 'name', 'shortDescription', 'longDescription', 'logo', 'icon', 'website', 'twitter', 'facebook', 'headerColor', 'headerMode', 'headerAlign', 'headerImage'].indexOf(key) > -1) {
 			updatedJournal[key] = req.body[key];
 		} 
 	});

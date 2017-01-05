@@ -206,7 +206,6 @@ const Journal = sequelize.define('Journal', {
 	},
 	shortDescription: { type: Sequelize.TEXT },
 	longDescription: { type: Sequelize.TEXT },
-	reviewDescription: { type: Sequelize.TEXT },
 	logo: { type: Sequelize.STRING },
 	icon: Sequelize.STRING,
 	website: Sequelize.STRING,

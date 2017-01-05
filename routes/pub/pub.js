@@ -32,7 +32,7 @@ export function getPub(req, res, next) {
 				{ model: Label, as: 'labels', through: { attributes: [] } }, // These are labels applied to the pub
 				{ model: Label, as: 'pubLabels' }, // These are labels owned by the pub, and used for discussions. 
 				{ model: PubSubmit, as: 'pubSubmits', include: [{ model: Journal, as: 'journal' }] },
-				{ model: PubFeature, as: 'pubFeatures', include: [{ model: Journal, as: 'journal', include: [{ model: Label, as: 'collections' }] }] },
+				{ model: PubFeature, separate: true, as: 'pubFeatures', include: [{ model: Journal, as: 'journal', include: [{ model: Label, as: 'collections' }] }] },
 				{ model: Pub, as: 'clones' },
 				{ model: InvitedReviewer, as: 'invitedReviewers', attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }, { model: Journal, as: 'inviterJournal' }] },
 				{ model: License, as: 'license' },
@@ -50,7 +50,34 @@ export function getPub(req, res, next) {
 		// Filter discussions
 		// console.timeEnd('pubQueryTime');
 		if (!pubData) { return res.status(500).json('Pub not found'); }
-		return res.status(201).json({ ...pubData.toJSON(), allReactions: reactionsData, allRoles: rolesData });
+
+		const canEdit = pubData.get('contributors').reduce((previous, current)=> {
+			if (current.userId === user.id) { return true; }
+			return previous;
+		}, false);
+
+		if (canEdit) {
+			return res.status(201).json({ ...pubData.toJSON(), allReactions: reactionsData, allRoles: rolesData });
+		}
+
+		if (!canEdit && !pubData.get('isPublished')) {
+			return res.status(201).json('Not Published');
+		}
+
+		const outputPub = {
+			...pubData.toJSON(),
+			contributors: pubData.get('contributors').filter((contributor)=> {
+				return !contributor.isHidden;
+			}),
+			discussions: pubData.get('discussions').filter((discussion)=> {
+				return discussion.isPublished;
+			}),
+			versions: pubData.get('versions').filter((version)=> {
+				return version.isPublished;
+			}),
+		};
+
+		return res.status(201).json({ ...outputPub, allReactions: reactionsData, allRoles: rolesData });
 	})
 	.catch(function(err) {
 		console.error('Error in getPub: ', err);
