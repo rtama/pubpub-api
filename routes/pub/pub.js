@@ -57,7 +57,7 @@ export function getPub(req, res, next) {
 		}, false);
 
 		if (canEdit) {
-			return res.status(201).json({ ...pubData.toJSON(), allReactions: reactionsData, allRoles: rolesData });
+			return res.status(201).json({ ...pubData.toJSON(), canEdit: canEdit, allReactions: reactionsData, allRoles: rolesData });
 		}
 
 		if (!canEdit && !pubData.get('isPublished')) {
@@ -77,7 +77,7 @@ export function getPub(req, res, next) {
 			}),
 		};
 
-		return res.status(201).json({ ...outputPub, allReactions: reactionsData, allRoles: rolesData });
+		return res.status(201).json({ ...outputPub, canEdit: canEdit, allReactions: reactionsData, allRoles: rolesData });
 	})
 	.catch(function(err) {
 		console.error('Error in getPub: ', err);
