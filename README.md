@@ -15,4 +15,3 @@ npm run build-docs
 ```
 `npm run buid-docs` will need to be run each time the template or api.raml is changed.
 
-The `.travis.yml` file specifies a means for Travis-CI to automatically build the docs and upload them to an S3 bucket.

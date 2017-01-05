@@ -138,6 +138,40 @@
         vertical-align: middle;
       }
 
+      .row {
+        margin: 0em 0em 1em;
+      }
+
+
+      .main-body {
+        width: calc(100% - 200px);
+        float: left;
+      }
+      .main-content {
+        max-width: 750px;
+        margin: 0 auto;
+        padding: 0em 2em;
+      }
+      .side-bar {
+        width: 200px;
+        float: left;
+        position: relative;
+        min-height: 1px;
+      }
+      #sidebar {
+        height: 100%;
+        width: 200px;
+        border-right: 1px solid #eee;
+      }
+
+      @media (max-width: 767px) {
+        .main-body {
+          width: 100%;
+        }
+        .side-bar {
+          display: none;
+        }
+      }
       .nav-pills>li>a {
         border-radius: 0;
       }
@@ -157,11 +191,8 @@
         padding-right: 15px;
       }
 
-      #sidebar {
-        height: 100%;
-        min-width: 200px;
-        border-right: 1px solid #eee;
-      }
+      
+
 
       #sidebar .nav {
         overflow: auto;
@@ -181,83 +212,81 @@
   </head>
 
   <body data-spy="scroll" data-target="#sidebar">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 hidden-xs">
-          <div id="sidebar" class="hidden-print affix" role="complementary">
-            <div class="logo-header">
-              <a href="https://v3-dev.pubpub.org" class="brand-logo">
-                  <img src="https://i.imgur.com/tyqfzAt.png" alt="PubPub Logo">
-              </a>
-              <a href="#"><h3 class="api-header">API</h3></a>
-            </div>
-            <ul class="nav nav-pills nav-stacked">
-                <li><a href="#Introduction">Introduction</a></li>
-              {% for resource in resources %}
-                <li><a href="#{{ resource.uniqueId}}">{% if resource.displayName %}{{ resource.displayName}}{% else %}{{ resource.relativeUri }}{% endif %}</a></li>
-              {% endfor %}
-            </ul>
-          </div>
+    <div class="side-bar">
+      <div id="sidebar" class="hidden-print affix" role="complementary">
+        <div class="logo-header">
+          <a href="https://v3-dev.pubpub.org" class="brand-logo">
+              <img src="https://i.imgur.com/tyqfzAt.png" alt="PubPub Logo">
+          </a>
+          <a href="#"><h3 class="api-header">API</h3></a>
         </div>
-        <div class="col-sm-9" role="main">
-          <div class="row">
-          <div class="col-sm-8">
-            <h1>API Reference{% if version %} <small>version {{ version }}</small>{% endif %}</h1>
-            <p>{{ baseUri }}</p>
+        <ul class="nav nav-pills nav-stacked">
+            <li><a href="#Introduction">Introduction</a></li>
+          {% for resource in resources %}
+            <li><a href="#{{ resource.uniqueId}}">{% if resource.displayName %}{{ resource.displayName}}{% else %}{{ resource.relativeUri }}{% endif %}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="main-body" role="main">
+      <div class="main-content">
+        <div class="row">
+        <div class="">
+          <h1>API Reference{% if version %} <small>version {{ version }}</small>{% endif %}</h1>
+          <p>{{ baseUri }}</p>
 
-            {% for chapter in documentation %}
-              <h3 id="{{ chapter.uniqueId }}"><a href="#{{ chapter.uniqueId }}">{{ chapter.title }}</a></h3>
+          {% for chapter in documentation %}
+            <h3 id="{{ chapter.uniqueId }}"><a href="#{{ chapter.uniqueId }}">{{ chapter.title }}</a></h3>
 {% markdown %}
 {{ chapter.content }}
 {% endmarkdown %}
-            {% endfor %}
+          {% endfor %}
 
-            {% for securedById in securedBy %}
-              {% set securityScheme = securitySchemeWithName(securedById) %}
-              {# {% set exp = new RegExp('_', 'g') %}
-              {% set schemeName = securedById.replace(exp, ' ') %} #}
-              <h3 id="{{ securedById }}"><a href="#{{ securedById }}">{{ securedById | replace('_', ' ') | capitalize }}</a></h3>
-              {% if securityScheme.description %}
+          {% for securedById in securedBy %}
+            {% set securityScheme = securitySchemeWithName(securedById) %}
+            {# {% set exp = new RegExp('_', 'g') %}
+            {% set schemeName = securedById.replace(exp, ' ') %} #}
+            <h3 id="{{ securedById }}"><a href="#{{ securedById }}">{{ securedById | replace('_', ' ') | capitalize }}</a></h3>
+            {% if securityScheme.description %}
 {% markdown %}
 {{ securityScheme.description }}
 {% endmarkdown %}
-              {% endif %}
+            {% endif %}
 
-              {% if securityScheme.describedBy.headers %}
-                {% for header, headerInfo in securityScheme.describedBy.headers %}
-                  <h4 id="{{ securedById }}_{{ header }}"><a href="#{{ securedById }}_{{ header }}">{{ header }} header</a></h4>
+            {% if securityScheme.describedBy.headers %}
+              {% for header, headerInfo in securityScheme.describedBy.headers %}
+                <h4 id="{{ securedById }}_{{ header }}"><a href="#{{ securedById }}_{{ header }}">{{ header }} header</a></h4>
 {% markdown %}
 {{ headerInfo.description }}
 {% endmarkdown %}
-                {% endfor %}
-              {% endif %}
-              {% if securityScheme.describedBy.responses %}
-                <h4 id="{{ securedById }}_responses"><a href="#{{ securedById }}_respnses">HTTP responses</a></h5>
-                {% for code, response in securityScheme.describedBy.responses %}
-                  <h5 id="{{ securedById }}_{{ code }}"><a href="#{{ securedById }}_{{ header }}">{{ code }}</a></h5>
+              {% endfor %}
+            {% endif %}
+            {% if securityScheme.describedBy.responses %}
+              <h4 id="{{ securedById }}_responses"><a href="#{{ securedById }}_respnses">HTTP responses</a></h5>
+              {% for code, response in securityScheme.describedBy.responses %}
+                <h5 id="{{ securedById }}_{{ code }}"><a href="#{{ securedById }}_{{ header }}">{{ code }}</a></h5>
 {% markdown %}
 {{ response.description }}
 {% endmarkdown %}
-                {% endfor %}
-              {% endif %}
-            {% endfor %}
-          </div>
-          </div>
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        </div>
+        </div>
 
-          {% for resource in resources %}
-            <h2 class="resource-header" id="{{ resource.uniqueId }}">{% if resource.displayName %}{{ resource.displayName}}{% else %}{{ resource.relativeUri }}{% endif %}</h2>
+        {% for resource in resources %}
+          <h2 class="resource-header" id="{{ resource.uniqueId }}">{% if resource.displayName %}{{ resource.displayName}}{% else %}{{ resource.relativeUri }}{% endif %}</h2>
 
-            {% if resource.description %}
-              <div class="top-resource-description">
+          {% if resource.description %}
+            <div class="top-resource-description">
 {% markdown %}
 {{ resource.description }}
 {% endmarkdown %}
-              </div>
-            {% endif %}
+            </div>
+          {% endif %}
 
-            {% include "./resource.nunjucks" %}
-          {% endfor %}
-        </div>
+          {% include "./resource.nunjucks" %}
+        {% endfor %}
       </div>
     </div>
   </body>

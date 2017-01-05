@@ -16,7 +16,7 @@
 
     {% for method in resource.methods %}
       <div class="row">
-        <div class="col-md-6">
+        <div>
           <span class="badge badge_{{ method.method }}">{{ method.method }}{% if method.securedBy.length %} <span class="glyphicon glyphicon-lock" title="Authentication required"></span>{% endif %}</span>
           <div class="method-description">
 {% markdown %}
@@ -25,7 +25,7 @@
           </div>
           <div class="clearfix"></div>
         </div>
-        <div class="col-md-6">
+        <div>
           <!-- Nav tabs -->
           <ul class="nav nav-tabs">
             {% if method.allUriParameters.length or method.queryParameters or method.headers or method.body %}
