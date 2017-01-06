@@ -29,28 +29,86 @@ documentation:
     content: |
       A common use case is that you have an account, and you'd like to programatically add pubs to PubPub. There are a few simple steps to achieve this. 
 
-      1. Create a pub
+      #### 1. Create a pub
 
       The first step is to create a pub. A Pub can be thought of as a bucket for all of the content you wish to eventually publish. Discussions, contributors, versions, and publication status are all 'owned' by the Pub.
 
       To create a pub, send a `POST` request to `/pub` ([go to docs](#pub)). If succesful, this will return the newly created Pub object.  It is suggested you hang onto the value of `pub.id` as you will need it when uploading other content.
 
-      2. Create versions
+      **POST request body** to `/pub`
+      ```javascript
+      {
+        description: "Lallala"
+        previewImage: "https://assets.pubpub.org/_site/pub.png"
+        slug: "happyurl"
+        title:"My Pub Title"
+      }
+      ```
+
+
+      #### 2. Create a version
 
       All content within a pub is versioned. To achieve this, a pub has a series of 'versions'. Each version is a unique list of files ids. New files replace old file ids, and a new version is created. In this way, all (versions of) files are maintained and a pub accesses them through the the version wrapper.
 
       To create a version, send a `POST` request to `pub/versions` ([go to docs](#pub_versions)). In this version, an array of File objects must be included.
-      ```json
-      Show the structure of the post request
+
+      **POST request body** to `pub/versions`
+      ```javascript
+      {
+        pubId: 114, 
+        versionMessage: "This is a new version", 
+        isPublished: false, 
+        files: [
+          {
+            name: "main.md",
+            type: "text/markdown",
+            url: "https://assets.pubpub.org/_testing/1483708995904.md"
+          },
+          {
+            name: "diffusionAnalysis.png",
+            type: "image/png",
+            url: "https://assets.pubpub.org/_testing/1483708995895.png"
+          }
+        ]
+      }
       ```
       
-      3. Add Contributors
+
+      #### 3. Add Contributors
         
       If the pub has additional contributors, they can be added using the API. Submit a `POST` request to `pub/contributors` of the following form (go to docs). If you're unsure of a user's id, you can search for users by name and username using the `search/users` endpoint (go to docs)
 
-      4. Publish versions
+      POST to create to `/pub/contributors`
+      ```javascript
+      {
+        pubId: 114,
+        userId: 6
+      }
+      ```
+      PUT request to set permissions to `/pub/contributors`
+      ```javascript
+        {
+          canEdit: true,
+          canRead: false,
+          contributorId: 146,
+          isAuthor: true,
+          isHidden: false,
+          pubId: 114
+        }
+      ```
+
+      #### 4. Publish a version
 
       New versions, and therefore pubs, are private by default. If a pub has no public versions, it too is private. To publish a version (and thus make the pub publicly available), send a `PUT` request to `/pub/versions` (go to docs). Show the structure of this post
+
+      PUT request to publish version to `/pub/versions`
+      ```javascript
+      {
+        isPublished: true,
+        pubId: 114,
+        versionId: 93
+      }
+      ```
 
 
 version: v2
