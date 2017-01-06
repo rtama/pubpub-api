@@ -1,0 +1,18 @@
+<li>
+  <a href="#{{resource.uniqueId}}">
+    {% if resource.displayName %}
+      {{ resource.displayName}}
+    {% else %}
+      {{ resource.relativeUri }}
+    {% endif %}
+  </a>
+
+  {% if resource.resources %}
+    <ul class="nested-nav">
+    {% for resource in resource.resources|sort(attribute='displayName') %}    
+      {% include "./listItem.nunjucks" %}
+    {% endfor %}
+    </ul>
+  {% endif %}
+
+</li>

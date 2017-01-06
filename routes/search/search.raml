@@ -1,123 +1,128 @@
 displayName: Search
 description: Routes to access PubPub search features
 /user:
-    get: 
-      description: Search for users by string. First name, last name, and username are indexed.
-      queryParameters:
-        q:
-          type: string
-          required: true
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                [
-                  {
-                  "id": 1,
-                  "username": "travis",
-                  "firstName": "Test",
-                  "lastName": "LastName",
-                  "image": "https://assets.pubpub.org/lzflunkd/1479834370629.jpg"
-                  }
-                ]
-        500:
-          body:
-            application/json:
-              example: "No Users found"
-/journal:
-    get: 
-      description: Search for journals by string. Journal name, url, and short description are indexed.
-      queryParameters:
-        q:
-          type: string
-          required: true
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                [
-                  {
-                  "id": 1,
-                  "name": "Journal of physics",
-                  "slug": "physics",
-                  "shortDescription": "This journal is about physics and other interesting things.",
-                  "logo": "http://www.image.com/example.jpg",
-                  "icon": "http://www.image.com/icon.jpg",
-                  }
-                ]
-        500:
-          body:
-            application/json:
-              example: "No Journals found" 
-/pub:
-    get: 
-      description: Search for pubs by string. Pub title, url, and short description are indexed.
-      queryParameters:
-        q:
-          type: string
-          required: true
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                [
-                  {
-                  "id": 1,
-                  "title": "Exciting new study!",
-                  "slug": "exciting",
-                  "description": "Here is my description",
-                  "previewImage": "http://www.image.com/example.jpg",
-                  }
-                ]
-        500:
-          body:
-            application/json:
-              example: "No Pubs found" 
-/label:
-    get: 
-      description: Search for labels by string. Label title is indexed.
-      queryParameters:
-        q:
-          type: string
-          required: true
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                [
-                  {
-                  "id": 1,
-                  "title": "Biology"
-                  }
-                ]
-        500:
-          body:
-            application/json:
-              example: "No Labels found"               
-/all:
-    get: 
-      description: Search for pubs, users, journals, and labels by string.
-      queryParameters:
-        q:
-          type: string
-          required: true
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
+  displayName: User
+  get: 
+    description: Search for users by string. First name, last name, and username are indexed.
+    queryParameters:
+      q:
+        type: string
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [
                 {
-                  pubs: [],
-                  users: [],
-                  journals: [],
-                  labels: []
+                "id": 1,
+                "username": "travis",
+                "firstName": "Test",
+                "lastName": "LastName",
+                "image": "https://assets.pubpub.org/lzflunkd/1479834370629.jpg"
                 }
-        500:
-          body:
-            application/json:
-              example: "No Labels found"               
+              ]
+      500:
+        body:
+          application/json:
+            example: "No Users found"
+/journal:
+  displayName: Journal
+  get: 
+    description: Search for journals by string. Journal name, url, and short description are indexed.
+    queryParameters:
+      q:
+        type: string
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [
+                {
+                "id": 1,
+                "name": "Journal of physics",
+                "slug": "physics",
+                "shortDescription": "This journal is about physics and other interesting things.",
+                "logo": "http://www.image.com/example.jpg",
+                "icon": "http://www.image.com/icon.jpg",
+                }
+              ]
+      500:
+        body:
+          application/json:
+            example: "No Journals found" 
+/pub:
+  displayName: Pub
+  get: 
+    description: Search for pubs by string. Pub title, url, and short description are indexed.
+    queryParameters:
+      q:
+        type: string
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [
+                {
+                "id": 1,
+                "title": "Exciting new study!",
+                "slug": "exciting",
+                "description": "Here is my description",
+                "previewImage": "http://www.image.com/example.jpg",
+                }
+              ]
+      500:
+        body:
+          application/json:
+            example: "No Pubs found" 
+/label:
+  displayName: Label
+  get: 
+    description: Search for labels by string. Label title is indexed.
+    queryParameters:
+      q:
+        type: string
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [
+                {
+                "id": 1,
+                "title": "Biology"
+                }
+              ]
+      500:
+        body:
+          application/json:
+            example: "No Labels found"               
+/all:
+  displayName: All
+  get: 
+    description: Search for pubs, users, journals, and labels by string.
+    queryParameters:
+      q:
+        type: string
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                pubs: [],
+                users: [],
+                journals: [],
+                labels: []
+              }
+      500:
+        body:
+          application/json:
+            example: "No Labels found"               
     

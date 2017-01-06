@@ -146,6 +146,7 @@
       .main-body {
         width: calc(100% - 200px);
         float: left;
+        padding-bottom: 3em;
       }
       .main-content {
         max-width: 750px;
@@ -171,6 +172,13 @@
         .side-bar {
           display: none;
         }
+      }
+      .nested-nav {
+        list-style: none;
+        padding-left: 2em;
+      }
+      .nav.nav-pills {
+        padding-bottom: 3em;
       }
       .nav-pills>li>a {
         border-radius: 0;
@@ -221,9 +229,9 @@
           <a href="#"><h3 class="api-header">API</h3></a>
         </div>
         <ul class="nav nav-pills nav-stacked">
-            <li><a href="#Introduction">Introduction</a></li>
-          {% for resource in resources %}
-            <li><a href="#{{ resource.uniqueId}}">{% if resource.displayName %}{{ resource.displayName}}{% else %}{{ resource.relativeUri }}{% endif %}</a></li>
+          <li><a href="#Introduction">Introduction</a></li>
+          {% for resource in resources|sort(attribute='displayName') %}
+            {% include "./listItem.nunjucks" %}
           {% endfor %}
         </ul>
       </div>
@@ -274,7 +282,7 @@
         </div>
         </div>
 
-        {% for resource in resources %}
+        {% for resource in resources|sort(attribute='displayName') %}
           <h2 class="resource-header" id="{{ resource.uniqueId }}">{% if resource.displayName %}{{ resource.displayName}}{% else %}{{ resource.relativeUri }}{% endif %}</h2>
 
           {% if resource.description %}

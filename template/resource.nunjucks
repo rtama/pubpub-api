@@ -1,6 +1,6 @@
 {% if (resource.methods or (resource.description and resource.parentUrl)) %}
   <div>
-    <h3>
+    <h3 id={{ resource.uniqueId }}>
         <span class="parent">{{ resource.parentUrl }}</span>{{ resource.relativeUri }}
     </h3>
 
@@ -142,6 +142,6 @@
   </div>
 {% endif %}
 
-{% for resource in resource.resources %}
+{% for resource in resource.resources|sort(attribute='displayName') %}
   {% include "./resource.nunjucks" %}
 {% endfor %}

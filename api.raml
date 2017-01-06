@@ -3,16 +3,43 @@ title: PubPub API
 documentation:
   - title: Introduction
     content: |
-      This API provides full access to the PubPub database.
+      This API provides access to the PubPub database.
       All requests and responses are in the form of application/json.
       Requests should be made to the following URL paths added to the hostname
-      https://api.pubpub.org. For example https://api.pubpub.org/user/travis.
+      https://api-v2-dev.pubpub.org. For example https://api-v2-dev.pubpub.org/user?username=test1.
   - title: Authentication
     content: |
-      Access to secured URLs is granted by included an apiToken in the body of POST, PUT, and DELETE requests or an apiToken in the query of GET requests. The apiToken can be found on the settings page of each users profile (https://wwww.pubpub.org/user/travis/settings). 
+      Access to secured URLs is granted by one of two methods:
+      1. A session cookie in the request headers
+      2. [Basic Auth](https://en.wikipedia.org/wiki/Basic_access_authentication)
+      
+      The cookie method is used when interacting with the database through a (often proxied) frontend. For API requests made from scripts or bots, it is best to use Basic Auth. To test basic auth, simple URL encoding is sufficient, e.g. `https://[username]:[accessToken]@api-v2-dev.pubpub.org/user?username=test1`
+
+      The accessToken for each user can be found on the settings page their profile (https://v3-dev.pubpub.org/user/test1/settings). 
+
+      For most secured routes, authentication is optional. If authenticated, private data will be returned, but if not, any publicly available data is sent. For example, the public query for a user will return their name, image, and basic profile contents. An authenticated query for a user will return that user's email and other secured fields.
+
   - title: Contributing
     content: |
       This API documentation and the associated server code is all open source: https://github.com/pubpub/pubpub-api. Contributions, fixes, bug reports are welcome!
+
+  - title: Example - Adding a Pub
+    content: |
+      A common use case is that you have an account, and you'd like to programatically add pubs to PubPub. There are a few simple steps to achieve this. 
+
+      1. Create pub
+
+        The first step is to create a pub. A Pub can be thought of as a bucket for all of the content you wish to eventually publish. Discussions, contributors, versions, and publication status are all 'owned' by the Pub.
+
+        To create a pub, send a `POST` request to `/pub` (go to [docs](#pub)). If succesful, this will return the newly created Pub object.  It is suggested you hang onto the value of `pub.id` as you will need it when uploading other content.
+
+      2. Create Versions
+        All content within a pub is versioned. To achieve this, a pub has a series of 'versions'. Each version is a unique list of files ids. New files replace old file ids, and a new version is created. In this way, all (versions of) files are maintained and a pub accesses them through the the version wrapper.
+
+        To create a version, send a `POST` request to `pub/versions` (go to [docs](#pub_versions)). In this version, an array of File objects must be included
+        
+      3. Add Contributors
+      4. Publish versions
 
 version: v2
 protocols: [ HTTPS ]
