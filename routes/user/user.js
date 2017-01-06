@@ -4,7 +4,7 @@ import app from '../../server';
 import { SignUp, User, Pub, Journal, Label, Contributor } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 
-const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email'];
+const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email', 'accessToken'];
 const unauthenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar'];
 
 export function getUser(req, res, next) {
