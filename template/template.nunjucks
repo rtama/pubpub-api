@@ -28,30 +28,6 @@
             hljs.highlightBlock(block);
           });
         });
-
-        // open modal on hashes like #_action_get
-        // $(window).bind('hashchange', function(e) {
-        //   var anchor_id = document.location.hash.substr(1); //strip #
-        //   var element = $('#' + anchor_id);
-
-        //   // do we have such element + is it a modal?  --> show it
-        //   if (element.length && element.hasClass('modal')) {
-        //     element.modal('show');
-        //   }
-        // });
-
-        // // execute hashchange on first page load
-        // $(window).trigger('hashchange');
-
-        // remove url fragment on modal hide
-        // $('.modal').on('hidden.bs.modal', function() {
-        //   console.log('does this ever happen 4');
-        //   try {
-        //     if (history && history.replaceState) {
-        //         history.replaceState({}, '', '#');
-        //     }
-        //   } catch(e) {}
-        // });
       });
     </script>
 
@@ -215,9 +191,6 @@
         padding-right: 15px;
       }
 
-      
-
-
       #sidebar .nav {
         overflow: auto;
         position: absolute;
@@ -232,10 +205,14 @@
       a, a:hover, a:focus {
         color: #202224;
       }
+      p>a, p>a:hover, p>a:focus {
+        color: #428bca;
+      }
     </style>
   </head>
 
   <body data-spy="scroll" data-target="#sidebar">
+    
     <div class="side-bar">
       <div id="sidebar" class="hidden-print affix" role="complementary">
         <div class="logo-header">
@@ -246,12 +223,16 @@
         </div>
         <ul class="nav nav-pills nav-stacked">
           <li><a href="#Introduction">Introduction</a></li>
+          <li><a href="#Authentication">Authentication</a></li>
+          <li><a href="#Contributing">Contributing</a></li>
+          <li><a href="#Example---Adding-a-Pub">Example</a></li>
           {% for resource in resources|sort(attribute='displayName') %}
             {% include "./listItem.nunjucks" %}
           {% endfor %}
         </ul>
       </div>
     </div>
+
     <div class="main-body" role="main">
       <div class="main-content">
         <div class="row">
@@ -299,7 +280,15 @@
         </div>
 
         {% for resource in resources|sort(attribute='displayName') %}
-          <h2 class="resource-header" id="{{ resource.uniqueId }}">{% if resource.displayName %}{{ resource.displayName}}{% else %}{{ resource.relativeUri }}{% endif %}</h2>
+          <h2 class="resource-header" id="{{ resource.uniqueId }}">
+            <a href="#{{resource.uniqueId}}">
+            {% if resource.displayName %}
+              {{ resource.displayName}}
+            {% else %}
+              {{ resource.relativeUri }}
+            {% endif %}
+            <a>
+          </h2>
 
           {% if resource.description %}
             <div class="top-resource-description">

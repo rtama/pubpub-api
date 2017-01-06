@@ -1,7 +1,9 @@
 {% if (resource.methods or (resource.description and resource.parentUrl)) %}
   <div>
     <h3 id={{ resource.uniqueId }}>
+      <a href="#{{resource.uniqueId}}">
         <span class="parent">{{ resource.parentUrl }}</span>{{ resource.relativeUri }}
+      </a>
     </h3>
 
     {% if resource.parentUrl %}
