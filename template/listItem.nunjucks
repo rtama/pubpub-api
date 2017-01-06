@@ -8,7 +8,7 @@
   </a>
 
   {% if resource.resources %}
-    <ul class="nested-nav">
+    <ul class="nav-pills nested-nav">
     {% for resource in resource.resources|sort(attribute='displayName') %}    
       {% include "./listItem.nunjucks" %}
     {% endfor %}

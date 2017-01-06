@@ -15,8 +15,10 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/highlight.min.js"></script>
 
     <script type="text/javascript">
+
       $(document).ready(function() {
         $('.page-header pre code, .top-resource-description pre code').each(function(i, block) {
+          console.log('does this ever happen 1');
           hljs.highlightBlock(block);
         });
 
@@ -28,27 +30,28 @@
         });
 
         // open modal on hashes like #_action_get
-        $(window).bind('hashchange', function(e) {
-          var anchor_id = document.location.hash.substr(1); //strip #
-          var element = $('#' + anchor_id);
+        // $(window).bind('hashchange', function(e) {
+        //   var anchor_id = document.location.hash.substr(1); //strip #
+        //   var element = $('#' + anchor_id);
 
-          // do we have such element + is it a modal?  --> show it
-          if (element.length && element.hasClass('modal')) {
-            element.modal('show');
-          }
-        });
+        //   // do we have such element + is it a modal?  --> show it
+        //   if (element.length && element.hasClass('modal')) {
+        //     element.modal('show');
+        //   }
+        // });
 
-        // execute hashchange on first page load
-        $(window).trigger('hashchange');
+        // // execute hashchange on first page load
+        // $(window).trigger('hashchange');
 
         // remove url fragment on modal hide
-        $('.modal').on('hidden.bs.modal', function() {
-          try {
-            if (history && history.replaceState) {
-                history.replaceState({}, '', '#');
-            }
-          } catch(e) {}
-        });
+        // $('.modal').on('hidden.bs.modal', function() {
+        //   console.log('does this ever happen 4');
+        //   try {
+        //     if (history && history.replaceState) {
+        //         history.replaceState({}, '', '#');
+        //     }
+        //   } catch(e) {}
+        // });
       });
     </script>
 
@@ -175,8 +178,21 @@
       }
       .nested-nav {
         list-style: none;
-        padding-left: 2em;
+        padding-left: 1em;
       }
+      .nested-nav>li {
+        float: none;
+      }
+      .nested-nav>li>a {
+        display: block;
+        position: relative;
+        padding-left: 1em;
+      }
+      .nested-nav>li>a:hover {
+        text-decoration: none;
+        background-color: #eee;
+      }
+        
       .nav.nav-pills {
         padding-bottom: 3em;
       }
