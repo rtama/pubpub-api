@@ -125,6 +125,7 @@ const File = sequelize.define('File', {
 	url: { type: Sequelize.TEXT },
 	content: { type: Sequelize.TEXT },
 	hash: { type: Sequelize.TEXT },
+	originalDate: { type: Sequelize.DATE },
 });
 
 // How do versions know their history?
