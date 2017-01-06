@@ -113,7 +113,6 @@ export function getActivities(req, res, next) {
 			// How do we define global activities? We grab top journals, users, and pubs - and populate them?
 			// Make on-the-fly following list essentially. We could have global be 'editors pick'
 		];
-
 		return [Promise.all(findActivities), assets];
 		
 	})
@@ -130,7 +129,8 @@ export function getActivities(req, res, next) {
 			},
 		};
 
-		if (req.query.assets === 'true') { output.assets = assets; }
+		if (req.query.assets === true) { output.assets = assets; }
+		
 		// console.timeEnd('assetQueryTime');
 		return res.status(201).json(output);
 	})
