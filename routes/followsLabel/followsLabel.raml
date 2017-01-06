@@ -41,10 +41,7 @@ post:
               "followerId": 1,
               "labelId": 3,
               "updatedAt": "2016-11-22T02:10:21.874Z",
-              "createdAt": "2016-11-22T02:10:21.874Z",
-              "notifyOnNewVersion": null,
-              "notifyOnNewFeature": null,
-              "notifyOnNewDiscussions": null
+              "createdAt": "2016-11-22T02:10:21.874Z"
             }
     500:
       body:
@@ -53,28 +50,6 @@ post:
             {
               error : "Error following label"
             }
-put:
-  description: edit the values of the follow
-  body:
-    application/json:
-      formParameters:
-        labelId: 
-          description: id of the label that will have follow data updated.
-          required: true
-        notifyOnNewVersion:
-          description: whether notifications are created for new versions. 
-  responses:
-    200:
-      body:
-        application/json:
-          example: "true"
-    500:
-      body:
-        application/json:
-          example: |
-            {
-              error : "Error updated Follow"
-            }            
 delete:
   description: Remove a follow
   body:

@@ -49,29 +49,29 @@ export function postFollow(req, res, next) {
 }
 app.post('/follows/pub', postFollow);
 
-export function putFollow(req, res, next) {
-	const user = req.user || {};
-	if (!user) { return res.status(500).json('Not authorized'); }
+// export function putFollow(req, res, next) {
+// 	const user = req.user || {};
+// 	if (!user) { return res.status(500).json('Not authorized'); }
 
-	const updatedFollow = {};
-	Object.keys(req.body).map((key)=> {
-		if (['notifyOnVersions', 'notifyOnDiscussions', 'notifyOnJournals', 'notifyOnContributors', 'notifyOnReviewers', 'notifyOnFollowers'].indexOf(key) > -1) {
-			updatedFollow[key] = req.body[key];
-		} 
-	});
+// 	const updatedFollow = {};
+// 	Object.keys(req.body).map((key)=> {
+// 		if (['notifyOnVersions', 'notifyOnDiscussions', 'notifyOnJournals', 'notifyOnContributors', 'notifyOnReviewers', 'notifyOnFollowers'].indexOf(key) > -1) {
+// 			updatedFollow[key] = req.body[key];
+// 		} 
+// 	});
 
-	FollowsPub.update(updatedFollow, {
-		where: { pubId: req.body.pubId, followerId: user.id }
-	})
-	.then(function(updatedCount) {
-		return res.status(201).json(true);
-	})
-	.catch(function(err) {
-		console.error('Error in putFollow: ', err);
-		return res.status(500).json(err.message);
-	});
-}
-app.put('/follows/pub', putFollow);
+// 	FollowsPub.update(updatedFollow, {
+// 		where: { pubId: req.body.pubId, followerId: user.id }
+// 	})
+// 	.then(function(updatedCount) {
+// 		return res.status(201).json(true);
+// 	})
+// 	.catch(function(err) {
+// 		console.error('Error in putFollow: ', err);
+// 		return res.status(500).json(err.message);
+// 	});
+// }
+// app.put('/follows/pub', putFollow);
 
 export function deleteFollow(req, res, next) {
 	const user = req.user || {};
