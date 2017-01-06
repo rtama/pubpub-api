@@ -191,13 +191,13 @@
       p>a, p>a:hover, p>a:focus {
         color: #428bca;
       }
-    </style></head><body data-spy="scroll" data-target="#sidebar"><div class="side-bar"><div id="sidebar" class="hidden-print affix" role="complementary"><div class="logo-header"><a href="https://v3-dev.pubpub.org" class="brand-logo"><img src="https://i.imgur.com/tyqfzAt.png" alt="PubPub Logo"></a> <a href="#"><h3 class="api-header">API</h3></a></div><ul class="nav nav-pills nav-stacked"><li><a href="#Introduction">Introduction</a></li><li><a href="#Authentication">Authentication</a></li><li><a href="#Contributing">Contributing</a></li><li><a href="#Example---Adding-a-Pub">Example</a></li><li><a href="#activities">Activities</a></li><li><a href="#follows">Follows</a><ul class="nav-pills nested-nav"><li><a href="#follows_journal">Journal</a></li><li><a href="#follows_label">Label</a></li><li><a href="#follows_pub">Pub</a></li><li><a href="#follows_user">User</a></li></ul></li><li><a href="#journal">Journal</a><ul class="nav-pills nested-nav"><li><a href="#journal_features">Features</a></li><li><a href="#journal_labels">Journal Pub Labels</a></li><li><a href="#journal_admins">JournalAdmins</a></li><li><a href="#journal_submits">Submits</a></li></ul></li><li><a href="#labels">Labels</a></li><li><a href="#licenses">Licenses</a></li><li><a href="#login">Login</a></li><li><a href="#logout">Logout</a></li><li><a href="#pub">Pub</a><ul class="nav-pills nested-nav"><li><a href="#pub_contributor_roles">ContributorRoles</a></li><li><a href="#pub_contributors">Contributors</a></li><li><a href="#pub_discussions">Discussions</a></li><li><a href="#pub_features">Features</a></li><li><a href="#pub_file_attributions">File Attribution</a></li><li><a href="#pub_file_relations">File Relation</a></li><li><a href="#pub_labels">Labels</a></li><li><a href="#pub_reactions">Reaction</a></li><li><a href="#pub_reviewers">Reviewers</a></li><li><a href="#pub_submits">Submits</a></li><li><a href="#pub_versions">Versions</a></li></ul></li><li><a href="#search">Search</a><ul class="nav-pills nested-nav"><li><a href="#search_all">All</a></li><li><a href="#search_journal">Journal</a></li><li><a href="#search_label">Label</a></li><li><a href="#search_pub">Pub</a></li><li><a href="#search_user">User</a></li></ul></li><li><a href="#signup">SignUp</a></li><li><a href="#user">User</a><ul class="nav-pills nested-nav"><li><a href="#user_labels">Label</a></li><li><a href="#user_password">Password</a><ul class="nav-pills nested-nav"><li><a href="#user_password_reset">Reset</a></li></ul></li></ul></li></ul></div></div><div class="main-body" role="main"><div class="main-content"><div class="row"><div><h1>API Reference <small>version v2</small></h1><p>https://api.pubpub.org</p><h3 id="Introduction"><a href="#Introduction">Introduction</a></h3><p>This API provides access to the PubPub database. All requests and responses are in the form of application/json. Requests should be made to the following URL paths added to the hostname <a href="https://api-v2-dev.pubpub.org">https://api-v2-dev.pubpub.org</a>. For example <a href="https://api-v2-dev.pubpub.org/user?username=test1">https://api-v2-dev.pubpub.org/user?username=test1</a>.</p><h3 id="Authentication"><a href="#Authentication">Authentication</a></h3><p>Access to secured URLs is granted by one of two methods:</p><ol><li>A session cookie in the request headers</li><li><a href="https://en.wikipedia.org/wiki/Basic_access_authentication">Basic Auth</a></li></ol><p>The cookie method is used when interacting with the database through a (often proxied) frontend. For API requests made from scripts or bots, it is best to use Basic Auth. To test basic auth, simple URL encoding is sufficient, e.g. <code>https://[username]:[accessToken]@api-v2-dev.pubpub.org/user?username=test1</code></p><p>The accessToken for each user can be found on the settings page their profile (<a href="https://v3-dev.pubpub.org/user/test1/settings">https://v3-dev.pubpub.org/user/test1/settings</a>).</p><p>For most secured routes, authentication is optional. If authenticated, private data will be returned, but if not, any publicly available data is sent. For example, the public query for a user will return their name, image, and basic profile contents. An authenticated query for a user will return that user&#39;s email and other secured fields.</p><h3 id="Contributing"><a href="#Contributing">Contributing</a></h3><p>This API documentation and the associated server code is all open source: <a href="https://github.com/pubpub/pubpub-api">https://github.com/pubpub/pubpub-api</a>. Contributions, fixes, bug reports are welcome!</p><p>Bugs, typos, or inconsistencies can be reported on our Github Repo</p><h3 id="Example---Adding-a-Pub"><a href="#Example---Adding-a-Pub">Example - Adding a Pub</a></h3><p>A common use case is that you have an account, and you&#39;d like to programatically add pubs to PubPub. There are a few simple steps to achieve this.</p><h4 id="1-create-a-pub">1. Create a pub</h4><p>The first step is to create a pub. A Pub can be thought of as a bucket for all of the content you wish to eventually publish. Discussions, contributors, versions, and publication status are all &#39;owned&#39; by the Pub.</p><p>To create a pub, send a <code>POST</code> request to <code>/pub</code> (<a href="#pub">go to docs</a>). If succesful, this will return the newly created Pub object. It is suggested you hang onto the value of <code>pub.id</code> as you will need it when uploading other content.</p><p><strong>POST request body</strong> to <code>/pub</code></p><pre><code class="lang-javascript">{
+    </style></head><body data-spy="scroll" data-target="#sidebar"><div class="side-bar"><div id="sidebar" class="hidden-print affix" role="complementary"><div class="logo-header"><a href="https://v3-dev.pubpub.org" class="brand-logo"><img src="https://i.imgur.com/tyqfzAt.png" alt="PubPub Logo"></a> <a href="#"><h3 class="api-header">API</h3></a></div><ul class="nav nav-pills nav-stacked"><li><a href="#Introduction">Introduction</a></li><li><a href="#Authentication">Authentication</a></li><li><a href="#Contributing">Contributing</a></li><li><a href="#Example---Adding-a-Pub">Example</a></li><li><a href="#activities">Activities</a></li><li><a href="#follows">Follows</a><ul class="nav-pills nested-nav"><li><a href="#follows_journal">Journal</a></li><li><a href="#follows_label">Label</a></li><li><a href="#follows_pub">Pub</a></li><li><a href="#follows_user">User</a></li></ul></li><li><a href="#journal">Journal</a><ul class="nav-pills nested-nav"><li><a href="#journal_features">Features</a></li><li><a href="#journal_labels">Journal Pub Labels</a></li><li><a href="#journal_admins">JournalAdmins</a></li><li><a href="#journal_submits">Submits</a></li></ul></li><li><a href="#labels">Labels</a></li><li><a href="#licenses">Licenses</a></li><li><a href="#login">Login</a></li><li><a href="#logout">Logout</a></li><li><a href="#pub">Pub</a><ul class="nav-pills nested-nav"><li><a href="#pub_contributor_roles">ContributorRoles</a></li><li><a href="#pub_contributors">Contributors</a></li><li><a href="#pub_discussions">Discussions</a></li><li><a href="#pub_features">Features</a></li><li><a href="#pub_file_attributions">File Attribution</a></li><li><a href="#pub_file_relations">File Relation</a></li><li><a href="#pub_labels">Labels</a></li><li><a href="#pub_reactions">Reaction</a></li><li><a href="#pub_reviewers">Reviewers</a></li><li><a href="#pub_submits">Submits</a></li><li><a href="#pub_versions">Versions</a></li></ul></li><li><a href="#search">Search</a><ul class="nav-pills nested-nav"><li><a href="#search_all">All</a></li><li><a href="#search_journal">Journal</a></li><li><a href="#search_label">Label</a></li><li><a href="#search_pub">Pub</a></li><li><a href="#search_user">User</a></li></ul></li><li><a href="#signup">SignUp</a></li><li><a href="#user">User</a><ul class="nav-pills nested-nav"><li><a href="#user_labels">Label</a></li><li><a href="#user_password">Password</a><ul class="nav-pills nested-nav"><li><a href="#user_password_reset">Reset</a></li></ul></li></ul></li></ul></div></div><div class="main-body" role="main"><div class="main-content"><div class="row"><div><h1>API Reference <small>version v2</small></h1><p>https://api.pubpub.org</p><h3 id="Introduction"><a href="#Introduction">Introduction</a></h3><p>This API provides access to the PubPub database. All requests and responses are in the form of application/json. Requests should be made to the following URL paths added to the hostname <a href="https://api-v2-dev.pubpub.org">https://api-v2-dev.pubpub.org</a>. For example <a href="https://api-v2-dev.pubpub.org/user?username=test1">https://api-v2-dev.pubpub.org/user?username=test1</a>.</p><h3 id="Authentication"><a href="#Authentication">Authentication</a></h3><p>Access to secured URLs is granted by one of two methods:</p><ol><li>A session cookie in the request headers</li><li><a href="https://en.wikipedia.org/wiki/Basic_access_authentication">Basic Auth</a></li></ol><p>The cookie method is used when interacting with the database through a (often proxied) frontend. For API requests made from scripts or bots, it is best to use Basic Auth. To test basic auth, simple URL encoding is sufficient, e.g. <code>https://[username]:[accessToken]@api-v2-dev.pubpub.org/user?username=test1</code></p><p>The accessToken for each user can be found on the settings page their profile (<a href="https://v3-dev.pubpub.org/user/test1/settings">https://v3-dev.pubpub.org/user/test1/settings</a>).</p><p>For most secured routes, authentication is optional. If authenticated, private data will be returned, but if not, any publicly available data is sent. For example, the public query for a user will return their name, image, and basic profile contents. An authenticated query for a user will return that user&#39;s email and other secured fields.</p><h3 id="Contributing"><a href="#Contributing">Contributing</a></h3><p>This API documentation and the associated server code is all open source: <a href="https://github.com/pubpub/pubpub-api">https://github.com/pubpub/pubpub-api</a>. Contributions, fixes, bug reports are welcome!</p><p>Bugs, typos, or inconsistencies can be reported on our Github Repo</p><h3 id="Example---Adding-a-Pub"><a href="#Example---Adding-a-Pub">Example - Adding a Pub</a></h3><p>A common use case is to programatically add pubs to PubPub. There are a few simple steps to achieve this.</p><h4 id="1-create-a-pub">1. Create a pub</h4><p>The first step is to create a pub. A Pub can be thought of as a bucket for all of the content you wish to eventually publish. Discussions, contributors, versions, and publication status are all &#39;owned&#39; by the Pub. You must be authenticated (<a href="#Authentication">go to docs</a>) in order to create pubs.</p><p>To create a pub, send a <code>POST</code> request to <code>/pub</code> (<a href="#pub">go to docs</a>). If succesful, this will return the newly created Pub object. It is suggested you hang onto the value of <code>pub.id</code> as you will need it when uploading content such as files and versions to the pub.</p><p><code>POST</code> request sample body to <code>/pub</code></p><pre><code class="lang-javascript">{
   description: "Lallala"
   previewImage: "https://assets.pubpub.org/_site/pub.png"
   slug: "happyurl"
   title:"My Pub Title"
 }
-</code></pre><h4 id="2-create-a-version">2. Create a version</h4><p>All content within a pub is versioned. To achieve this, a pub has a series of &#39;versions&#39;. Each version is a unique list of files ids. New files replace old file ids, and a new version is created. In this way, all (versions of) files are maintained and a pub accesses them through the the version wrapper.</p><p>To create a version, send a <code>POST</code> request to <code>pub/versions</code> (<a href="#pub_versions">go to docs</a>). In this version, an array of File objects must be included.</p><p><strong>POST request body</strong> to <code>pub/versions</code></p><pre><code class="lang-javascript">{
+</code></pre><h4 id="2-create-a-version">2. Create a version</h4><p>All content within a pub is versioned. To achieve this, a pub has a series of &#39;versions&#39;. Each version is a unique list of file ids. New files replace old file ids, and a new version is created. In this way, all (versions of) files are maintained and a pub accesses them through the the version wrapper.</p><p>To create a version, send a <code>POST</code> request to <code>pub/versions</code> (<a href="#pub_versions">go to docs</a>). In this version, an array of File objects must be included. If the file URL is not a pubpub URL, the file will be uploaded to pubpub so that they can be properly archived.</p><p><code>POST</code> request sample body to <code>/pub/versions</code></p><pre><code class="lang-javascript">{
   pubId: 114, 
   versionMessage: "This is a new version", 
   isPublished: false, 
@@ -214,11 +214,11 @@
     }
   ]
 }
-</code></pre><h4 id="3-add-contributors">3. Add Contributors</h4><p>If the pub has additional contributors, they can be added using the API. Submit a <code>POST</code> request to <code>pub/contributors</code> of the following form (go to docs). If you&#39;re unsure of a user&#39;s id, you can search for users by name and username using the <code>search/users</code> endpoint (go to docs)</p><p>POST to create to <code>/pub/contributors</code></p><pre><code class="lang-javascript">{
+</code></pre><h4 id="3-add-contributors">3. Add Contributors</h4><p>When a pub is created, the authenticated user who created the pub is set by default to be an author. If the pub has additional contributors, they can be added using the API. Submit a <code>POST</code> request to <code>pub/contributors</code> (<a href="#pub_contributors">go to docs</a>). If you&#39;re unsure of a user&#39;s id, you can search for users by name and username using the <code>search/users</code> endpoint (<a href="#search_user">go to docs</a>)</p><p><code>POST</code> request sample body to <code>/pub/contributors</code></p><pre><code class="lang-javascript">{
   pubId: 114,
   userId: 6
 }
-</code></pre><p>PUT request to set permissions to <code>/pub/contributors</code></p><pre><code class="lang-javascript">  {
+</code></pre><p>By default, this use is added as a contributor with no read or edit permissions, and is not listed as an author. To update these parameters, send a PUT request to</p><p>PUT request to set permissions to <code>pub/contributors</code> (<a href="#pub_contributors">go to docs</a>). The contributorId is the id of the object returned by the previous <code>POST</code> to <code>/pub/contributors</code></p><p><code>PUT</code> request sample body to <code>/pub/contributors</code></p><pre><code class="lang-javascript">  {
     canEdit: true,
     canRead: false,
     contributorId: 146,
@@ -226,7 +226,7 @@
     isHidden: false,
     pubId: 114
   }
-</code></pre><h4 id="4-publish-a-version">4. Publish a version</h4><p>New versions, and therefore pubs, are private by default. If a pub has no public versions, it too is private. To publish a version (and thus make the pub publicly available), send a <code>PUT</code> request to <code>/pub/versions</code> (go to docs). Show the structure of this post</p><p>PUT request to publish version to <code>/pub/versions</code></p><pre><code class="lang-javascript">{
+</code></pre><h4 id="4-publish-a-version">4. Publish a version</h4><p>New versions are private by default. If a pub has no public versions, it too is private. To publish a version (and thus make the pub publicly available), send a <code>PUT</code> request to <code>/pub/versions</code> (<a href="#pub_versions">go to docs</a>).</p><p><code>PUT</code> request sample body to <code>/pub/versions</code></p><pre><code class="lang-javascript">{
   isPublished: true,
   pubId: 114,
   versionId: 93
@@ -486,254 +486,62 @@
   googleScholar: "janejane"
 }
 </code></pre><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>Unauthorized</code></pre></div></div></div></div></div><h2 class="resource-header" id="logout"><a href="#logout">Logout <a></a></a></h2><div class="top-resource-description"><p>Used to logout the user associated with cookies</p></div><div><h3 id="logout"><a href="#logout"><span class="parent"></span>/logout</a></h3><div class="row"><div><span class="badge badge_get">get</span><div class="method-description"><p>Logout the given user based on their cookie</p></div><div class="clearfix"></div></div><div><ul class="nav nav-tabs"><li><a href="#logout_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane" id="logout_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>true</code></pre></div></div></div></div></div><h2 class="resource-header" id="pub"><a href="#pub">Pub <a></a></a></h2><div class="top-resource-description"><p>Routes to access data about Pubs</p></div><div><h3 id="pub"><a href="#pub"><span class="parent"></span>/pub</a></h3><div class="row"><div><span class="badge badge_get">get</span><div class="method-description"><p>Get pub data. Includes connected user, discussion, label, etc data. If the user&#39;s cookie or token is included, private data (private discussions, versions, etc) are included.</p></div><div class="clearfix"></div></div><div><ul class="nav nav-tabs"><li class="active"><a href="#pub_get_request" data-toggle="tab">Request</a></li><li><a href="#pub_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="pub_get_request"><h3>Query Parameters</h3><ul><li><strong>slug</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="pub_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-    id: 9,
-    slug: "pub-slug",
-    title: "My Great Document",
-    description: "A description about this document",
-    previewImage: "https://www.image.com/myimage",
-    isReply: null,
-    isClosed: null,
-    hideAuthorsList: null,
-    customAuthorList: null,
-    distinguishedClone: null,
-    inactive: false,
-    replyRootPubId: null,
-    replyParentPubId: null,
-    licenseId: 1,
-    cloneParentPubId: 8,
-    cloneParentVersionId: null,
-    pullRequestVersionId: null,
-    contributors: [
-        {
-            id: 8,
-            canEdit: true,
-            canRead: null,
-            isAuthor: true,
-            isHidden: null,
-            inactive: null,
-            createdAt: "2016-11-19T01:37:56.660Z",
-            updatedAt: "2016-11-19T01:37:56.660Z",
-            pubId: 9,
-            userId: 1,
-            roles: [
-                {
-                    id: 1,
-                    title: "FunkyRole",
-                    createdAt: "2016-11-19T01:17:27.702Z",
-                    updatedAt: "2016-11-19T01:17:27.702Z",
-                }
-            ],
-            user: {
-                id: 1,
-                username: "travis1",
-                firstName: "Travis",
-                lastName: "One",
-                image: "https://assets.pubpub.org/fvkcycyd/1479518664943.jpg"
-            }
-        }
-    ],
-    followers: [],
-    versions: [
-            id: 1,
-            versionMessage: "First Version",
-            isPublished: null,
-            datePublished: null,
-            doi: null,
-            files: [
-                {
-                    id: 1,
-                    type: "doc",
-                    name: "myFile.jpg",
-                    url: null,
-                    value: null,
-                    createdAt: "2016-11-19T01:24:28.601Z",
-                    updatedAt: "2016-11-19T01:24:28.601Z",
-                    sources: [],
-                    destinations: [
-                        {
-                            id: 2,
-                            type: "doc",
-                            name: "secondFile.dox",
-                            url: null,
-                            value: null,
-                        }
-                    ],
-                    users: []
-                },
-                {
-                    id: 2,
-                    type: "doc",
-                    name: "secondFile.dox",
-                    url: null,
-                    value: null,
-                    createdAt: "2016-11-19T01:24:28.601Z",
-                    updatedAt: "2016-11-19T01:24:28.601Z",
-                    sources: [
-                        {
-                            id: 1,
-                            type: "doc",
-                            name: "myFile.jpg",
-                            url: null,
-                            value: null,
-                        }
-                    ],
-                    destinations: [],
-                    users: []
-                }
-            ]
-        }
-    ],
-    discussions: [
-        {
-            id: 7,
-            slug: "hasdf9h18hdkan2",
-            title: "My discussion item",
-            description: "",
-            previewImage: "",
-            isReply: true,
-            isClosed: null,
-            hideAuthorsList: null,
-            customAuthorList: null,
-            distinguishedClone: null,
-            inactive: null,
-            createdAt: "2016-11-19T01:32:54.350Z",
-            updatedAt: "2016-11-19T01:32:54.350Z",
-            replyRootPubId: 9,
-            replyParentPubId: 9,
-            licenseId: null,
-            cloneParentPubId: null,
-            cloneParentVersionId: null,
-            pullRequestVersionId: null,
-            contributors: [],
-            versions: [],
-            labels: [],
-            reactions: []
-        }
-    ],
-    labels: [
-        {
-            id: 1,
-            title: "New Title",
-            journalId: null,
-            userId: null,
-            pubId: null
-        }
-    ],
-    pubLabels: [
-        {
-            id: 2,
-            title: "Owned By Pub",
-            journalId: null,
-            userId: null,
-            pubId: 9
-        }
-    ],
-    journalsFeatured: [],
-    journalsSubmitted: [],
-    clones: [],
-    invitedReviewers: [
-        {
-            id: 1,
-            email: "testing@test.co",
-            name: "Mary Elburt",
-            invitationHash: null,
-            invitationAccepted: null,
-            invitationRejected: null,
-            rejectionReason: null,
-            createdAt: "2016-11-19T01:24:28.601Z",
-            updatedAt: "2016-11-19T01:24:28.601Z",
-            pubId: 9,
-            invitedUserId: 1,
-            inviterUserId: 2,
-            inviterJournalId: null,
-            invitedUser: {
-                id: 1,
-                username: "mary",
-                firstName: "Mary",
-                lastName: "Elbert",
-                image: "https://assets.pubpub.org/fvkcycyd/1479518664943.jpg"
-            },
-            inviterUser: {
-                id: 2,
-                username: "travis2",
-                firstName: "Travis",
-                lastName: "Two",
-                image: "https://assets.pubpub.org/fvkcycyd/1479518664943.jpg"
-            },
-            inviterJournal: null
-        }
-    ],
-    license: {
-        id: 1,
-        title: "CC-BY-3.0",
-        description: "CC3.0",
-        url: null,
-        image: null,
-        createdAt: "2016-11-19T01:30:43.284Z",
-        updatedAt: "2016-11-19T01:30:43.284Z"
-    },
-    cloneParent: {}
+  id: 102,
+  slug: "my-doc-url",
+  title: "Analysis of Spectral Filters",
+  description: "This document compares 45 spectral filters.",
+  previewImage: "https://assets.pubpub.org/_testing/1483555461063.jpg",
+  isClosed: null,
+  hideAuthorsList: null,
+  customAuthorList: null,
+  distinguishedClone: null,
+  inactive: null,
+  isPublished: true,
+  threadNumber: null,
+  createdAt: "2017-01-04T18:44:23.506Z",
+  updatedAt: "2017-01-06T15:53:34.908Z",
+  replyRootPubId: null,
+  replyParentPubId: null,
+  licenseId: null,
+  defaultContext: null,
+  cloneParentPubId: null,
+  contributors: [...],
+  followers: [...],
+  versions: [...],
+  labels: [...],
+  pubLabels: [...],
+  pubSubmits: [...],
+  clones: [...],
+  invitedReviewers: [...],
+  license: null,
+  cloneParent: null,
+  pubFeatures: [...],
+  discussions: [...],
+  canEdit: false,
+  allReactions: [...]
 }
 </code></pre><h2>HTTP status code <a href="http://httpstatus.es/500" target="_blank">500</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>Pub not found</code></pre></div></div></div></div><div class="row"><div><span class="badge badge_post">post</span><div class="method-description"><p>Create a new Pub</p></div><div class="clearfix"></div></div><div><ul class="nav nav-tabs"><li class="active"><a href="#pub_post_request" data-toggle="tab">Request</a></li><li><a href="#pub_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="pub_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><strong>Form Parameters</strong><ul><li><strong>slug</strong>: <em>required (string)</em><p>slug used for the pub url</p></li><li><strong>title</strong>: <em>required (string)</em><p>title used for the new pub</p></li><li><strong>previewImage</strong>: <em>required (string)</em><p>preview image to be used for the new pub</p></li><li><strong>description</strong>: <em>(string)</em><p>description of the new pub</p></li></ul></div><div class="tab-pane" id="pub_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
-    "id": 15,
-    "slug": "testslug17",
-    "title": "My new pub!",
-    "description": "My description",
-    "previewImage": "yoooImage",
-    "isReply": null,
-    "isClosed": null,
-    "hideAuthorsList": null,
-    "customAuthorList": null,
-    "distinguishedClone": null,
-    "inactive": null,
-    "createdAt": "2016-11-19T05:06:00.057Z",
-    "updatedAt": "2016-11-19T05:06:00.057Z",
-    "replyRootPubId": null,
-    "replyParentPubId": null,
-    "licenseId": null,
-    "cloneParentPubId": null,
-    "cloneParentVersionId": null,
-    "pullRequestVersionId": null,
-    "contributors": [
-        {
-            "id": 12,
-            "canEdit": null,
-            "canRead": null,
-            "isAuthor": true,
-            "isHidden": null,
-            "inactive": null,
-            "createdAt": "2016-11-19T05:06:00.097Z",
-            "updatedAt": "2016-11-19T05:06:00.097Z",
-            "pubId": 15,
-            "userId": 1,
-            "roles": [],
-            "user": {
-                "id": 1,
-                "username": "travis1",
-                "firstName": "Travis",
-                "lastName": "One",
-                "image": "https://assets.pubpub.org/fvkcycyd/1479518664943.jpg"
-            }
-        }
-    ],
-    "followers": [
-        {
-            "id": 1,
-            "username": "travis1",
-            "firstName": "Travis",
-            "lastName": "One",
-            "image": "https://assets.pubpub.org/fvkcycyd/1479518664943.jpg",
-            "FollowsPub": {
-                "notifyOnNewVersion": null,
-                "notifyOnNewFeature": null,
-                "notifyOnNewDiscussions": null,
-                "createdAt": "2016-11-19T05:06:00.097Z",
-                "updatedAt": "2016-11-19T05:06:00.097Z",
-                "followerId": 1,
-                "pubId": 15
-            }
-        }
-    ]
+  id: 102,
+  slug: "my-doc-url",
+  title: "Analysis of Spectral Filters",
+  description: "This document compares 45 popular spectral filters and measures their efficacy.",
+  previewImage: "https://assets.pubpub.org/_testing/1483555461063.jpg",
+  isClosed: null,
+  hideAuthorsList: null,
+  customAuthorList: null,
+  distinguishedClone: null,
+  inactive: null,
+  isPublished: null,
+  threadNumber: null,
+  createdAt: "2017-01-06T13:20:05.290Z",
+  updatedAt: "2017-01-06T13:20:05.290Z",
+  replyRootPubId: null,
+  replyParentPubId: null,
+  licenseId: null,
+  defaultContext: null,
+  cloneParentPubId: null,
+  contributors: [...],
+  followers: [...]
 }
 </code></pre><h2>HTTP status code <a href="http://httpstatus.es/500" target="_blank">500</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
   error : "Error creating pub"

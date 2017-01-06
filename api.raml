@@ -27,15 +27,15 @@ documentation:
 
   - title: Example - Adding a Pub
     content: |
-      A common use case is that you have an account, and you'd like to programatically add pubs to PubPub. There are a few simple steps to achieve this. 
+      A common use case is to programatically add pubs to PubPub. There are a few simple steps to achieve this. 
 
       #### 1. Create a pub
 
-      The first step is to create a pub. A Pub can be thought of as a bucket for all of the content you wish to eventually publish. Discussions, contributors, versions, and publication status are all 'owned' by the Pub.
+      The first step is to create a pub. A Pub can be thought of as a bucket for all of the content you wish to eventually publish. Discussions, contributors, versions, and publication status are all 'owned' by the Pub. You must be authenticated ([go to docs](#Authentication)) in order to create pubs.
 
-      To create a pub, send a `POST` request to `/pub` ([go to docs](#pub)). If succesful, this will return the newly created Pub object.  It is suggested you hang onto the value of `pub.id` as you will need it when uploading other content.
+      To create a pub, send a `POST` request to `/pub` ([go to docs](#pub)). If succesful, this will return the newly created Pub object.  It is suggested you hang onto the value of `pub.id` as you will need it when uploading content such as files and versions to the pub.
 
-      **POST request body** to `/pub`
+      `POST` request sample body to `/pub`
       ```javascript
       {
         description: "Lallala"
@@ -48,11 +48,11 @@ documentation:
 
       #### 2. Create a version
 
-      All content within a pub is versioned. To achieve this, a pub has a series of 'versions'. Each version is a unique list of files ids. New files replace old file ids, and a new version is created. In this way, all (versions of) files are maintained and a pub accesses them through the the version wrapper.
+      All content within a pub is versioned. To achieve this, a pub has a series of 'versions'. Each version is a unique list of file ids. New files replace old file ids, and a new version is created. In this way, all (versions of) files are maintained and a pub accesses them through the the version wrapper.
 
-      To create a version, send a `POST` request to `pub/versions` ([go to docs](#pub_versions)). In this version, an array of File objects must be included.
+      To create a version, send a `POST` request to `pub/versions` ([go to docs](#pub_versions)). In this version, an array of File objects must be included. If the file URL is not a pubpub URL, the file will be uploaded to pubpub so that they can be properly archived.
 
-      **POST request body** to `pub/versions`
+      `POST` request sample body to `/pub/versions`
       ```javascript
       {
         pubId: 114, 
@@ -76,16 +76,20 @@ documentation:
 
       #### 3. Add Contributors
         
-      If the pub has additional contributors, they can be added using the API. Submit a `POST` request to `pub/contributors` of the following form (go to docs). If you're unsure of a user's id, you can search for users by name and username using the `search/users` endpoint (go to docs)
+      When a pub is created, the authenticated user who created the pub is set by default to be an author. If the pub has additional contributors, they can be added using the API. Submit a `POST` request to `pub/contributors` ([go to docs](#pub_contributors)). If you're unsure of a user's id, you can search for users by name and username using the `search/users` endpoint ([go to docs](#search_user))
 
-      POST to create to `/pub/contributors`
+      `POST` request sample body to `/pub/contributors`
       ```javascript
       {
         pubId: 114,
         userId: 6
       }
       ```
-      PUT request to set permissions to `/pub/contributors`
+      By default, this use is added as a contributor with no read or edit permissions, and is not listed as an author. To update these parameters, send a PUT request to 
+      
+      PUT request to set permissions to `pub/contributors` ([go to docs](#pub_contributors)). The contributorId is the id of the object returned by the previous `POST` to `/pub/contributors`
+
+      `PUT` request sample body to `/pub/contributors`
       ```javascript
         {
           canEdit: true,
@@ -99,9 +103,9 @@ documentation:
 
       #### 4. Publish a version
 
-      New versions, and therefore pubs, are private by default. If a pub has no public versions, it too is private. To publish a version (and thus make the pub publicly available), send a `PUT` request to `/pub/versions` (go to docs). Show the structure of this post
+      New versions are private by default. If a pub has no public versions, it too is private. To publish a version (and thus make the pub publicly available), send a `PUT` request to `/pub/versions` ([go to docs](#pub_versions)).
 
-      PUT request to publish version to `/pub/versions`
+      `PUT` request sample body to `/pub/versions`
       ```javascript
       {
         isPublished: true,
