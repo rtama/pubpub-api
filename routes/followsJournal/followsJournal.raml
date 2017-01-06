@@ -4,7 +4,7 @@ get:
   description: Get a list of all followers
   queryParameters:
     journalId:
-      type: string
+      type: number
       required: true
   responses:
     200:
@@ -32,6 +32,7 @@ post:
         journalId: 
           description: id of the journal that will be followed.
           required: true
+          type: number
   responses:
     200:
       body:
@@ -58,6 +59,8 @@ delete:
         journalId: 
           description: id of the journal to remove follow from
           required: true
+          type: number
+
   responses:
     200:
       body:

@@ -1,13 +1,13 @@
 displayName: Versions
 description: Routes to access data about a pub's versions
 get: 
-  description: Get pub data. Includes connected user, discussion, label, etc data. If the user's cookie or token is included, private data (private discussions, versions, etc) are included.
+  description: Get a specific version associated with a pub
   queryParameters:
     pubId:
-      type: string
+      type: number
       required: true
     versionId:
-      type: string
+      type: number
       required: true
   responses:
     200:
@@ -29,6 +29,7 @@ post:
         pubId: 
           description: id of the Pub this version will be attached to
           required: true
+          type: number
         versionMessage: 
           description: message for this given version
           required: true
@@ -63,16 +64,18 @@ post:
             }
 put:
   description: |
-    Set the isPublished value of a version to TRUE
+    Set values associated with the version.
   body:
     application/json:
       formParameters:
         pubId: 
           description: id of the pub to be changed
           required: true
+          type: number
         versionId: 
           description: id of the version to be changed
           required: true
+          type: number
         doi: 
           description: new DOI for a given version
         defaultFile: 
@@ -88,23 +91,4 @@ put:
           example: |
             {
               error : "Error updating pub"
-            }
-delete:
-  description: Delete the pub
-  body:
-    application/json:
-      formParameters:
-        pubId: 
-          description: id of the pub to be deleted
-  responses:
-    200:
-      body:
-        application/json:
-          example: "Pub set inactive"
-    500:
-      body:
-        application/json:
-          example: |
-            {
-              error : "Error deleting pub"
             }

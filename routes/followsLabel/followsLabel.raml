@@ -4,7 +4,7 @@ get:
   description: Get a list of all followers
   queryParameters:
     labelId:
-      type: string
+      type: number
       required: true
   responses:
     200:
@@ -32,6 +32,7 @@ post:
         labelId: 
           description: id of the label that will be followed.
           required: true
+          type: number
   responses:
     200:
       body:
@@ -58,6 +59,7 @@ delete:
         labelId: 
           description: id of the label to remove follow from
           required: true
+          type: number
   responses:
     200:
       body:

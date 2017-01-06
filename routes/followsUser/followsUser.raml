@@ -4,7 +4,7 @@ get:
   description: Get a list of all followers
   queryParameters:
     userId:
-      type: string
+      type: number
       required: true
   responses:
     200:
@@ -32,6 +32,7 @@ post:
         userId: 
           description: id of the user that will be followed.
           required: true
+          type: number
   responses:
     200:
       body:
@@ -58,6 +59,7 @@ delete:
         userId: 
           description: id of the user to remove follow from
           required: true
+          type: number
   responses:
     200:
       body:
