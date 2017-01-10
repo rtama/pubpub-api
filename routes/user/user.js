@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import passport from 'passport';
 import app from '../../server';
-import { SignUp, User, Pub, Journal, Label, Contributor } from '../../models';
+import { SignUp, User, Pub, Journal, Label, Contributor, InvitedReviewer } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 
 const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email', 'accessToken'];
@@ -52,6 +52,8 @@ export function postUser(req, res, next) {
 	const email = req.body.email ? req.body.email.toLowerCase() : '';
 	const username = req.body.username ? req.body.username.toLowerCase() : '';
 
+	let newUserId;
+
 	SignUp.findOne({ 
 		where: { hash: req.body.hash, email: email },
 		attributes: ['email', 'hash', 'completed'] 
@@ -83,11 +85,19 @@ export function postUser(req, res, next) {
 		return userRegister(newUser, req.body.password);
 	})
 	.then(function(newUser) {
+		newUserId = newUser.id;
+		console.log('new user id is ', newUserId);
 		return SignUp.update({ completed: true }, {
 			where: { email: email, completed: false },
 		});
 	})
 	.then(function(updatedSignUp) {
+		// Find all the invited reviewers with this email, and switch them to use userId
+		return InvitedReviewer.update({ email: null, name: null, invitedUserId: newUserId }, {
+			where: { email: email }
+		});
+	})
+	.then(function(updatedInvitedReviewers) {
 		return User.findOne({ 
 			where: { username: username },
 			attributes: authenticatedUserAttributes

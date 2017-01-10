@@ -52,21 +52,36 @@ app.use(session({
 /* Configure app login */
 /* ------------------- */
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-passport.use(new LocalStrategy(
-	function(username, password, done) {
-		User.findOne({ where: { username: username } })
-		.then(function(user) {
-			if (!user) { return done(null, false, { message: 'Incorrect username.' }); }
-			if (!user.validPassword(password)) { return done(null, false, { message: 'Incorrect password.' }); }
-			return done(null, user);
-		})
-		.catch(function(err) {
-			console.log('Passport err (Local Auth)', err);
-			return done(err);
-		});
-	}
-));
+// const LocalStrategy = require('passport-local').Strategy;
+// passport.use(new LocalStrategy({
+// 		usernameField: 'email',
+// 		hashField: 'hash',
+// 		saltField: 'salt'
+// 	},
+// 	function(email, password, done) {
+// 		console.log('yo yo ', email)
+// 		User.findOne({ 
+// 			where: { email: email },
+// 			include: [
+// 				{ model: Contributor, separate: true, as: 'contributions', include: [{ model: Pub, as: 'pub', where: { replyRootPubId: null }, }] },
+// 				{ model: JournalAdmin, as: 'journalAdmins', include: [{ model: Journal, as: 'journal' }] },
+// 			]
+// 		})
+// 		.then(function(user) {
+// 			console.log('Im here in user 1');
+// 			// console.log(user.contributions)
+// 			if (!user) { return done(null, false, { message: 'Incorrect email.' }); }
+// 			console.log('Im here in user 1b');
+// 			if (!user.validPassword(password)) { return done(null, false, { message: 'Incorrect password.' }); }
+// 			console.log('Im here in user 1c');
+// 			return done(null, user);
+// 		})
+// 		.catch(function(err) {
+// 			console.log('Passport err (Local Auth)', err);
+// 			return done(err);
+// 		});
+// 	}
+// ));
 
 app.use(passport.initialize());
 app.use(passport.session());

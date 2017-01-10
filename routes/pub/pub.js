@@ -34,7 +34,7 @@ export function getPub(req, res, next) {
 				{ model: PubSubmit, as: 'pubSubmits', include: [{ model: Journal, as: 'journal' }] },
 				{ model: PubFeature, separate: true, as: 'pubFeatures', include: [{ model: Journal, as: 'journal', include: [{ model: Label, as: 'collections' }] }] },
 				{ model: Pub, as: 'clones' },
-				{ model: InvitedReviewer, as: 'invitedReviewers', attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }, { model: Journal, as: 'inviterJournal' }] },
+				{ model: InvitedReviewer, as: 'invitedReviewers', attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId', 'invitationAccepted', 'invitationRejected', 'rejectionReason'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }, { model: Journal, as: 'inviterJournal' }] },
 				{ model: License, as: 'license' },
 				{ model: Pub, as: 'cloneParent' },
 			]

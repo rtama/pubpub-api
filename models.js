@@ -245,7 +245,7 @@ const InvitedReviewer = sequelize.define('InvitedReviewer', {
 		} 
 	},
 	name: Sequelize.TEXT,
-	invitationHash: Sequelize.TEXT, // Used to create the link that an invited email user can navigate to to create an account
+	// invitationHash: Sequelize.TEXT, // Used to create the link that an invited email user can navigate to to create an account
 	invitationAccepted: Sequelize.BOOLEAN,
 	invitationRejected: Sequelize.BOOLEAN,
 	rejectionReason: Sequelize.TEXT,
@@ -458,6 +458,7 @@ Pub.belongsTo(Pub, { onDelete: 'CASCADE', as: 'cloneParent', foreignKey: 'cloneP
 
 // A pub can have many invited reviewers, but an invited reviewer belongs to only a single pub
 Pub.hasMany(InvitedReviewer, { onDelete: 'CASCADE', as: 'invitedReviewers', foreignKey: 'pubId' });
+InvitedReviewer.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 
 // A user can be an invited as a reviewer many times, but a review invitation can only have a single user
 User.hasMany(InvitedReviewer, { onDelete: 'CASCADE', as: 'invitations', foreignKey: 'invitedUserId' });

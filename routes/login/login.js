@@ -3,6 +3,7 @@ import passport from 'passport';
 // import languageParser from 'accept-language-parser';
 // import Promise from 'bluebird';
 import app from '../../server';
+import { User, Pub, Contributor, Journal, JournalAdmin } from '../../models';
 
 // const readFile = Promise.promisify(require('fs').readFile);
 // const acceptedLanguages = ['en', 'es'];
@@ -80,17 +81,27 @@ export function login(req, res) {
 	// 	console.log('error', error);
 	// 	return res.status(500).json(error);
 	// });
-	const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email'];
-	const loginData = {};
-	const user = req.user || {};
-	// if (!user.id) { return res.status(201).json({}); }
-	
-	for (let index = 0; index < authenticatedUserAttributes.length; index++) {
-		const key = authenticatedUserAttributes[index];
-		loginData[key] = user[key];
-	}
 
-	return res.status(201).json(loginData);
+	const user = req.user || {};
+	User.findOne({ 
+		where: { id: user.id },
+		include: [
+			{ model: Contributor, separate: true, as: 'contributions', include: [{ model: Pub, as: 'pub', where: { replyRootPubId: null }, }] },
+			{ model: JournalAdmin, as: 'journalAdmins', include: [{ model: Journal, as: 'journal' }] },
+		]
+	})
+	.then(function(userData) {
+		const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email', 'journalAdmins', 'contributions'];
+		const loginData = {};
+		for (let index = 0; index < authenticatedUserAttributes.length; index++) {
+			const key = authenticatedUserAttributes[index];
+			loginData[key] = userData[key];
+		}
+		return res.status(201).json(loginData);
+	})
+	.catch(function(err) {
+		return res.status(500).json(err);
+	});
 
 }
 app.get('/login', login);
