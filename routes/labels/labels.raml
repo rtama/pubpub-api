@@ -53,7 +53,9 @@ post:
         isDisplayed: 
           description: Boolean setting whether the rendered is displayd in certain contexts (e.g. Journal header)
           type: boolean
-
+        order: 
+          description: Number of double precision used for order some labels (e.g. Journal collections)
+          type: number
   responses:
     200:
       body:
@@ -85,17 +87,24 @@ put:
       formParameters:
         userId: 
           description: id of the user the label is owned by
+          type: number
         pubId: 
           description: id of the pub the label is owned by
+          type: number
         journalId: 
           description: id of the pub the label is owned by
+          type: number
         labelId: 
           description: id of the label to be updated
           required: true
+          type: number
         title: 
           description: title of the updated label
         color: 
           description: color of the updated label
+        order: 
+          description: Number of double precision used for order some labels (e.g. Journal collections)
+          type: number
   responses:
     200:
       body:
