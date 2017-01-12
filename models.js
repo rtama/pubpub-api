@@ -170,6 +170,7 @@ const Label = sequelize.define('Label', {
 	image: { type: Sequelize.TEXT },
 	description: { type: Sequelize.TEXT },
 	isDisplayed: { type: Sequelize.BOOLEAN }, // Used for some labels to mark whether they are rendered in special places, e.g. in a Journal's nav as collections
+	order: { type: Sequelize.DOUBLE }, // Used for some labels to mark their order, e.g. in a Journal's nav. Doubles in the range of (0-1) exclusive.
 	// isPrivate: { type: Sequelize.BOOLEAN }, // Perhaps some labels could be private. If owned by a journal or user, they could be used to keep track of private organizations
 	// journalId: journalId is used if a label is owned by a particular journal. These labels are used for collections
 	// pubId: pubId is used to allow a pub to set it's own list of privately-editable labels for discussions.

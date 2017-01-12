@@ -92,7 +92,8 @@ export function postLabel(req, res, next) {
 				title: req.body.title,
 				color: req.body.color,
 				isDisplayed: req.body.isDisplayed,
-				description: req.body.description
+				description: req.body.description,
+				order: req.body.order,
 			});
 		});
 	}
@@ -122,7 +123,7 @@ export function putLabel(req, res, next) {
 
 	const updatedLabel = {};
 	Object.keys(req.body).map((key)=> {
-		if (['color', 'title', 'description', 'isDisplayed'].indexOf(key) > -1) {
+		if (['color', 'title', 'description', 'isDisplayed', 'order'].indexOf(key) > -1) {
 			updatedLabel[key] = req.body[key];
 		} 
 	});
