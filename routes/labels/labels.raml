@@ -48,6 +48,12 @@ post:
           required: true
         color: 
           description: color of the label
+        description: 
+          description: Text explaining the purpose of the label
+        isDisplayed: 
+          description: Boolean setting whether the rendered is displayd in certain contexts (e.g. Journal header)
+          type: boolean
+
   responses:
     200:
       body:
@@ -58,6 +64,8 @@ post:
               userId: 4,
               title: "My Physics Label",
               color: "#ff0000",
+              isDisplayed: true,
+              description: "A collection of physics articles",
               updatedAt: "2016-11-30T21:50:45.124Z",
               createdAt: "2016-11-30T21:50:45.124Z",
               journalId: null,

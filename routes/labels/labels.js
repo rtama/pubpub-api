@@ -24,7 +24,7 @@ export function getLabels(req, res, next) {
 
 	Label.findOne({
 		where: whereParams,
-		attributes: ['id', 'title', 'color', 'journalId', 'userId', 'pubId'],
+		attributes: ['id', 'title', 'color', 'journalId', 'userId', 'pubId', 'isDisplayed', 'description'],
 		include: [
 			{ model: Pub, as: 'pubs' },
 			{ model: User, as: 'followers', attributes: userAttributes }, 
@@ -91,6 +91,8 @@ export function postLabel(req, res, next) {
 				journalId: req.body.journalId,
 				title: req.body.title,
 				color: req.body.color,
+				isDisplayed: req.body.isDisplayed,
+				description: req.body.description
 			});
 		});
 	}
@@ -120,7 +122,7 @@ export function putLabel(req, res, next) {
 
 	const updatedLabel = {};
 	Object.keys(req.body).map((key)=> {
-		if (['color', 'title'].indexOf(key) > -1) {
+		if (['color', 'title', 'description', 'isDisplayed'].indexOf(key) > -1) {
 			updatedLabel[key] = req.body[key];
 		} 
 	});
