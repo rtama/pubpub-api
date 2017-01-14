@@ -59,14 +59,13 @@ export function getPub(req, res, next) {
 	.then(function(pubData) {
 		if (!pubData) { return res.status(500).json('Pub not found'); }
 		const outputData = pubData.toJSON ? pubData.toJSON() : JSON.parse(pubData);
-
+		console.log('Using Cache: ', !pubData.toJSON);
 		const setCache = pubData.toJSON ? redisClient.setexAsync(req.query.slug, 60 * 60 * 24, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, Reaction.findAll({ raw: true }), Role.findAll({ raw: true }), setCache]);
 	})
 	.spread(function(pubData, reactionsData, rolesData) {
 		console.timeEnd('pubQueryTime');
 		console.time('pubProcessTime');
-		// if (!pubData) { return res.status(500).json('Pub not found'); }
 
 		const canEdit = pubData.contributors.reduce((previous, current)=> {
 			if (current.userId === user.id) { return true; }
