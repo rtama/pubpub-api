@@ -1,6 +1,20 @@
+import Promise from 'bluebird';
+
 if (process.env.NODE_ENV !== 'production') {
 	require('./config.js');
 }
+/* Initialize Redis */
+/* ------------- */
+const redis = require('redis');
+Promise.promisifyAll(redis.RedisClient.prototype);
+Promise.promisifyAll(redis.Multi.prototype);
+
+const redisClient = redis.createClient(process.env.REDIS_URL);
+
+redisClient.on('error', function (err) {
+	console.log('redisClient Error:  ' + err);
+});
+/* ------------- */
 
 const Sequelize = require('sequelize');
 const passportLocalSequelize = require('passport-local-sequelize');
@@ -49,6 +63,7 @@ const User = sequelize.define('User', {
 			isLowercase: true,
 			isAlphanumeric: true, // No special characters
 			is: /^.*[A-Za-z]+.*$/, // Must contain at least one letter
+			// Does this catch spaces? We don't want to allow spaces.
 		},
 	},
 	firstName: { type: Sequelize.STRING, allowNull: false },
@@ -363,6 +378,7 @@ User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'followsPubs', through: 'Foll
 Pub.belongsToMany(User, { onDelete: 'CASCADE', as: 'followers', through: 'FollowsPub', foreignKey: 'pubId' });
 FollowsPub.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'followerId' });
 User.hasMany(FollowsPub, { onDelete: 'CASCADE', as: 'FollowsPubs', foreignKey: 'followerId' });
+Pub.hasMany(FollowsPub, { onDelete: 'CASCADE', as: 'FollowsPubs', foreignKey: 'followerId' });
 
 // A user can follow many journals, and a journal can be followed by many users
 User.belongsToMany(Journal, { onDelete: 'CASCADE', as: 'followsJournals', through: 'FollowsJournal', foreignKey: 'followerId' });
@@ -527,5 +543,6 @@ const db = {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+db.redisClient = redisClient;
 
 module.exports = db;
