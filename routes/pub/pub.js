@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import app from '../../server';
-import { redisClient, Pub, User, Label, File, Journal, Version, PubReply, PubReaction, Contributor, FollowsPub, License, InvitedReviewer, Reaction, Role, PubSubmit, PubFeature } from '../../models';
+import { redisClient, Pub, User, Label, File, Journal, Version, PubReaction, Contributor, FollowsPub, License, InvitedReviewer, Reaction, Role, PubSubmit, PubFeature } from '../../models';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
@@ -105,9 +105,6 @@ export function getPub(req, res, next) {
 app.get('/pub', getPub);
 
 export function postPub(req, res, next) {
-	// Check if authenticated
-	// Make get request
-	// Return
 	const user = req.user || {};
 	if (!user.id) { return res.status(500).json('Not authorized'); }
 

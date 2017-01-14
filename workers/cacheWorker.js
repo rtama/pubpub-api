@@ -4,15 +4,6 @@ import { queryForUser } from '../routes/user/user';
 import { queryForJournal } from '../routes/journal/journal';
 import { queryForLabel } from '../routes/labels/labels';
 
-
-// cacheQueueValue: 
-// p_123, pub by id
-// p_mypubslug, pub by slug
-// u_123, user by id
-// u_myusername, user by username
-// j_123, journal by id
-// j_myusername, journal by name
-
 function updateCache(thing) {
 	let query;
 	const prefix = thing.split('_')[0];
@@ -50,17 +41,16 @@ function updateCache(thing) {
 	});
 }
 
-function checkAndRunJob(timeInterval) {
+function checkAndRunJob() {
 	redisClient.spopAsync('cacheQueue')
 	.then(function(popResult) {
 		if (popResult) { return updateCache(popResult); }
 		return false;
 	})
 	.then(function() {
-		setTimeout(checkAndRunJob.bind(this, timeInterval), timeInterval);
+		setTimeout(checkAndRunJob.bind(this, 500), 500);
 	});
 }
 
+checkAndRunJob();
 console.info('⛏️  Cache Worker Started');
-checkAndRunJob(500);
-

@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign */
-
 import osprey from 'osprey';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -34,15 +33,14 @@ app.use(cookieParser());
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 app.use(session({
-	secret: 'superdupersecret',
-	resave: true,
-	saveUninitialized: true,
+	secret: 'sessionsecret',
+	resave: false,
+	saveUninitialized: false,
 	store: new SequelizeStore({
 		db: sequelize
 	}),
 	cookie: {
 		path: '/',
-		// domain: '127.0.0.1', // This was causing all sorts of mayhem.
 		httpOnly: false,
 		secure: false,
 		maxAge: 30 * 24 * 60 * 60 * 1000// = 30 days.
@@ -53,36 +51,6 @@ app.use(session({
 /* Configure app login */
 /* ------------------- */
 const passport = require('passport');
-// const LocalStrategy = require('passport-local').Strategy;
-// passport.use(new LocalStrategy({
-// 		usernameField: 'email',
-// 		hashField: 'hash',
-// 		saltField: 'salt'
-// 	},
-// 	function(email, password, done) {
-// 		console.log('yo yo ', email)
-// 		User.findOne({ 
-// 			where: { email: email },
-// 			include: [
-// 				{ model: Contributor, separate: true, as: 'contributions', include: [{ model: Pub, as: 'pub', where: { replyRootPubId: null }, }] },
-// 				{ model: JournalAdmin, as: 'journalAdmins', include: [{ model: Journal, as: 'journal' }] },
-// 			]
-// 		})
-// 		.then(function(user) {
-// 			console.log('Im here in user 1');
-// 			// console.log(user.contributions)
-// 			if (!user) { return done(null, false, { message: 'Incorrect email.' }); }
-// 			console.log('Im here in user 1b');
-// 			if (!user.validPassword(password)) { return done(null, false, { message: 'Incorrect password.' }); }
-// 			console.log('Im here in user 1c');
-// 			return done(null, user);
-// 		})
-// 		.catch(function(err) {
-// 			console.log('Passport err (Local Auth)', err);
-// 			return done(err);
-// 		});
-// 	}
-// ));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -187,8 +155,6 @@ if (process.env.WORKER !== 'true') {
 		require('./routes/followsLabel/followsLabel.js');
 		require('./routes/userPassword/userPassword.js');
 		require('./routes/userPasswordReset/userPasswordReset.js');
-
-
 
 		/* ------------------- */
 		/* ------------------- */
