@@ -14,6 +14,10 @@ const redisClient = redis.createClient(process.env.REDIS_URL);
 redisClient.on('error', function (err) {
 	console.log('redisClient Error:  ' + err);
 });
+
+// To trigger a worker to update the cache, add either the pubId or the slug to cacheQueue set.
+// redisClient.saddAsync('cacheQueue', '117', 'myslug');
+
 // redisClient.flushdb( function (err, succeeded) {
 // 	console.log('Flushed Redis DB'); 
 // });
