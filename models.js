@@ -14,6 +14,9 @@ const redisClient = redis.createClient(process.env.REDIS_URL);
 redisClient.on('error', function (err) {
 	console.log('redisClient Error:  ' + err);
 });
+// redisClient.flushdb( function (err, succeeded) {
+// 	console.log('Flushed Redis DB'); 
+// });
 /* ------------- */
 
 const Sequelize = require('sequelize');

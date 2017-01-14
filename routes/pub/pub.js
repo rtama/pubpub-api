@@ -5,6 +5,10 @@ import { redisClient, Pub, User, Label, File, Journal, Version, PubReply, PubRea
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
 export function getPub(req, res, next) {
+	// Define Redis KEY
+	// Check Redis, return
+	// Find Postrgres, Set Redis, return
+
 	// Probably should add the option to search by pubId or slug.
 
 	// Check if authenticated
@@ -15,7 +19,6 @@ export function getPub(req, res, next) {
 
 	let hasCache = false;
 	redisClient.getAsync(req.query.slug).then(function(redisResult) {
-		console.log('redis response is ', redisResult); // => 'bar'
 		if (redisResult) { 
 			hasCache = true; 
 			const redisResultObject = JSON.parse(redisResult);
@@ -56,7 +59,7 @@ export function getPub(req, res, next) {
 		]);
 	})
 	.spread(function(pubData, reactionsData, rolesData) {
-		const setCache = hasCache ? {} : redisClient.setexAsync(req.query.slug, 30, JSON.stringify([pubData.toJSON(), reactionsData, rolesData]));
+		const setCache = hasCache ? {} : redisClient.setexAsync(req.query.slug, 60 * 60 * 24, JSON.stringify([pubData.toJSON(), reactionsData, rolesData]));
 		return Promise.all([pubData, reactionsData, rolesData, setCache]);
 	})
 	.spread(function(pubData, reactionsData, rolesData) {
