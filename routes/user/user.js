@@ -42,7 +42,7 @@ export function getUser(req, res, next) {
 		if (!userData) { throw new Error('User not Found'); }
 		const outputData = userData.toJSON ? userData.toJSON() : JSON.parse(userData);
 		console.log('Using Cache: ', !userData.toJSON);
-		const setCache = userData.toJSON ? redisClient.setexAsync(username, 60 * 60 * 24, JSON.stringify(outputData)) : {};
+		const setCache = userData.toJSON ? redisClient.setexAsync(username, 60, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, setCache]);
 	})
 	.spread(function(userData, setCacheResult) {

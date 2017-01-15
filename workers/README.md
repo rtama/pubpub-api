@@ -23,3 +23,5 @@ u_myusername, user by username
 j_123, journal by id
 j_journaltitle, journal by name
 ```
+
+Durp - this isn't actually so clean. If a user updates their name for example - we have to go and regenerate the cache for all of the Pubs they're a part of, all of the journals they admin, all of the activity items they are a part of, across all of the activity feeds.

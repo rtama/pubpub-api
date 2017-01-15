@@ -20,7 +20,6 @@ export function queryForPub(value) {
 				separate: true,
 				include: [
 					{ model: Contributor, separate: true, as: 'contributors', include: [{ model: Role, as: 'roles' }, { model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
-					// { model: Version, as: 'versions', include: [{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'attributions', attributes: userAttributes }] }] },
 					{ model: Label, as: 'labels' },
 					{ model: PubReaction, as: 'pubReactions', include: [{ model: Reaction, as: 'reaction' }] },
 				] 
@@ -60,7 +59,7 @@ export function getPub(req, res, next) {
 		if (!pubData) { return res.status(500).json('Pub not found'); }
 		const outputData = pubData.toJSON ? pubData.toJSON() : JSON.parse(pubData);
 		console.log('Using Cache: ', !pubData.toJSON);
-		const setCache = pubData.toJSON ? redisClient.setexAsync(req.query.slug, 60 * 60 * 24, JSON.stringify(outputData)) : {};
+		const setCache = pubData.toJSON ? redisClient.setexAsync(req.query.slug, 60, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, Reaction.findAll({ raw: true }), Role.findAll({ raw: true }), setCache]);
 	})
 	.spread(function(pubData, reactionsData, rolesData) {
