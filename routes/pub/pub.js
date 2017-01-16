@@ -180,7 +180,8 @@ export function putPub(req, res, next) {
 			throw new Error('Not Authorized to update this pub');
 		}
 		return Pub.update(updatedPub, {
-			where: { id: req.body.pubId }
+			where: { id: req.body.pubId },
+			individualHooks: true,
 		});
 	})
 	.then(function(updatedCount) {
@@ -210,7 +211,8 @@ export function deletePub(req, res, next) {
 			throw new Error('Not Authorized to delete this pub');
 		}
 		return Pub.update({ inactive: true }, {
-			where: { id: req.body.pubId }
+			where: { id: req.body.pubId },
+			individualHooks: true,
 		});
 	})
 	.then(function(updatedCount) {

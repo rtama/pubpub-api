@@ -21,6 +21,12 @@ redisClient.on('error', function (err) {
 // redisClient.flushdb( function (err, succeeded) {
 // 	console.log('Flushed Redis DB'); 
 // });
+const updatePubCache = function(pubId) {
+	if (pubId) {
+		redisClient.saddAsync('cacheQueue', `p_${pubId}`);
+	}
+};
+
 /* ------------- */
 
 const Sequelize = require('sequelize');
@@ -136,6 +142,10 @@ const Pub = sequelize.define('Pub', {
 	// pullRequestVersionId
 	// licenseId
 	// defaultContext
+}, {
+	hooks: {
+		afterUpdate: function(updatedItem, options) { updatePubCache(updatedItem.id); },
+	}
 });
 
 // How do files know their history?
@@ -312,7 +322,14 @@ const FollowsLabel = sequelize.define('FollowsLabel', {}); // Used to connect sp
 const ContributorRole = sequelize.define('ContributorRole', {
 	inactive: Sequelize.BOOLEAN, // Used when a contributor is removed so we have a history of contributors and how they were applied/removed
 	// pubID: used so we can grab all roles when querying for pubs. Needed because we can't 'include' on a through table. Issue here: https://github.com/sequelize/sequelize/issues/5358
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updatePubCache(updatedItem.pubId); },
+		afterDestroy: function(updatedItem, options) { updatePubCache(updatedItem.pubId); }
+	}
 }); // Used to connect specific role to a specific contributor
+
+
 const PubFeature = sequelize.define('PubFeature', { // Used to connect specific journal to specific pub as featurer
 	isDisplayed: Sequelize.BOOLEAN, // Whether the feature tag is displayed on the front of the pub
 	// isContext: Sequelize.BOOLEAN, // Whether the feature is the default context
@@ -347,6 +364,8 @@ User.hasMany(Contributor, { onDelete: 'CASCADE', as: 'contributions', foreignKey
 // Roles can belong to many contributors, and contributors can have many roles
 Contributor.belongsToMany(Role, { onDelete: 'CASCADE', as: 'roles', through: 'ContributorRole', foreignKey: 'contributorId' });
 Role.belongsToMany(Contributor, { onDelete: 'CASCADE', as: 'contributors', through: 'ContributorRole', foreignKey: 'roleId' });
+ContributorRole.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
+
 // A contributor has a single user
 Contributor.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
 Contributor.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });

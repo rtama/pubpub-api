@@ -37,6 +37,7 @@ export function postContributorRole(req, res, next) {
 		return ContributorRole.create({
 			roleId: req.body.roleId,
 			contributorId: req.body.contributorId,
+			pubId: req.body.pubId,
 		});
 	})
 	.then(function(newContributorRole) {
@@ -63,7 +64,8 @@ export function deleteContributorRole(req, res, next) {
 			throw new Error('Not Authorized to edit this pub');
 		}
 		return ContributorRole.destroy({
-			where: { roleId: req.body.roleId, contributorId: req.body.contributorId }
+			where: { roleId: req.body.roleId, contributorId: req.body.contributorId, pubId: req.body.pubId, },
+			individualHooks: true,
 		});
 	})
 	.then(function(newContributorRole) {
