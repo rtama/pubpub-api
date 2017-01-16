@@ -28,10 +28,10 @@ function updateCache(thing) {
 	.then(function(queryData) {
 		if (!queryData) { return false; }
 		let key;
-		if (prefix === 'p') { key = queryData.slug; } 
-		if (prefix === 'u') { key = queryData.username; } 
-		if (prefix === 'j') { key = queryData.slug; } 
-		if (prefix === 'l') { key = queryData.title; } 
+		if (prefix === 'p') { key = 'p' + queryData.slug; } 
+		if (prefix === 'u') { key = 'u' + queryData.username; } 
+		if (prefix === 'j') { key = 'j' + queryData.slug; } 
+		if (prefix === 'l') { key = 'l' + queryData.title; } 
 		return redisClient.setexAsync(key, 120, JSON.stringify(queryData.toJSON()));
 	})
 	.then(function() {
