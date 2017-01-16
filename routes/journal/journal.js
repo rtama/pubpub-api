@@ -1,36 +1,48 @@
 import Promise from 'bluebird';
 import app from '../../server';
-import { Pub, PubSubmit, PubFeature, User, Label, JournalAdmin, Journal, FollowsJournal, InvitedReviewer } from '../../models';
+import { redisClient, Pub, PubSubmit, PubFeature, User, Label, JournalAdmin, Journal, FollowsJournal, InvitedReviewer } from '../../models';
 import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
-export function getJournal(req, res, next) {
-	// Probably should add the option to search by pubId or slug.
-
-	// Check if authenticated
-	// Make get request
-	// Return
-	const user = req.user || {};
-	Journal.findOne({
-		where: { slug: req.query.slug, inactive: { $not: true } },
+export function queryForJournal(value) {
+	const where = isNaN(value) 
+		? { slug: value, inactive: { $not: true } }
+		: { id: value, inactive: { $not: true } };
+	return Journal.findOne({
+		where: where,
 		include: [
 			{ model: JournalAdmin, as: 'admins', include: [{ model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
 			{ model: User, as: 'followers', attributes: userAttributes }, 
 			{ model: Label, as: 'collections' }, // These are labels owned by the journal
-			// { model: Pub, as: 'pubsFeatured', include: [{ model: Label, as: 'labels', through: { attributes: [] } }] },
-			// { model: Pub, as: 'pubsSubmitted' },
-
 			{ model: PubSubmit, as: 'pubSubmits', include: [{ model: Pub, as: 'pub' }] },
 			{ model: PubFeature, as: 'pubFeatures', include: [{ model: Pub, as: 'pub', include: [{ model: Label, as: 'labels', through: { attributes: [] } }] }] },
-
 			{ model: InvitedReviewer, as: 'invitationsCreated', attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }] },
 		]
 		// include: [{ all: true }]
+	});
+}
+
+export function getJournal(req, res, next) {
+	const user = req.user || {};
+	const slug = req.query.slug;
+
+	console.time('journalQueryTime');
+	redisClient.getAsync(slug).then(function(redisResult) {
+		if (redisResult) { return redisResult; }
+		return queryForJournal(slug);
 	})
 	.then(function(journalData) {
+		if (!journalData) { throw new Error('Journal not Found'); }
+		const outputData = journalData.toJSON ? journalData.toJSON() : JSON.parse(journalData);
+		console.log('Using Cache: ', !journalData.toJSON);
+		const setCache = journalData.toJSON ? redisClient.setexAsync(slug, 120, JSON.stringify(outputData)) : {};
+		return Promise.all([outputData, setCache]);
+	})
+	.spread(function(journalData, setCacheResult) {
 		// Filter through to see if admin, set isAuthorized
 		if (!journalData) { return res.status(500).json('Journal not found'); }
+		console.timeEnd('journalQueryTime');
 		return res.status(201).json(journalData);
 	})
 	.catch(function(err) {
