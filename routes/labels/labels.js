@@ -1,38 +1,45 @@
 import app from '../../server';
-import { Pub, Label, Contributor, JournalAdmin, User } from '../../models';
+import { redisClient, Pub, Label, Contributor, JournalAdmin, User } from '../../models';
 import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
-export function getLabels(req, res, next) {
-	// Return a single label and the associated pubs
+export function queryForLabel(value) {
+	const where = isNaN(value) 
+		? { title: value, userId: null, journalId: null, pubId: null }
+		: { id: value, userId: null, journalId: null, pubId: null };
 
-	const whereParams = {};
-	Object.keys(req.query).map((key)=> {
-		if (['id', 'title', 'journalId', 'userId', 'pubId'].indexOf(key) > -1) {
-			whereParams[key] = req.query[key];
-		} 
-	});
-
-	if (whereParams.title && !whereParams.userId) { whereParams.userId = null; }
-	if (whereParams.title && !whereParams.journalId) { whereParams.journalId = null; }
-	if (whereParams.title && !whereParams.pubId) { whereParams.pubId = null; }
-
-	// const whereParameters = Object.keys(queryParams).length
-	// 	? queryParams
-	// 	: { journalId: null, userId: null, pubId: null };
-
-	Label.findOne({
-		where: whereParams,
+	return Label.findOne({
+		where: where,
 		attributes: ['id', 'title', 'color', 'journalId', 'userId', 'pubId', 'isDisplayed', 'description'],
 		include: [
 			{ model: Pub, as: 'pubs' },
 			{ model: User, as: 'followers', attributes: userAttributes }, 
 		],
+	});
+	
+}
+
+export function getLabels(req, res, next) {
+	// Return a single global label and the associated pubs
+
+	console.time('labelQueryTime');
+	redisClient.getAsync('l_' + req.query.title).then(function(redisResult) {
+		if (redisResult) { return redisResult; }
+		return queryForLabel(req.query.title);
 	})
-	.then(function(labelsData) {
-		if (!labelsData) { return res.status(500).json('Label not found'); }
-		return res.status(201).json(labelsData);
+	.then(function(labelData) {
+		if (!labelData) { throw new Error('Label not Found'); }
+		const outputData = labelData.toJSON ? labelData.toJSON() : JSON.parse(labelData);
+		console.log('Using Cache: ', !labelData.toJSON);
+		const setCache = labelData.toJSON ? redisClient.setexAsync('l_' + req.query.title, 120, JSON.stringify(outputData)) : {};
+		return Promise.all([outputData, setCache]);
+	})
+	.spread(function(labelData, setCacheResult) {
+		console.timeEnd('labelQueryTime');
+		if (!labelData) { return res.status(500).json('Label not found'); }
+
+		return res.status(201).json(labelData);
 	})
 	.catch(function(err) {
 		console.error('Error in getLabels: ', err);
@@ -132,7 +139,8 @@ export function putLabel(req, res, next) {
 	if (req.body.userId) {
 		if (req.body.userId !== user.id) { return res.status(500).json('Not authorized to update labels for this userId'); }
 		authenticateAndUpdate = Label.update(updatedLabel, {
-			where: { id: req.body.labelId, userId: req.body.userId }
+			where: { id: req.body.labelId, userId: req.body.userId },
+			individualHooks: true
 		});
 	}
 
@@ -147,7 +155,8 @@ export function putLabel(req, res, next) {
 				throw new Error('Not Authorized to update labels for this pubId');
 			}
 			return Label.update(updatedLabel, {
-				where: { id: req.body.labelId, pubId: req.body.pubId }
+				where: { id: req.body.labelId, pubId: req.body.pubId },
+				individualHooks: true
 			});
 		});
 	}
@@ -164,7 +173,8 @@ export function putLabel(req, res, next) {
 			}
 
 			return Label.update(updatedLabel, {
-				where: { id: req.body.labelId, journalId: req.body.journalId }
+				where: { id: req.body.labelId, journalId: req.body.journalId },
+				individualHooks: true
 			});
 		});
 	}
@@ -190,7 +200,8 @@ export function deleteLabel(req, res, next) {
 	if (req.body.userId) {
 		if (req.body.userId !== user.id) { return res.status(500).json('Not authorized to delete labels for this userId'); }
 		authenticateAndUpdate = Label.destroy({
-			where: { id: req.body.labelId, userId: req.body.userId }
+			where: { id: req.body.labelId, userId: req.body.userId },
+			individualHooks: true
 		});
 	}
 
@@ -205,7 +216,8 @@ export function deleteLabel(req, res, next) {
 				throw new Error('Not Authorized to delete labels for this pubId');
 			}
 			return Label.destroy({
-				where: { id: req.body.labelId, pubId: req.body.pubId }
+				where: { id: req.body.labelId, pubId: req.body.pubId },
+				individualHooks: true
 			});
 		});
 	}
@@ -222,7 +234,8 @@ export function deleteLabel(req, res, next) {
 			}
 
 			return Label.destroy({
-				where: { id: req.body.labelId, journalId: req.body.journalId }
+				where: { id: req.body.labelId, journalId: req.body.journalId },
+				individualHooks: true
 			});
 		});
 	}

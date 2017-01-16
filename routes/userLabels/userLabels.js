@@ -45,7 +45,8 @@ export function putLabel(req, res, next) {
 	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	Label.update({ title: req.body.title }, {
-		where: { id: req.body.labelId, userId: user.id }
+		where: { id: req.body.labelId, userId: user.id },
+		individualHooks: true
 	})
 	.then(function(updatedCount) {
 		return res.status(201).json(updatedCount);
@@ -62,7 +63,8 @@ export function deleteLabel(req, res, next) {
 	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	Label.destroy({
-		where: { userId: user.id, id: req.body.labelId }
+		where: { userId: user.id, id: req.body.labelId },
+		individualHooks: true
 	})
 	.then(function(destroyedCount) {
 		return res.status(201).json(true);

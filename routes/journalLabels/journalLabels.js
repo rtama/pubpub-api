@@ -49,7 +49,8 @@ export function deleteLabel(req, res, next) {
 	// This deletes the label relationship, not the label itself
 	// Authenticate
 	PubLabel.destroy({
-		where: { pubId: req.body.pubId, labelId: req.body.labelId }
+		where: { pubId: req.body.pubId, labelId: req.body.labelId },
+		individualHooks: true
 	})
 	.then(function(destroyedCount) {
 		return res.status(201).json(true);

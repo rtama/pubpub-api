@@ -96,6 +96,7 @@ export function putContributor(req, res, next) {
 		}
 		return Contributor.update(updatedContributor, {
 			where: { id: req.body.contributorId },
+			individualHooks: true,
 		});
 	})
 	.then(function(updatedCount) {
@@ -125,6 +126,7 @@ export function deleteContributor(req, res, next) {
 		}
 		return Contributor.destroy({
 			where: { id: req.body.contributorId },
+			individualHooks: true,
 		});
 	})
 	.then(function(removedCount) {

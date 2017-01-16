@@ -42,6 +42,7 @@ export function postReset(req, res) {
 		return User.update(updateData, {
 			where: { id: user.id },
 			returning: true,
+			individualHooks: true
 		});
 
 	}).then(function(updatedUserData) {

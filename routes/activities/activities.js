@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import app from '../../server';
-import { Activity, User, Pub, Label, Journal, FollowsPub, FollowsUser, FollowsJournal, FollowsLabel, Contributor, JournalAdmin } from '../../models';
+import { redisClient, Activity, User, Pub, Label, Journal, FollowsPub, FollowsUser, FollowsJournal, FollowsLabel, Contributor, JournalAdmin } from '../../models';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
@@ -56,22 +56,9 @@ const filterPrivate = function(activities, pubs, journals) {
 
 };
 
-export function getActivities(req, res, next) {
-	// Get user followsPub, followsUser, followsLabel, followsJournal
-	// Get activities of ids that exist in user's Follows
-	// Get global activities?
-
-	const user = req.user || {};
-	// const assetsInclude = req.query.assets === 'true' 
-	// 	? [
-	// 		{ model: Pub, as: 'pubs', where: { replyRootPubId: null } },
-	// 		{ model: Journal, as: 'journals' },
-	// 	]
-	// 	: {};
-
-	// console.time('assetQueryTime');
-	User.findOne({
-		where: { id: user.id },
+export function queryForActivity(userId) {
+	return User.findOne({
+		where: { id: userId },
 		include: [
 			{ model: FollowsPub, as: 'FollowsPubs' }, 
 			{ model: FollowsUser, as: 'FollowsUsers' }, 
@@ -89,9 +76,7 @@ export function getActivities(req, res, next) {
 		const journalAdmins = userData.journalAdmins || [];
 		const assets = {
 			pubs: contributions.map((item)=> { return item.pub; }).filter((item)=> { return item.replyRootPubId === null; }),
-			// pubs: userData.pubs,
 			journals: journalAdmins.map((item)=> { return item.journal; }),
-			// journals: userData.journals || [],
 		};
 
 		const FollowsPubsIds = userData.FollowsPubs.map((item)=> { return item.pubId; });
@@ -109,14 +94,13 @@ export function getActivities(req, res, next) {
 			activityFinder('Label', FollowsLabelsIds),
 			activityFinder('Pub', myPubsIds),
 			activityFinder('Journal', myJournalsIds),
-			activityFinder('User', [user.id]), // You activities
+			activityFinder('User', [userId]), // You activities
 			// How do we define global activities? We grab top journals, users, and pubs - and populate them?
 			// Make on-the-fly following list essentially. We could have global be 'editors pick'
 		];
 		return [Promise.all(findActivities), assets];
 		
-	})
-	.spread(function(activitiesData, assets) {
+	}).spread(function(activitiesData, assets) {
 		const output = {
 			activities: {
 				pubs: filterPrivate(activitiesData[0], assets.pubs, assets.journals),
@@ -126,17 +110,43 @@ export function getActivities(req, res, next) {
 				myPubs: activitiesData[4],
 				myJournals: activitiesData[5],
 				myUsers: activitiesData[6],
+				assets: assets
 			},
 		};
+		return output;
+	});
+}
 
-		if (req.query.assets === true) { output.assets = assets; }
-		
-		// console.timeEnd('assetQueryTime');
-		return res.status(201).json(output);
+export function getActivities(req, res, next) {
+	// Get user followsPub, followsUser, followsLabel, followsJournal
+	// Get activities of ids that exist in user's Follows
+	// Get global activities?
+
+	const user = req.user || {};
+
+	console.time('assetQueryTime');
+	redisClient.getAsync('a_' + user.id).then(function(redisResult) {
+		if (redisResult) { return redisResult; }
+		return queryForActivity(user.id);
+	})
+	.then(function(activitiesData) {
+		if (!activitiesData) { throw new Error('Activities not Found'); }
+		const outputData = typeof activitiesData === 'object' ? activitiesData : JSON.parse(activitiesData);
+		console.log('Using Cache: ', typeof activitiesData !== 'object');
+		const setCache = typeof activitiesData === 'object' ? redisClient.setexAsync('a_' + user.id, 120, JSON.stringify(outputData)) : {};
+		return Promise.all([outputData, setCache]);
+	})
+	.spread(function(activitiesData, setCacheResult) {
+		console.timeEnd('assetQueryTime');
+		return res.status(201).json({
+			...activitiesData,
+			assets: req.query.assets === true ? activitiesData.assets : undefined,
+		});
 	})
 	.catch(function(err) {
 		console.error('Error in getActivities: ', err);
 		return res.status(500).json(err.message);
 	});
+
 }
 app.get('/activities', getActivities);

@@ -49,7 +49,8 @@ export function putFeature(req, res, next) {
 		});
 
 		return PubFeature.update(updatedFeature, {
-			where: { pubId: req.body.pubId, journalId: req.body.journalId }			
+			where: { pubId: req.body.pubId, journalId: req.body.journalId },
+			individualHooks: true			
 		});
 	})
 	.then(function(countUpdated) {

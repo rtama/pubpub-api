@@ -152,11 +152,11 @@ export function postVersion(req, res, next) {
 
 		const newFileRelationsInput = req.body.newFileRelations || [];
 		const newFileRelations = newFileRelationsInput.map((newRelation)=> {
-			return { sourceFileId: nameIdObject[newRelation.source], destinationFileId: nameIdObject[newRelation.destination] };
+			return { sourceFileId: nameIdObject[newRelation.source], destinationFileId: nameIdObject[newRelation.destination], pubId: req.body.pubId };
 		});
 		const newFileAttributionsInput = req.body.newFileAttributions || [];
 		const newFileAttributions = newFileAttributionsInput.map((newAttribution)=> {
-			return { fileId: nameIdObject[newAttribution.fileName], userId: newAttribution.userId };
+			return { fileId: nameIdObject[newAttribution.fileName], userId: newAttribution.userId, pubId: req.body.pubId };
 		});
 
 		const createFileRelations = FileRelation.bulkCreate(newFileRelations);
@@ -204,7 +204,8 @@ export function putVersion(req, res, next) {
 			throw new Error('Not Authorized to update this pub');
 		}
 		return Version.update(updatedVersion, {
-			where: { id: req.body.versionId }
+			where: { id: req.body.versionId },
+			individualHooks: true,
 		});
 	})
 	.then(function(updatedCount) {
@@ -224,7 +225,7 @@ export function putVersion(req, res, next) {
 
 				return Promise.all([
 					createActivity('publishedPub', user.id, req.body.pubId),
-					Pub.update({ isPublished: true }, { where: { id: req.body.pubId } })
+					Pub.update({ isPublished: true }, { where: { id: req.body.pubId }, individualHooks: true })
 				]);
 			});
 		}

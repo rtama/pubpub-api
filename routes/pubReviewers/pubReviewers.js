@@ -231,6 +231,7 @@ export function putReviewer(req, res, next) {
 			invitedUserId: user.id
 		},
 		returning: true,
+		individualHooks: true
 	})
 	.then(function(updatedInvitation) {
 		if (req.body.invitationAccepted && updatedInvitation[1][0]) {

@@ -31,6 +31,7 @@ export function postFileAttribution(req, res, next) {
 	FileAttribution.create({
 		fileId: req.body.fileId,
 		userId: req.body.userId,
+		pubId: req.body.pubId
 	})
 	.then(function(newFileAttribution) {
 		return res.status(201).json(newFileAttribution);
@@ -46,7 +47,8 @@ export function deleteFileAttribution(req, res, next) {
 	// This deletes the attribution
 	// Authenticate
 	FileAttribution.destroy({
-		where: { fileId: req.body.fileId, userId: req.body.userId }
+		where: { fileId: req.body.fileId, userId: req.body.userId, pubId: req.body.pubId },
+		individualHooks: true,
 	})
 	.then(function(destroyedCount) {
 		return res.status(201).json(true);

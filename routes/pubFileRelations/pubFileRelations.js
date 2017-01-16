@@ -33,6 +33,7 @@ export function postFileRelation(req, res, next) {
 		type: req.body.type,
 		sourceFileId: req.body.sourceFileId,
 		destinationFileId: req.body.destinationFileId,
+		pubId: req.body.pubId,
 	})
 	.then(function(newFileRelation) {
 		return res.status(201).json(newFileRelation);
@@ -48,7 +49,8 @@ export function deleteFileRelation(req, res, next) {
 	// This deletes the label relationship, not the label itself
 	// Authenticate
 	FileRelation.destroy({
-		where: { sourceFileId: req.body.sourceFileId, destinationFileId: req.body.destinationFileId }
+		where: { sourceFileId: req.body.sourceFileId, destinationFileId: req.body.destinationFileId, pubId: req.body.pubId, },
+		individualHooks: true,
 	})
 	.then(function(destroyedCount) {
 		return res.status(201).json(true);

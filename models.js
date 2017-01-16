@@ -1,6 +1,43 @@
+import Promise from 'bluebird';
+
 if (process.env.NODE_ENV !== 'production') {
 	require('./config.js');
 }
+/* Initialize Redis */
+/* ------------- */
+const redis = require('redis');
+Promise.promisifyAll(redis.RedisClient.prototype);
+Promise.promisifyAll(redis.Multi.prototype);
+
+const redisClient = redis.createClient(process.env.REDIS_URL);
+
+redisClient.on('error', function (err) {
+	console.log('redisClient Error:  ' + err);
+});
+
+// To trigger a worker to update the cache, add either the pubId or the slug to cacheQueue set.
+// redisClient.saddAsync('cacheQueue', 'p_117', 'p_turtles');
+
+// redisClient.flushdb( function (err, succeeded) {
+// 	console.log('Flushed Redis DB'); 
+// });
+const updatePubCache = function(pubId) {
+	if (pubId) { redisClient.saddAsync('cacheQueue', `p_${pubId}`); }
+};
+
+const updateUserCache = function(userId) {
+	if (userId) { redisClient.saddAsync('cacheQueue', `u_${userId}`); }
+};
+
+const updateJournalCache = function(journalId) {
+	if (journalId) { redisClient.saddAsync('cacheQueue', `j_${journalId}`); }
+};
+
+const updateLabelCache = function(labelId) {
+	if (labelId) { redisClient.saddAsync('cacheQueue', `l_${labelId}`); }
+};
+
+/* ------------- */
 
 const Sequelize = require('sequelize');
 const passportLocalSequelize = require('passport-local-sequelize');
@@ -27,19 +64,6 @@ const SignUp = sequelize.define('SignUp', {
 	completed: Sequelize.BOOLEAN,
 });
 
-SignUp.hook('afterCreate', function(user, options) {
-	console.debug('Just created SignUp row ', user.dataValues);
-	// What happens if they resend an email? We should track that.
-	// What happens if they close the tab, and then want to signup again? Do we increment the resend count. Probably.
-	// Call email service here!
-});
-SignUp.hook('afterUpdate', function(user, options) {
-	console.debug('Just updated SignUp row ', user.dataValues);
-	// If completed is still false, send email!
-	// Call email service.
-});
-
-
 const User = sequelize.define('User', {
 	username: { 
 		type: Sequelize.STRING, 
@@ -49,6 +73,7 @@ const User = sequelize.define('User', {
 			isLowercase: true,
 			isAlphanumeric: true, // No special characters
 			is: /^.*[A-Za-z]+.*$/, // Must contain at least one letter
+			// Does this catch spaces? We don't want to allow spaces.
 		},
 	},
 	firstName: { type: Sequelize.STRING, allowNull: false },
@@ -78,6 +103,12 @@ const User = sequelize.define('User', {
 
 	hash: Sequelize.TEXT,
 	salt: Sequelize.STRING,
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updateUserCache(updatedItem.id); },
+		afterUpdate: function(updatedItem, options) { updateUserCache(updatedItem.id); },
+		afterDelete: function(updatedItem, options) { updateUserCache(updatedItem.id); },
+	}
 });
 
 passportLocalSequelize.attachToUser(User, {
@@ -114,6 +145,12 @@ const Pub = sequelize.define('Pub', {
 	// pullRequestVersionId
 	// licenseId
 	// defaultContext
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updatePubCache(updatedItem.id); },
+		afterUpdate: function(updatedItem, options) { updatePubCache(updatedItem.id); },
+		afterDelete: function(updatedItem, options) { updatePubCache(updatedItem.id); },
+	}
 });
 
 // How do files know their history?
@@ -141,6 +178,11 @@ const Version = sequelize.define('Version', {
 	// exportMarkdown: { type: Sequelize.TEXT },
 	// exportXML: { type: Sequelize.TEXT },
 	// exportHTML: { type: Sequelize.TEXT },
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updatePubCache(updatedItem.pubId); },
+		afterUpdate: function(updatedItem, options) { updatePubCache(updatedItem.pubId); },
+	}
 });
 
 const Activity = sequelize.define('Activity', {
@@ -176,6 +218,24 @@ const Label = sequelize.define('Label', {
 	// pubId: pubId is used to allow a pub to set it's own list of privately-editable labels for discussions.
 	// userId: userId is used and private to a user to allow them to organize pubs that they follow
 	// If there is no pubId and no journalId, it is a pubic label that can be used by anyone. These must be managed by the community.
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			if (updatedItem.pubId) { updatePubCache(updatedItem.pubId); }
+			if (updatedItem.userId) { updateUserCache(updatedItem.userId); }
+			if (updatedItem.journalId) { updateJournalCache(updatedItem.journalId); }
+		},
+		afterUpdate: function(updatedItem, options) {
+			if (updatedItem.pubId) { updatePubCache(updatedItem.pubId); }
+			if (updatedItem.userId) { updateUserCache(updatedItem.userId); }
+			if (updatedItem.journalId) { updateJournalCache(updatedItem.journalId); }
+		},
+		afterDestroy: function(updatedItem, options) {
+			if (updatedItem.pubId) { updatePubCache(updatedItem.pubId); }
+			if (updatedItem.userId) { updateUserCache(updatedItem.userId); }
+			if (updatedItem.journalId) { updateJournalCache(updatedItem.journalId); }
+		},
+	}
 });
 
 const Role = sequelize.define('Role', {
@@ -219,6 +279,12 @@ const Journal = sequelize.define('Journal', {
 	headerAlign: Sequelize.STRING,
 	headerImage: Sequelize.STRING,
 	inactive: Sequelize.BOOLEAN,
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updateJournalCache(updatedItem.id); },
+		afterUpdate: function(updatedItem, options) { updateJournalCache(updatedItem.id); },
+		afterDestroy: function(updatedItem, options) { updateJournalCache(updatedItem.id); },
+	}
 });
 
 const UserLastReadPub = sequelize.define('UserLastReadPub', {
@@ -236,6 +302,21 @@ const Contributor = sequelize.define('Contributor', {
 	isAuthor: Sequelize.BOOLEAN,
 	isHidden: Sequelize.BOOLEAN, // Whether the contributor shows up on the 'Contributors' list. isAuthor=true forces isHidden false (or isHidden is ignored at least)
 	inactive: Sequelize.BOOLEAN, // Used when a contributor is removed so we have a history of contributors and how they were applied/removed
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateUserCache(updatedItem.userId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateUserCache(updatedItem.userId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateUserCache(updatedItem.userId);
+		},
+	}
 });
 
 const InvitedReviewer = sequelize.define('InvitedReviewer', {
@@ -255,6 +336,27 @@ const InvitedReviewer = sequelize.define('InvitedReviewer', {
 	// inviterUserId: used to mark which user created the invitiation
 	// inviterJournalId: used to mark which journal the invitation is on behalf of
 	// pubId: used to mark which pub they have been invited to.
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateUserCache(updatedItem.invitedUserId);
+			updateUserCache(updatedItem.inviterUserId);
+			updateJournalCache(updatedItem.inviterJournalId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateUserCache(updatedItem.invitedUserId);
+			updateUserCache(updatedItem.inviterUserId);
+			updateJournalCache(updatedItem.inviterJournalId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateUserCache(updatedItem.invitedUserId);
+			updateUserCache(updatedItem.inviterUserId);
+			updateJournalCache(updatedItem.inviterJournalId);
+		},
+	}
 });
 
 const ApiKey = sequelize.define('ApiKey', {
@@ -262,6 +364,11 @@ const ApiKey = sequelize.define('ApiKey', {
 	keyId: Sequelize.TEXT,
 	keySecret: Sequelize.TEXT,
 	//userId: the associated user that this authenticates.
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updateUserCache(updatedItem.userId); },
+		afterDestroy: function(updatedItem, options) { updateUserCache(updatedItem.userId); },
+	}
 });
 
 // Used on a Pub (typically a discussion pub)
@@ -277,35 +384,213 @@ const JournalAdmin = sequelize.define('JournalAdmin', {
 		primaryKey: true, 
 		autoIncrement: true 
 	},
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.userId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.userId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updateUserCache(updatedItem.userId);
+			updateJournalCache(updatedItem.journalId);
+		},
+	}
 }); // Used to connect specific users to a specific journal as admin
 
 const VersionFile = sequelize.define('VersionFile', {}); // Used to connect specific files to a specific version
-const FileAttribution = sequelize.define('FileAttribution', {}); // Used to connect specific users to a specific file
+const FileAttribution = sequelize.define('FileAttribution', {
+	// fileId
+	// userId
+	// pubId
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.userId);
+			updatePubCache(updatedItem.pubId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.userId);
+			updatePubCache(updatedItem.pubId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updateUserCache(updatedItem.userId);
+			updatePubCache(updatedItem.pubId);
+		},
+	}
+}); // Used to connect specific users to a specific journal as admin// Used to connect specific users to a specific file
 
-const FollowsPub = sequelize.define('FollowsPub', {}); // Used to connect specific user to a specific pub as follower
-const FollowsJournal = sequelize.define('FollowsJournal', {}); // Used to connect specific user to a specific journal as follower
-const FollowsUser = sequelize.define('FollowsUser', {}); // Used to connect specific user to a specific user as follower
-const FollowsLabel = sequelize.define('FollowsLabel', {}); // Used to connect specific user to a specific label as follower
+// Used to connect specific user to a specific pub as follower
+const FollowsPub = sequelize.define('FollowsPub', {
+	// followerId
+	// pubId
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updatePubCache(updatedItem.pubId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updatePubCache(updatedItem.pubId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updatePubCache(updatedItem.pubId);
+		},
+	}
+});
+
+// Used to connect specific user to a specific journal as follower
+const FollowsJournal = sequelize.define('FollowsJournal', {
+	// followerId
+	// journalId
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateJournalCache(updatedItem.journalId);
+		},
+	}
+});
+
+// Used to connect specific user to a specific user as follower
+const FollowsUser = sequelize.define('FollowsUser', {
+	// followerId
+	// userId
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateUserCache(updatedItem.userId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateUserCache(updatedItem.userId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateUserCache(updatedItem.userId);
+		},
+	}
+});
+
+// Used to connect specific user to a specific label as follower
+const FollowsLabel = sequelize.define('FollowsLabel', {
+	// followerId
+	// labelId
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateLabelCache(updatedItem.labelId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateLabelCache(updatedItem.labelId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateLabelCache(updatedItem.labelId);
+		},
+	}
+});
+
 	
 const ContributorRole = sequelize.define('ContributorRole', {
 	inactive: Sequelize.BOOLEAN, // Used when a contributor is removed so we have a history of contributors and how they were applied/removed
 	// pubID: used so we can grab all roles when querying for pubs. Needed because we can't 'include' on a through table. Issue here: https://github.com/sequelize/sequelize/issues/5358
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updatePubCache(updatedItem.pubId); },
+		afterDestroy: function(updatedItem, options) { updatePubCache(updatedItem.pubId); }
+	}
 }); // Used to connect specific role to a specific contributor
+
+
 const PubFeature = sequelize.define('PubFeature', { // Used to connect specific journal to specific pub as featurer
 	isDisplayed: Sequelize.BOOLEAN, // Whether the feature tag is displayed on the front of the pub
 	// isContext: Sequelize.BOOLEAN, // Whether the feature is the default context
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateJournalCache(updatedItem.journalId);
+		},
+	}
 });
+
+// Used to connect specific journal to specific pub as submit destination
 const PubSubmit = sequelize.define('PubSubmit', {
 	isRejected: Sequelize.BOOLEAN,
 	isFeatured: Sequelize.BOOLEAN,
-}); // Used to connect specific journal to specific pub as submit destination
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateJournalCache(updatedItem.journalId);
+		},
+	}
+});
+
+// Used to connect specific reaction to specific pub (typicaly discussion pub)
 const PubReaction = sequelize.define('PubReaction', {
 	inactive: Sequelize.BOOLEAN, // Used when a reaction is removed so we have a history of reactions and how they were applied/removed
-}); // Used to connect specific reaction to specific pub (typicaly discussion pub)
+	// userId
+	// pubId
+	// replyRootPubId
+	// reactionId
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updatePubCache(updatedItem.replyRootPubId); },
+		afterDestroy: function(updatedItem, options) { updatePubCache(updatedItem.replyRootPubId); },
+	}
+});
+
+// Used to connect specific label to specific pub
 const PubLabel = sequelize.define('PubLabel', {
 	inactive: Sequelize.BOOLEAN, // Used when a label is removed so we have a history of labels and how they were applied/removed
-}); // Used to connect specific label to specific pub
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateLabelCache(updatedItem.labelId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateLabelCache(updatedItem.labelId);
+		},
+	}
+});
 
+// Used to connect specific file to specific file
 const FileRelation = sequelize.define('FileRelation', {
 	id: { 
 		type: Sequelize.INTEGER, 
@@ -313,7 +598,12 @@ const FileRelation = sequelize.define('FileRelation', {
 		autoIncrement: true 
 	},
 	type: Sequelize.TEXT, // Used to describe the relationship between to files
-}); // Used to connect specific file to specific file
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updatePubCache(updatedItem.pubId); },
+		afterDestroy: function(updatedItem, options) { updatePubCache(updatedItem.pubId); },
+	}
+});
 
 // A user can be an author on many pubs, and a pub can have many authors
 User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'Contributor', foreignKey: 'userId' });
@@ -325,6 +615,8 @@ User.hasMany(Contributor, { onDelete: 'CASCADE', as: 'contributions', foreignKey
 // Roles can belong to many contributors, and contributors can have many roles
 Contributor.belongsToMany(Role, { onDelete: 'CASCADE', as: 'roles', through: 'ContributorRole', foreignKey: 'contributorId' });
 Role.belongsToMany(Contributor, { onDelete: 'CASCADE', as: 'contributors', through: 'ContributorRole', foreignKey: 'roleId' });
+ContributorRole.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
+
 // A contributor has a single user
 Contributor.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
 Contributor.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
@@ -339,6 +631,7 @@ Pub.hasMany(File, { onDelete: 'CASCADE', as: 'files', foreignKey: 'pubId' });
 // A user can be attributed with many files, and a file may attribute many users
 File.belongsToMany(User, { onDelete: 'CASCADE', as: 'attributions', through: 'FileAttribution', foreignKey: 'fileId' });
 User.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'FileAttribution', foreignKey: 'userId' });
+FileAttribution.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 
 // A version belongs to a single pub, but a pub can have many versions
 Pub.hasMany(Version, { onDelete: 'CASCADE', as: 'versions', foreignKey: 'pubId' });
@@ -363,6 +656,7 @@ User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'followsPubs', through: 'Foll
 Pub.belongsToMany(User, { onDelete: 'CASCADE', as: 'followers', through: 'FollowsPub', foreignKey: 'pubId' });
 FollowsPub.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'followerId' });
 User.hasMany(FollowsPub, { onDelete: 'CASCADE', as: 'FollowsPubs', foreignKey: 'followerId' });
+Pub.hasMany(FollowsPub, { onDelete: 'CASCADE', as: 'FollowsPubs', foreignKey: 'followerId' });
 
 // A user can follow many journals, and a journal can be followed by many users
 User.belongsToMany(Journal, { onDelete: 'CASCADE', as: 'followsJournals', through: 'FollowsJournal', foreignKey: 'followerId' });
@@ -426,12 +720,14 @@ User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubsRead', through: 'UserLas
 PubReaction.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
 PubReaction.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 PubReaction.belongsTo(Reaction, { onDelete: 'CASCADE', as: 'reaction', foreignKey: 'reactionId' });
+PubReaction.belongsTo(Pub, { onDelete: 'CASCADE', as: 'replyRootPub', foreignKey: 'replyRootPubId' });
 Pub.hasMany(PubReaction, { onDelete: 'CASCADE', as: 'pubReactions', foreignKey: 'pubId' });
 
 
 // A File can be related to many other files
 File.belongsToMany(File, { onDelete: 'CASCADE', as: 'destinations', through: 'FileRelation', foreignKey: 'sourceFileId' });
 File.belongsToMany(File, { onDelete: 'CASCADE', as: 'sources', through: 'FileRelation', foreignKey: 'destinationFileId' });
+FileRelation.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 
 // A pub can have many highlights, but a highlight belongs to only a single pub
 Pub.hasMany(Highlight, { onDelete: 'CASCADE', as: 'highlights', foreignKey: 'pubId' });
@@ -527,5 +823,6 @@ const db = {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+db.redisClient = redisClient;
 
 module.exports = db;

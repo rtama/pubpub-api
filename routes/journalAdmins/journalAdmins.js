@@ -89,6 +89,7 @@ export function deleteJournalAdmin(req, res, next) {
 		}
 		return JournalAdmin.destroy({
 			where: { id: req.body.journalAdminId },
+			individualHooks: true,
 		});
 	})
 	.then(function(removedCount) {
