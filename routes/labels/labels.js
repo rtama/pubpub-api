@@ -132,7 +132,8 @@ export function putLabel(req, res, next) {
 	if (req.body.userId) {
 		if (req.body.userId !== user.id) { return res.status(500).json('Not authorized to update labels for this userId'); }
 		authenticateAndUpdate = Label.update(updatedLabel, {
-			where: { id: req.body.labelId, userId: req.body.userId }
+			where: { id: req.body.labelId, userId: req.body.userId },
+			individualHooks: true
 		});
 	}
 
@@ -147,7 +148,8 @@ export function putLabel(req, res, next) {
 				throw new Error('Not Authorized to update labels for this pubId');
 			}
 			return Label.update(updatedLabel, {
-				where: { id: req.body.labelId, pubId: req.body.pubId }
+				where: { id: req.body.labelId, pubId: req.body.pubId },
+				individualHooks: true
 			});
 		});
 	}
@@ -164,7 +166,8 @@ export function putLabel(req, res, next) {
 			}
 
 			return Label.update(updatedLabel, {
-				where: { id: req.body.labelId, journalId: req.body.journalId }
+				where: { id: req.body.labelId, journalId: req.body.journalId },
+				individualHooks: true
 			});
 		});
 	}
@@ -190,7 +193,8 @@ export function deleteLabel(req, res, next) {
 	if (req.body.userId) {
 		if (req.body.userId !== user.id) { return res.status(500).json('Not authorized to delete labels for this userId'); }
 		authenticateAndUpdate = Label.destroy({
-			where: { id: req.body.labelId, userId: req.body.userId }
+			where: { id: req.body.labelId, userId: req.body.userId },
+			individualHooks: true
 		});
 	}
 
@@ -205,7 +209,8 @@ export function deleteLabel(req, res, next) {
 				throw new Error('Not Authorized to delete labels for this pubId');
 			}
 			return Label.destroy({
-				where: { id: req.body.labelId, pubId: req.body.pubId }
+				where: { id: req.body.labelId, pubId: req.body.pubId },
+				individualHooks: true
 			});
 		});
 	}
@@ -222,7 +227,8 @@ export function deleteLabel(req, res, next) {
 			}
 
 			return Label.destroy({
-				where: { id: req.body.labelId, journalId: req.body.journalId }
+				where: { id: req.body.labelId, journalId: req.body.journalId },
+				individualHooks: true
 			});
 		});
 	}

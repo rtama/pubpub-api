@@ -204,7 +204,8 @@ export function putVersion(req, res, next) {
 			throw new Error('Not Authorized to update this pub');
 		}
 		return Version.update(updatedVersion, {
-			where: { id: req.body.versionId }
+			where: { id: req.body.versionId },
+			individualHooks: true,
 		});
 	})
 	.then(function(updatedCount) {
@@ -224,7 +225,7 @@ export function putVersion(req, res, next) {
 
 				return Promise.all([
 					createActivity('publishedPub', user.id, req.body.pubId),
-					Pub.update({ isPublished: true }, { where: { id: req.body.pubId } })
+					Pub.update({ isPublished: true }, { where: { id: req.body.pubId }, individualHooks: true })
 				]);
 			});
 		}

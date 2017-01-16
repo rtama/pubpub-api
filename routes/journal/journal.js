@@ -136,7 +136,8 @@ export function putJournal(req, res, next) {
 			throw new Error('Not Authorized to update this journal');
 		}
 		return Journal.update(updatedJournal, {
-			where: { id: req.body.journalId }
+			where: { id: req.body.journalId },
+			individualHooks: true,
 		});
 	})
 	.then(function(updatedCount) {
@@ -166,7 +167,8 @@ export function deleteJournal(req, res, next) {
 			throw new Error('Not Authorized to update this journal');
 		}
 		return Journal.update({ inactive: true }, {
-			where: { id: req.body.journalId }
+			where: { id: req.body.journalId },
+			individualHooks: true,
 		});
 	})
 	.then(function(updatedCount) {

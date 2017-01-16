@@ -22,9 +22,15 @@ redisClient.on('error', function (err) {
 // 	console.log('Flushed Redis DB'); 
 // });
 const updatePubCache = function(pubId) {
-	if (pubId) {
-		redisClient.saddAsync('cacheQueue', `p_${pubId}`);
-	}
+	if (pubId) { redisClient.saddAsync('cacheQueue', `p_${pubId}`); }
+};
+
+const updateUserCache = function(userId) {
+	if (userId) { redisClient.saddAsync('cacheQueue', `u_${userId}`); }
+};
+
+const updateJournalCache = function(journalId) {
+	if (journalId) { redisClient.saddAsync('cacheQueue', `j_${journalId}`); }
 };
 
 /* ------------- */
@@ -53,19 +59,6 @@ const SignUp = sequelize.define('SignUp', {
 	count: Sequelize.INTEGER,
 	completed: Sequelize.BOOLEAN,
 });
-
-SignUp.hook('afterCreate', function(user, options) {
-	console.debug('Just created SignUp row ', user.dataValues);
-	// What happens if they resend an email? We should track that.
-	// What happens if they close the tab, and then want to signup again? Do we increment the resend count. Probably.
-	// Call email service here!
-});
-SignUp.hook('afterUpdate', function(user, options) {
-	console.debug('Just updated SignUp row ', user.dataValues);
-	// If completed is still false, send email!
-	// Call email service.
-});
-
 
 const User = sequelize.define('User', {
 	username: { 
@@ -173,6 +166,11 @@ const Version = sequelize.define('Version', {
 	// exportMarkdown: { type: Sequelize.TEXT },
 	// exportXML: { type: Sequelize.TEXT },
 	// exportHTML: { type: Sequelize.TEXT },
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updatePubCache(updatedItem.pubId); },
+		afterUpdate: function(updatedItem, options) { updatePubCache(updatedItem.pubId); },
+	}
 });
 
 const Activity = sequelize.define('Activity', {
@@ -208,6 +206,24 @@ const Label = sequelize.define('Label', {
 	// pubId: pubId is used to allow a pub to set it's own list of privately-editable labels for discussions.
 	// userId: userId is used and private to a user to allow them to organize pubs that they follow
 	// If there is no pubId and no journalId, it is a pubic label that can be used by anyone. These must be managed by the community.
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			if (updatedItem.pubId) { updatePubCache(updatedItem.pubId); }
+			if (updatedItem.userId) { updateUserCache(updatedItem.userId); }
+			if (updatedItem.journalId) { updateJournalCache(updatedItem.journalId); }
+		},
+		afterUpdate: function(updatedItem, options) {
+			if (updatedItem.pubId) { updatePubCache(updatedItem.pubId); }
+			if (updatedItem.userId) { updateUserCache(updatedItem.userId); }
+			if (updatedItem.journalId) { updateJournalCache(updatedItem.journalId); }
+		},
+		afterDestroy: function(updatedItem, options) {
+			if (updatedItem.pubId) { updatePubCache(updatedItem.pubId); }
+			if (updatedItem.userId) { updateUserCache(updatedItem.userId); }
+			if (updatedItem.journalId) { updateJournalCache(updatedItem.journalId); }
+		},
+	}
 });
 
 const Role = sequelize.define('Role', {
@@ -251,6 +267,12 @@ const Journal = sequelize.define('Journal', {
 	headerAlign: Sequelize.STRING,
 	headerImage: Sequelize.STRING,
 	inactive: Sequelize.BOOLEAN,
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updateJournalCache(updatedItem.id); },
+		afterUpdate: function(updatedItem, options) { updateJournalCache(updatedItem.id); },
+		afterDestroy: function(updatedItem, options) { updateJournalCache(updatedItem.id); },
+	}
 });
 
 const UserLastReadPub = sequelize.define('UserLastReadPub', {
@@ -268,6 +290,21 @@ const Contributor = sequelize.define('Contributor', {
 	isAuthor: Sequelize.BOOLEAN,
 	isHidden: Sequelize.BOOLEAN, // Whether the contributor shows up on the 'Contributors' list. isAuthor=true forces isHidden false (or isHidden is ignored at least)
 	inactive: Sequelize.BOOLEAN, // Used when a contributor is removed so we have a history of contributors and how they were applied/removed
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateUserCache(updatedItem.userId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateUserCache(updatedItem.userId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateUserCache(updatedItem.userId);
+		},
+	}
 });
 
 const InvitedReviewer = sequelize.define('InvitedReviewer', {
@@ -287,6 +324,27 @@ const InvitedReviewer = sequelize.define('InvitedReviewer', {
 	// inviterUserId: used to mark which user created the invitiation
 	// inviterJournalId: used to mark which journal the invitation is on behalf of
 	// pubId: used to mark which pub they have been invited to.
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateUserCache(updatedItem.invitedUserId);
+			updateUserCache(updatedItem.inviterUserId);
+			updateJournalCache(updatedItem.inviterJournalId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateUserCache(updatedItem.invitedUserId);
+			updateUserCache(updatedItem.inviterUserId);
+			updateJournalCache(updatedItem.inviterJournalId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateUserCache(updatedItem.invitedUserId);
+			updateUserCache(updatedItem.inviterUserId);
+			updateJournalCache(updatedItem.inviterJournalId);
+		},
+	}
 });
 
 const ApiKey = sequelize.define('ApiKey', {
@@ -294,6 +352,11 @@ const ApiKey = sequelize.define('ApiKey', {
 	keyId: Sequelize.TEXT,
 	keySecret: Sequelize.TEXT,
 	//userId: the associated user that this authenticates.
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updateUserCache(updatedItem.userId); },
+		afterDestroy: function(updatedItem, options) { updateUserCache(updatedItem.userId); },
+	}
 });
 
 // Used on a Pub (typically a discussion pub)
