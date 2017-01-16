@@ -26,9 +26,15 @@ post:
         fileId: 
           description: id of the source file
           required: true
+          type: number
         userId:
           description: id of the user to be attributed
           required: true
+          type: number
+        pubId:
+          description: id of the pub this file is associated with
+          required: true
+          type: number
   responses:
     200:
       body:
@@ -55,9 +61,15 @@ delete:
         fileId: 
           description: id of the source file
           required: true
+          type: number
         userId:
           description: id of the user to be attributed
           required: true
+          type: number
+        pubId:
+          description: id of the pub this file is associated with
+          required: true
+          type: number
   responses:
     200:
       body:

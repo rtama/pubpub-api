@@ -26,9 +26,13 @@ post:
         pubId: 
           description: id of the pub this reaction is being added to
           required: true
+        replyRootPubId: 
+          description: id of the pub containing the discussionn this reaction is being added to
+          required: true
         reactionId: 
           description: id of the reaction to be added
           required: true
+
   responses:
     200:
       body:
@@ -51,6 +55,9 @@ delete:
       formParameters:
         pubId: 
           description: id of the pub this reaction is being removed from
+          required: true
+        replyRootPubId: 
+          description: id of the pub containing the discussionn this reaction is removed from
           required: true
         reactionId: 
           description: id of the reaction to be removed

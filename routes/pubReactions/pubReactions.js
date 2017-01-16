@@ -33,6 +33,7 @@ export function postReaction(req, res, next) {
 
 	PubReaction.create({
 		pubId: req.body.pubId,
+		replyRootPubId: req.body.replyRootPubId,
 		reactionId: req.body.reactionId,
 		userId: user.id,
 	})
@@ -71,7 +72,8 @@ export function deleteReaction(req, res, next) {
 	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	PubReaction.destroy({
-		where: { pubId: req.body.pubId, reactionId: req.body.reactionId, userId: user.id }
+		where: { pubId: req.body.pubId, replyRootPubId: req.body.replyRootPubId, reactionId: req.body.reactionId, userId: user.id },
+		individualHooks: true,
 	})
 	.then(function(destroyedCount) {
 		return res.status(201).json(true);

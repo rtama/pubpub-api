@@ -156,7 +156,7 @@ export function postVersion(req, res, next) {
 		});
 		const newFileAttributionsInput = req.body.newFileAttributions || [];
 		const newFileAttributions = newFileAttributionsInput.map((newAttribution)=> {
-			return { fileId: nameIdObject[newAttribution.fileName], userId: newAttribution.userId };
+			return { fileId: nameIdObject[newAttribution.fileName], userId: newAttribution.userId, pubId: req.body.pubId };
 		});
 
 		const createFileRelations = FileRelation.bulkCreate(newFileRelations);

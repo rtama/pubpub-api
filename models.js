@@ -33,6 +33,10 @@ const updateJournalCache = function(journalId) {
 	if (journalId) { redisClient.saddAsync('cacheQueue', `j_${journalId}`); }
 };
 
+const updateLabelCache = function(labelId) {
+	if (labelId) { redisClient.saddAsync('cacheQueue', `l_${labelId}`); }
+};
+
 /* ------------- */
 
 const Sequelize = require('sequelize');
@@ -372,15 +376,129 @@ const JournalAdmin = sequelize.define('JournalAdmin', {
 		primaryKey: true, 
 		autoIncrement: true 
 	},
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.userId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.userId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updateUserCache(updatedItem.userId);
+			updateJournalCache(updatedItem.journalId);
+		},
+	}
 }); // Used to connect specific users to a specific journal as admin
 
 const VersionFile = sequelize.define('VersionFile', {}); // Used to connect specific files to a specific version
-const FileAttribution = sequelize.define('FileAttribution', {}); // Used to connect specific users to a specific file
+const FileAttribution = sequelize.define('FileAttribution', {
+	// fileId
+	// userId
+	// pubId
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.userId);
+			updatePubCache(updatedItem.pubId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.userId);
+			updatePubCache(updatedItem.pubId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updateUserCache(updatedItem.userId);
+			updatePubCache(updatedItem.pubId);
+		},
+	}
+}); // Used to connect specific users to a specific journal as admin// Used to connect specific users to a specific file
 
-const FollowsPub = sequelize.define('FollowsPub', {}); // Used to connect specific user to a specific pub as follower
-const FollowsJournal = sequelize.define('FollowsJournal', {}); // Used to connect specific user to a specific journal as follower
-const FollowsUser = sequelize.define('FollowsUser', {}); // Used to connect specific user to a specific user as follower
-const FollowsLabel = sequelize.define('FollowsLabel', {}); // Used to connect specific user to a specific label as follower
+// Used to connect specific user to a specific pub as follower
+const FollowsPub = sequelize.define('FollowsPub', {
+	// followerId
+	// pubId
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updatePubCache(updatedItem.pubId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updatePubCache(updatedItem.pubId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updatePubCache(updatedItem.pubId);
+		},
+	}
+});
+
+// Used to connect specific user to a specific journal as follower
+const FollowsJournal = sequelize.define('FollowsJournal', {
+	// followerId
+	// journalId
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateJournalCache(updatedItem.journalId);
+		},
+	}
+});
+
+// Used to connect specific user to a specific user as follower
+const FollowsUser = sequelize.define('FollowsUser', {
+	// followerId
+	// userId
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateUserCache(updatedItem.userId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateUserCache(updatedItem.userId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateUserCache(updatedItem.userId);
+		},
+	}
+});
+
+// Used to connect specific user to a specific label as follower
+const FollowsLabel = sequelize.define('FollowsLabel', {
+	// followerId
+	// labelId
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateLabelCache(updatedItem.labelId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateLabelCache(updatedItem.labelId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updateUserCache(updatedItem.followerId);
+			updateLabelCache(updatedItem.labelId);
+		},
+	}
+});
+
 	
 const ContributorRole = sequelize.define('ContributorRole', {
 	inactive: Sequelize.BOOLEAN, // Used when a contributor is removed so we have a history of contributors and how they were applied/removed
@@ -396,14 +514,58 @@ const ContributorRole = sequelize.define('ContributorRole', {
 const PubFeature = sequelize.define('PubFeature', { // Used to connect specific journal to specific pub as featurer
 	isDisplayed: Sequelize.BOOLEAN, // Whether the feature tag is displayed on the front of the pub
 	// isContext: Sequelize.BOOLEAN, // Whether the feature is the default context
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateJournalCache(updatedItem.journalId);
+		},
+	}
 });
+
+// Used to connect specific journal to specific pub as submit destination
 const PubSubmit = sequelize.define('PubSubmit', {
 	isRejected: Sequelize.BOOLEAN,
 	isFeatured: Sequelize.BOOLEAN,
-}); // Used to connect specific journal to specific pub as submit destination
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateJournalCache(updatedItem.journalId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateJournalCache(updatedItem.journalId);
+		},
+	}
+});
+
+// Used to connect specific reaction to specific pub (typicaly discussion pub)
 const PubReaction = sequelize.define('PubReaction', {
 	inactive: Sequelize.BOOLEAN, // Used when a reaction is removed so we have a history of reactions and how they were applied/removed
-}); // Used to connect specific reaction to specific pub (typicaly discussion pub)
+	// userId
+	// pubId
+	// replyRootPubId
+	// reactionId
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updatePubCache(updatedItem.replyRootPubId); },
+		afterDestroy: function(updatedItem, options) { updatePubCache(updatedItem.replyRootPubId); },
+	}
+});
+
 const PubLabel = sequelize.define('PubLabel', {
 	inactive: Sequelize.BOOLEAN, // Used when a label is removed so we have a history of labels and how they were applied/removed
 }); // Used to connect specific label to specific pub
@@ -443,6 +605,7 @@ Pub.hasMany(File, { onDelete: 'CASCADE', as: 'files', foreignKey: 'pubId' });
 // A user can be attributed with many files, and a file may attribute many users
 File.belongsToMany(User, { onDelete: 'CASCADE', as: 'attributions', through: 'FileAttribution', foreignKey: 'fileId' });
 User.belongsToMany(File, { onDelete: 'CASCADE', as: 'files', through: 'FileAttribution', foreignKey: 'userId' });
+FileAttribution.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 
 // A version belongs to a single pub, but a pub can have many versions
 Pub.hasMany(Version, { onDelete: 'CASCADE', as: 'versions', foreignKey: 'pubId' });
@@ -531,6 +694,7 @@ User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubsRead', through: 'UserLas
 PubReaction.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'userId' });
 PubReaction.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 PubReaction.belongsTo(Reaction, { onDelete: 'CASCADE', as: 'reaction', foreignKey: 'reactionId' });
+PubReaction.belongsTo(Pub, { onDelete: 'CASCADE', as: 'replyRootPub', foreignKey: 'replyRootPubId' });
 Pub.hasMany(PubReaction, { onDelete: 'CASCADE', as: 'pubReactions', foreignKey: 'pubId' });
 
 
