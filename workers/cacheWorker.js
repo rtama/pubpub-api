@@ -30,7 +30,8 @@ function updateCache(thing) {
 		if (prefix === 'j') { key = 'j_' + queryData.slug; } 
 		if (prefix === 'l') { key = 'l_' + queryData.title; } 
 		if (prefix === 'a') { key = 'a_' + queryData.id; } 
-		return redisClient.setexAsync(key, 120, JSON.stringify(queryData.toJSON()));
+		const output = queryData.toJSON ? queryData.toJSON() : queryData;
+		return redisClient.setexAsync(key, 120, JSON.stringify(output));
 	})
 	.then(function() {
 		console.timeEnd('Finished cache update for ' + thing);
