@@ -23,7 +23,7 @@ export function getLabels(req, res, next) {
 }
 app.get('/pub/labels', getLabels);
 
-export function postLabel(req, res, next) {
+export function postPubLabel(req, res, next) {
 	// Add a new label to a pub
 	// These are already existing labels that we're adding
 	// Authenticate. If the label to be applied has the userId of the user making the request, 
@@ -53,18 +53,19 @@ export function postLabel(req, res, next) {
 		return res.status(500).json(err.message);
 	});
 }
-app.post('/pub/labels', postLabel);
+app.post('/pub/labels', postPubLabel);
 
 export function putLabel(req, res, next) {
 	// is there anything we want to let someone change?
 }
 app.put('/pub/labels', putLabel);
 
-export function deleteLabel(req, res, next) {
+export function deletePubLabel(req, res, next) {
 	// This deletes the label relationship, not the label itself
 	// Authenticate
 	PubLabel.destroy({
-		where: { pubId: req.body.pubId, labelId: req.body.labelId }
+		where: { pubId: req.body.pubId, labelId: req.body.labelId },
+		individualHooks: true,
 	})
 	.then(function(destroyedCount) {
 		return res.status(201).json(true);
@@ -74,4 +75,4 @@ export function deleteLabel(req, res, next) {
 		return res.status(500).json(err.message);
 	});
 }
-app.delete('/pub/labels', deleteLabel);
+app.delete('/pub/labels', deletePubLabel);

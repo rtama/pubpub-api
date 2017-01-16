@@ -34,7 +34,6 @@ const updateJournalCache = function(journalId) {
 };
 
 const updateLabelCache = function(labelId) {
-	console.log('in the updatelabel  ', labelId);
 	if (labelId) { redisClient.saddAsync('cacheQueue', `l_${labelId}`); }
 };
 
@@ -581,7 +580,6 @@ const PubLabel = sequelize.define('PubLabel', {
 }, {
 	hooks: {
 		afterCreate: function(updatedItem, options) { 
-			console.log('in the after create ', updatedItem.labelId);
 			updatePubCache(updatedItem.pubId);
 			updateLabelCache(updatedItem.labelId);
 		},

@@ -23,38 +23,23 @@ export function queryForLabel(value) {
 export function getLabels(req, res, next) {
 	// Return a single global label and the associated pubs
 
-	// const whereParams = {};
-	// Object.keys(req.query).map((key)=> {
-	// 	if (['id', 'title', 'journalId', 'userId', 'pubId'].indexOf(key) > -1) {
-	// 		whereParams[key] = req.query[key];
-	// 	} 
-	// });
-
-	// if (whereParams.title && !whereParams.userId) { whereParams.userId = null; }
-	// if (whereParams.title && !whereParams.journalId) { whereParams.journalId = null; }
-	// if (whereParams.title && !whereParams.pubId) { whereParams.pubId = null; }
-
-	// const whereParameters = Object.keys(queryParams).length
-	// 	? queryParams
-	// 	: { journalId: null, userId: null, pubId: null };
-
 	console.time('labelQueryTime');
 	redisClient.getAsync('l_' + req.query.title).then(function(redisResult) {
 		if (redisResult) { return redisResult; }
 		return queryForLabel(req.query.title);
 	})
-	.then(function(labelsData) {
-		if (!labelsData) { throw new Error('User not Found'); }
-		const outputData = labelsData.toJSON ? labelsData.toJSON() : JSON.parse(labelsData);
-		console.log('Using Cache: ', !labelsData.toJSON);
-		const setCache = labelsData.toJSON ? redisClient.setexAsync('l_' + req.query.title, 120, JSON.stringify(outputData)) : {};
+	.then(function(labelData) {
+		if (!labelData) { throw new Error('Label not Found'); }
+		const outputData = labelData.toJSON ? labelData.toJSON() : JSON.parse(labelData);
+		console.log('Using Cache: ', !labelData.toJSON);
+		const setCache = labelData.toJSON ? redisClient.setexAsync('l_' + req.query.title, 120, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, setCache]);
 	})
-	.spread(function(labelsData, setCacheResult) {
+	.spread(function(labelData, setCacheResult) {
 		console.timeEnd('labelQueryTime');
-		if (!labelsData) { return res.status(500).json('Label not found'); }
+		if (!labelData) { return res.status(500).json('Label not found'); }
 
-		return res.status(201).json(labelsData);
+		return res.status(201).json(labelData);
 	})
 	.catch(function(err) {
 		console.error('Error in getLabels: ', err);
