@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import passport from 'passport';
 import app from '../../server';
-import { redisClient, SignUp, User, Pub, Journal, Label, Contributor, InvitedReviewer, JournalAdmin } from '../../models';
+import { redisClient, SignUp, User, Pub, Journal, Label, Contributor, InvitedReviewer } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 
 const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email', 'accessToken'];
@@ -19,7 +19,6 @@ export function queryForUser(value) {
 			// { model: Pub, as: 'pubs', include: [{ model: Pub, as: 'replyRootPub' }] },
 			{ model: Contributor, separate: true, as: 'contributions', include: [{ model: Pub, as: 'pub', include: [{ model: Pub, as: 'replyRootPub' }] }] },
 			{ model: Journal, as: 'journals' },
-			// { model: JournalAdmin, separate: true, as: 'journalAdmins', include: [{ model: Journal, as: 'journal' }] },
 			{ model: User, as: 'followers', attributes: unauthenticatedUserAttributes }, 
 			{ model: Pub, as: 'followsPubs' }, 
 			{ model: User, as: 'followsUsers' }, 

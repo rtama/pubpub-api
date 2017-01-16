@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 import crypto from 'crypto';
 import app from '../server';
 
@@ -21,10 +22,10 @@ app.get('/uploadPolicy', function(req, res) {
 			return '' + padding;
 		},
 		expiration_date: function() {
-			const now = new Date();
-			const date = new Date(now.getTime() + (3600 * 1000));
-			let edate = date.getFullYear() + '-' + this.pad(date.getMonth() + 1) + '-' + this.pad(date.getDate());
-			edate += 'T' + this.pad(date.getHours()) + ':' + this.pad(date.getMinutes()) + ':' + this.pad(date.getSeconds()) + '.000Z';
+			// const now = new Date();
+			// const date = new Date(now.getTime() + (3600 * 1000));
+			// let edate = date.getFullYear() + '-' + this.pad(date.getMonth() + 1) + '-' + this.pad(date.getDate());
+			// edate += 'T' + this.pad(date.getHours()) + ':' + this.pad(date.getMinutes()) + ':' + this.pad(date.getSeconds()) + '.000Z';
 			return new Date(Date.now() + 60000);
 		}
 	};
@@ -36,12 +37,12 @@ app.get('/uploadPolicy', function(req, res) {
 	const acl = s3.acl; // private or public-read
 
 	// THIS YOU DON'T
-	let policy = { 'expiration': s3.expiration_date(),
-		'conditions': [
-			{'bucket': bucket},
+	let policy = { expiration: s3.expiration_date(),
+		conditions: [
+			{ bucket: bucket },
 			['starts-with', '$key', ''],
-			{'acl': acl},
-			{'success_action_status': '200'},
+			{ acl: acl },
+			{ success_action_status: '200' },
 			['starts-with', '$Content-Type', ''],
 		]
 	};

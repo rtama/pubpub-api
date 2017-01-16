@@ -1,5 +1,5 @@
-import app from '../../server';
 import Promise from 'bluebird';
+import app from '../../server';
 import { Pub, User, Label, Journal } from '../../models';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
