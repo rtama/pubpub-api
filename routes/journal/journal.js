@@ -28,7 +28,7 @@ export function getJournal(req, res, next) {
 	const slug = req.query.slug;
 
 	console.time('journalQueryTime');
-	redisClient.getAsync('j' + slug).then(function(redisResult) {
+	redisClient.getAsync('j_' + slug).then(function(redisResult) {
 		if (redisResult) { return redisResult; }
 		return queryForJournal(slug);
 	})
@@ -36,7 +36,7 @@ export function getJournal(req, res, next) {
 		if (!journalData) { throw new Error('Journal not Found'); }
 		const outputData = journalData.toJSON ? journalData.toJSON() : JSON.parse(journalData);
 		console.log('Using Cache: ', !journalData.toJSON);
-		const setCache = journalData.toJSON ? redisClient.setexAsync('j' + slug, 120, JSON.stringify(outputData)) : {};
+		const setCache = journalData.toJSON ? redisClient.setexAsync('j_' + slug, 120, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, setCache]);
 	})
 	.spread(function(journalData, setCacheResult) {

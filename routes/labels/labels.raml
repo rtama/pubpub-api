@@ -1,16 +1,12 @@
 displayName: Labels
 description: Routes to access data about labels
 get: 
-  description: Get specific label and associated pubs.
+  description: Get a single global label and associated pubs.
   queryParameters:
     title: 
       description: title of the label
-    pubId: 
-      description: id of the pub owning a label
-    userId: 
-      description: id of the user owning a label
-    journalId:
-      description: id of the journal owning a label
+      required: true
+      type: string
   responses:
     200:
       body:
@@ -31,7 +27,7 @@ get:
     500:
       body:
         application/json:
-          example: "Pub not found"
+          example: "Label not found"
 post:
   description: Create a Label. Currently, labels can only be created if associated with a journal, user, of pub.
   body:

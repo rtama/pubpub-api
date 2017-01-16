@@ -33,7 +33,7 @@ export function getUser(req, res, next) {
 	const authenticated = req.user && req.user.username === username;
 	
 	console.time('userQueryTime');
-	redisClient.getAsync('u' + username).then(function(redisResult) {
+	redisClient.getAsync('u_' + username).then(function(redisResult) {
 		if (redisResult) { return redisResult; }
 		return queryForUser(username);
 	})
@@ -41,7 +41,7 @@ export function getUser(req, res, next) {
 		if (!userData) { throw new Error('User not Found'); }
 		const outputData = userData.toJSON ? userData.toJSON() : JSON.parse(userData);
 		console.log('Using Cache: ', !userData.toJSON);
-		const setCache = userData.toJSON ? redisClient.setexAsync('u' + username, 120, JSON.stringify(outputData)) : {};
+		const setCache = userData.toJSON ? redisClient.setexAsync('u_' + username, 120, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, setCache]);
 	})
 	.spread(function(userData, setCacheResult) {

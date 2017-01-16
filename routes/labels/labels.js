@@ -1,37 +1,59 @@
 import app from '../../server';
-import { Pub, Label, Contributor, JournalAdmin, User } from '../../models';
+import { redisClient, Pub, Label, Contributor, JournalAdmin, User } from '../../models';
 import { createActivity } from '../../utilities/createActivity';
 
 const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
-export function getLabels(req, res, next) {
-	// Return a single label and the associated pubs
+export function queryForLabel(value) {
+	const where = isNaN(value) 
+		? { title: value, userId: null, journalId: null, pubId: null }
+		: { id: value, userId: null, journalId: null, pubId: null };
 
-	const whereParams = {};
-	Object.keys(req.query).map((key)=> {
-		if (['id', 'title', 'journalId', 'userId', 'pubId'].indexOf(key) > -1) {
-			whereParams[key] = req.query[key];
-		} 
-	});
-
-	if (whereParams.title && !whereParams.userId) { whereParams.userId = null; }
-	if (whereParams.title && !whereParams.journalId) { whereParams.journalId = null; }
-	if (whereParams.title && !whereParams.pubId) { whereParams.pubId = null; }
-
-	// const whereParameters = Object.keys(queryParams).length
-	// 	? queryParams
-	// 	: { journalId: null, userId: null, pubId: null };
-
-	Label.findOne({
-		where: whereParams,
+	return Label.findOne({
+		where: where,
 		attributes: ['id', 'title', 'color', 'journalId', 'userId', 'pubId', 'isDisplayed', 'description'],
 		include: [
 			{ model: Pub, as: 'pubs' },
 			{ model: User, as: 'followers', attributes: userAttributes }, 
 		],
+	});
+	
+}
+
+export function getLabels(req, res, next) {
+	// Return a single global label and the associated pubs
+
+	// const whereParams = {};
+	// Object.keys(req.query).map((key)=> {
+	// 	if (['id', 'title', 'journalId', 'userId', 'pubId'].indexOf(key) > -1) {
+	// 		whereParams[key] = req.query[key];
+	// 	} 
+	// });
+
+	// if (whereParams.title && !whereParams.userId) { whereParams.userId = null; }
+	// if (whereParams.title && !whereParams.journalId) { whereParams.journalId = null; }
+	// if (whereParams.title && !whereParams.pubId) { whereParams.pubId = null; }
+
+	// const whereParameters = Object.keys(queryParams).length
+	// 	? queryParams
+	// 	: { journalId: null, userId: null, pubId: null };
+
+	console.time('labelQueryTime');
+	redisClient.getAsync('l_' + req.query.title).then(function(redisResult) {
+		if (redisResult) { return redisResult; }
+		return queryForLabel(req.query.title);
 	})
 	.then(function(labelsData) {
+		if (!labelsData) { throw new Error('User not Found'); }
+		const outputData = labelsData.toJSON ? labelsData.toJSON() : JSON.parse(labelsData);
+		console.log('Using Cache: ', !labelsData.toJSON);
+		const setCache = labelsData.toJSON ? redisClient.setexAsync('l_' + req.query.title, 120, JSON.stringify(outputData)) : {};
+		return Promise.all([outputData, setCache]);
+	})
+	.spread(function(labelsData, setCacheResult) {
+		console.timeEnd('labelQueryTime');
 		if (!labelsData) { return res.status(500).json('Label not found'); }
+
 		return res.status(201).json(labelsData);
 	})
 	.catch(function(err) {

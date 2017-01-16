@@ -51,7 +51,7 @@ export function getPub(req, res, next) {
 	const user = req.user || {};
 	console.time('pubQueryTime');
 
-	redisClient.getAsync('p' + req.query.slug).then(function(redisResult) {
+	redisClient.getAsync('p_' + req.query.slug).then(function(redisResult) {
 		if (redisResult) { return redisResult; }
 		return queryForPub(req.query.slug);
 	})
@@ -59,7 +59,7 @@ export function getPub(req, res, next) {
 		if (!pubData) { return res.status(500).json('Pub not found'); }
 		const outputData = pubData.toJSON ? pubData.toJSON() : JSON.parse(pubData);
 		console.log('Using Cache: ', !pubData.toJSON);
-		const setCache = pubData.toJSON ? redisClient.setexAsync('p' + req.query.slug, 120, JSON.stringify(outputData)) : {};
+		const setCache = pubData.toJSON ? redisClient.setexAsync('p_' + req.query.slug, 120, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, Reaction.findAll({ raw: true }), Role.findAll({ raw: true }), setCache]);
 	})
 	.spread(function(pubData, reactionsData, rolesData) {
