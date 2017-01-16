@@ -22,6 +22,9 @@ u_123, user by id
 u_myusername, user by username
 j_123, journal by id
 j_journaltitle, journal by name
+l_123, label by id
+l_labeltitle, label by name
+a_123, activity for a give user id
 ```
 
-Durp - this isn't actually so clean. If a user updates their name for example - we have to go and regenerate the cache for all of the Pubs they're a part of, all of the journals they admin, all of the activity items they are a part of, across all of the activity feeds.
+The cache is typically updated for direct edits (if you update a contributor, the pub it is associated will be updated) - but not updated for secondary joins (if you update your pub's title, we will not update the cache for the journal in which it is featured - thus the journal will have stale results until it's cache expires).

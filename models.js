@@ -17,6 +17,7 @@ redisClient.on('error', function (err) {
 
 // To trigger a worker to update the cache, add either the pubId or the slug to cacheQueue set.
 // redisClient.saddAsync('cacheQueue', 'p_117', 'p_turtles');
+// redisClient.saddAsync('cacheQueue', 'a_11');
 
 // redisClient.flushdb( function (err, succeeded) {
 // 	console.log('Flushed Redis DB'); 

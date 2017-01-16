@@ -3,11 +3,7 @@ import { queryForPub } from '../routes/pub/pub';
 import { queryForUser } from '../routes/user/user';
 import { queryForJournal } from '../routes/journal/journal';
 import { queryForLabel } from '../routes/labels/labels';
-
-// How do we invalidate?
-// We could query the item, and try to populate everything, and then grab and invalidate all the depending items
-	// This would cause loops if we just fired updateCache(), so we can't do that...
-// We could just be okay with stale things on secondary pages, but would have to reduce the expiration time a lot - to 60 seconds?
+import { queryForActivity } from '../routes/activities/activities';
 
 
 function updateCache(thing) {
@@ -19,6 +15,7 @@ function updateCache(thing) {
 	if (prefix === 'u') { query = queryForUser; } 
 	if (prefix === 'j') { query = queryForJournal; } 
 	if (prefix === 'l') { query = queryForLabel; } 
+	if (prefix === 'a') { query = queryForActivity; } 
 	if (!prefix || !queryTerm || !query) { return false; }
 	
 	console.log('Starting cache update for ' + thing);
@@ -32,6 +29,7 @@ function updateCache(thing) {
 		if (prefix === 'u') { key = 'u_' + queryData.username; } 
 		if (prefix === 'j') { key = 'j_' + queryData.slug; } 
 		if (prefix === 'l') { key = 'l_' + queryData.title; } 
+		if (prefix === 'a') { key = 'a_' + queryData.id; } 
 		return redisClient.setexAsync(key, 120, JSON.stringify(queryData.toJSON()));
 	})
 	.then(function() {
