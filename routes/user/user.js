@@ -107,12 +107,14 @@ export function postUser(req, res, next) {
 		console.log('new user id is ', newUserId);
 		return SignUp.update({ completed: true }, {
 			where: { email: email, completed: false },
+			individualHooks: true
 		});
 	})
 	.then(function(updatedSignUp) {
 		// Find all the invited reviewers with this email, and switch them to use userId
 		return InvitedReviewer.update({ email: null, name: null, invitedUserId: newUserId }, {
-			where: { email: email }
+			where: { email: email },
+			individualHooks: true
 		});
 	})
 	.then(function(updatedInvitedReviewers) {
@@ -159,7 +161,8 @@ export function putUser(req, res, next) {
 	});
 
 	User.update(updatedUser, {
-		where: { id: userId }
+		where: { id: userId },
+		individualHooks: true
 	})
 	.then(function(updatedCount) {
 		return User.findOne({ 
@@ -187,7 +190,8 @@ export function deleteUser(req, res, next) {
 	if (!authenticated) { return res.status(500).json('Unauthorized'); }
 
 	User.update({ inactive: true }, {
-		where: { username: requestedUser, inactive: { $not: true } }
+		where: { username: requestedUser, inactive: { $not: true } },
+		individualHooks: true
 	})
 	.then(function(updatedCount) {
 		if (updatedCount[0] === 0) { return res.status(500).json('Account already inactive'); }

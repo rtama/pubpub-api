@@ -37,7 +37,8 @@ export function postFeatures(req, res, next) {
 		}
 
 		return PubSubmit.update({ isFeatured: true }, {
-			where: { pubId: req.body.pubId, journalId: req.body.journalId }			
+			where: { pubId: req.body.pubId, journalId: req.body.journalId },
+			individualHooks: true	
 		});
 	})
 	.then(function() {

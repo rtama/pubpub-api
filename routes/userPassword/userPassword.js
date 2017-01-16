@@ -33,6 +33,7 @@ export function postPassword(req, res) {
 		};
 		return User.update(updateData, {
 			where: whereQuery,
+			individualHooks: true
 		});
 	})
 	.then(function(updatedCount) {

@@ -36,7 +36,8 @@ export function putSubmit(req, res, next) {
 			throw new Error('Not Authorized to edit this journal');
 		}
 		return PubSubmit.update({ isRejected: !!req.body.isRejected }, {
-			where: { pubId: req.body.pubId, journalId: req.body.journalId }			
+			where: { pubId: req.body.pubId, journalId: req.body.journalId },
+			individualHooks: true		
 		});
 	})
 	.then(function(countUpdated) {

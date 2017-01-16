@@ -49,36 +49,13 @@ export function postFollow(req, res, next) {
 }
 app.post('/follows/label', postFollow);
 
-// export function putFollow(req, res, next) {
-// 	const user = req.user || {};
-// 	if (!user.id) { return res.status(500).json('Not authorized'); }
-
-// 	const updatedFollow = {};
-// 	Object.keys(req.body).map((key)=> {
-// 		if (['notifyOnPubs', 'notifyOnFollowers'].indexOf(key) > -1) {
-// 			updatedFollow[key] = req.body[key];
-// 		} 
-// 	});
-
-// 	FollowsLabel.update(updatedFollow, {
-// 		where: { labelId: req.body.labelId, followerId: user.id }
-// 	})
-// 	.then(function(updatedCount) {
-// 		return res.status(201).json(true);
-// 	})
-// 	.catch(function(err) {
-// 		console.error('Error in putFollow: ', err);
-// 		return res.status(500).json(err.message);
-// 	});
-// }
-// app.put('/follows/label', putFollow);
-
 export function deleteFollow(req, res, next) {
 	const user = req.user || {};
 	if (!user.id) { return res.status(500).json('Not authorized'); }
 
 	FollowsLabel.destroy({
-		where: { followerId: user.id, labelId: req.body.labelId }
+		where: { followerId: user.id, labelId: req.body.labelId },
+		individualHooks: true
 	})
 	.then(function(destroyedCount) {
 		return res.status(201).json(true);
