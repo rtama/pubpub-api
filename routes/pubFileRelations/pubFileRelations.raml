@@ -4,7 +4,7 @@ get:
   description: Get a single file and its relations
   queryParameters:
     fileId:
-      type: string
+      type: number
       required: true
   responses:
     200:
@@ -29,9 +29,15 @@ post:
         sourceFileId: 
           description: id of the source file
           required: true
+          type: number
         destinationFileId:
           description: id of the destination file
           required: true
+          type: number
+        pubId:
+          description: id of the pub these files belong to
+          required: true
+          type: number
   responses:
     200:
       body:
@@ -59,9 +65,15 @@ delete:
         sourceFileId: 
           description: id of the source file
           required: true
+          type: number
         destinationFileId:
           description: id of the destination file
           required: true
+          type: number
+        pubId:
+          description: id of the pub these files belong to
+          required: true
+          type: number
   responses:
     200:
       body:

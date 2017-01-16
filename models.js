@@ -103,6 +103,12 @@ const User = sequelize.define('User', {
 
 	hash: Sequelize.TEXT,
 	salt: Sequelize.STRING,
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updateUserCache(updatedItem.id); },
+		afterUpdate: function(updatedItem, options) { updateUserCache(updatedItem.id); },
+		afterDelete: function(updatedItem, options) { updateUserCache(updatedItem.id); },
+	}
 });
 
 passportLocalSequelize.attachToUser(User, {
@@ -141,7 +147,9 @@ const Pub = sequelize.define('Pub', {
 	// defaultContext
 }, {
 	hooks: {
+		afterCreate: function(updatedItem, options) { updatePubCache(updatedItem.id); },
 		afterUpdate: function(updatedItem, options) { updatePubCache(updatedItem.id); },
+		afterDelete: function(updatedItem, options) { updatePubCache(updatedItem.id); },
 	}
 });
 
@@ -566,10 +574,23 @@ const PubReaction = sequelize.define('PubReaction', {
 	}
 });
 
+// Used to connect specific label to specific pub
 const PubLabel = sequelize.define('PubLabel', {
 	inactive: Sequelize.BOOLEAN, // Used when a label is removed so we have a history of labels and how they were applied/removed
-}); // Used to connect specific label to specific pub
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateLabelCache(updatedItem.labelId);
+		},
+		afterDestroy: function(updatedItem, options) { 
+			updatePubCache(updatedItem.pubId);
+			updateLabelCache(updatedItem.labelId);
+		},
+	}
+});
 
+// Used to connect specific file to specific file
 const FileRelation = sequelize.define('FileRelation', {
 	id: { 
 		type: Sequelize.INTEGER, 
@@ -577,7 +598,12 @@ const FileRelation = sequelize.define('FileRelation', {
 		autoIncrement: true 
 	},
 	type: Sequelize.TEXT, // Used to describe the relationship between to files
-}); // Used to connect specific file to specific file
+}, {
+	hooks: {
+		afterCreate: function(updatedItem, options) { updatePubCache(updatedItem.pubId); },
+		afterDestroy: function(updatedItem, options) { updatePubCache(updatedItem.pubId); },
+	}
+});
 
 // A user can be an author on many pubs, and a pub can have many authors
 User.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'Contributor', foreignKey: 'userId' });
@@ -701,6 +727,7 @@ Pub.hasMany(PubReaction, { onDelete: 'CASCADE', as: 'pubReactions', foreignKey: 
 // A File can be related to many other files
 File.belongsToMany(File, { onDelete: 'CASCADE', as: 'destinations', through: 'FileRelation', foreignKey: 'sourceFileId' });
 File.belongsToMany(File, { onDelete: 'CASCADE', as: 'sources', through: 'FileRelation', foreignKey: 'destinationFileId' });
+FileRelation.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 
 // A pub can have many highlights, but a highlight belongs to only a single pub
 Pub.hasMany(Highlight, { onDelete: 'CASCADE', as: 'highlights', foreignKey: 'pubId' });

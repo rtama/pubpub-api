@@ -152,7 +152,7 @@ export function postVersion(req, res, next) {
 
 		const newFileRelationsInput = req.body.newFileRelations || [];
 		const newFileRelations = newFileRelationsInput.map((newRelation)=> {
-			return { sourceFileId: nameIdObject[newRelation.source], destinationFileId: nameIdObject[newRelation.destination] };
+			return { sourceFileId: nameIdObject[newRelation.source], destinationFileId: nameIdObject[newRelation.destination], pubId: req.body.pubId };
 		});
 		const newFileAttributionsInput = req.body.newFileAttributions || [];
 		const newFileAttributions = newFileAttributionsInput.map((newAttribution)=> {
