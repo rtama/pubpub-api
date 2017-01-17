@@ -1,5 +1,5 @@
 import app from '../../server';
-import { Label, PubLabel } from '../../models';
+import { Contributor, Label, PubLabel } from '../../models';
 import { createActivity } from '../../utilities/createActivity';
 
 export function postPubLabel(req, res, next) {
@@ -8,10 +8,20 @@ export function postPubLabel(req, res, next) {
 	// Authenticate. If the label to be applied has the userId of the user making the request, 
 	// or if the request is by a pub editor, it is valid.
 	const user = req.user || {};
+	if (!user.id) { return res.status(500).json('Not authorized'); }
 
-	PubLabel.create({
-		pubId: req.body.pubId,
-		labelId: req.body.labelId,
+	Contributor.findOne({
+		where: { pubId: req.body.pubId, userId: user.id },
+		raw: true,
+	})
+	.then(function(contributor) {
+		if (!contributor || (!contributor.canEdit && !contributor.isAuthor)) {
+			throw new Error('Not Authorized to edit this pub');
+		}
+		return PubLabel.create({
+			pubId: req.body.pubId,
+			labelId: req.body.labelId,
+		});
 	})
 	.then(function(newPubLabel) {
 		return Label.findOne({
@@ -36,10 +46,22 @@ app.post('/pub/label', postPubLabel);
 
 export function deletePubLabel(req, res, next) {
 	// This deletes the label relationship, not the label itself
-	// Authenticate
-	PubLabel.destroy({
-		where: { pubId: req.body.pubId, labelId: req.body.labelId },
-		individualHooks: true,
+	
+	const user = req.user || {};
+	if (!user.id) { return res.status(500).json('Not authorized'); }
+
+	Contributor.findOne({
+		where: { pubId: req.body.pubId, userId: user.id },
+		raw: true,
+	})
+	.then(function(contributor) {
+		if (!contributor || (!contributor.canEdit && !contributor.isAuthor)) {
+			throw new Error('Not Authorized to edit this pub');
+		}
+		return PubLabel.destroy({
+			where: { pubId: req.body.pubId, labelId: req.body.labelId },
+			individualHooks: true,
+		});
 	})
 	.then(function(destroyedCount) {
 		return res.status(201).json(true);

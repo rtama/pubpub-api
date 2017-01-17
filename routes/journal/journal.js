@@ -40,9 +40,17 @@ export function getJournal(req, res, next) {
 	})
 	.spread(function(journalData, setCacheResult) {
 		// Filter through to see if admin, set isAuthorized
-		if (!journalData) { return res.status(500).json('Journal not found'); }
 		console.timeEnd('journalQueryTime');
-		return res.status(201).json(journalData);
+		if (!journalData) { return res.status(500).json('Journal not found'); }
+
+		const isAdmin = journalData.admins.reduce((previous, current)=> {
+			if (current.userId === user.id) { return true; }
+			return previous;
+		}, false);
+
+		return res.status(201).json({ ...journalData, isAdmin: isAdmin });
+
+
 	})
 	.catch(function(err) {
 		console.error('Error in getJournal: ', err);
