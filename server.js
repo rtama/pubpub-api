@@ -123,14 +123,26 @@ if (process.env.WORKER !== 'true') {
 		/* ------------------- */
 		/* API Endpoints */
 		/* ------------------- */
+		require('./routes/activities/activities.js');
 		require('./routes/search/search.js');
 		require('./routes/licenses/licenses.js');
 		require('./routes/signUp/signUp.js');
-		require('./routes/user/user.js');
-		require('./routes/userLabels/userLabels.js');
 		require('./routes/labels/labels.js');
+		
+		require('./routes/followsPub/followsPub.js');
+		require('./routes/followsJournal/followsJournal.js');
+		require('./routes/followsUser/followsUser.js');
+		require('./routes/followsLabel/followsLabel.js');
+
+		require('./routes/journal/journal.js');
+		require('./routes/journalAdmin/journalAdmin.js');
+		require('./routes/journalFeature/journalFeature.js');
+		require('./routes/journalSubmit/journalSubmit.js');
+		require('./routes/journalLabel/journalLabel.js');
+
 		require('./routes/login/login.js');
 		require('./routes/logout/logout.js');
+
 		require('./routes/pub/pub.js');
 		require('./routes/pubContributor/pubContributor.js');
 		require('./routes/pubContributorRole/pubContributorRole.js');
@@ -143,16 +155,9 @@ if (process.env.WORKER !== 'true') {
 		require('./routes/pubFeature/pubFeature.js');
 		require('./routes/pubFileRelation/pubFileRelation.js');
 		require('./routes/pubFileAttribution/pubFileAttribution.js');
-		require('./routes/activities/activities.js');
-		require('./routes/journal/journal.js');
-		require('./routes/journalAdmin/journalAdmin.js');
-		require('./routes/journalFeature/journalFeature.js');
-		require('./routes/journalSubmit/journalSubmit.js');
-		require('./routes/journalLabel/journalLabel.js');
-		require('./routes/followsPub/followsPub.js');
-		require('./routes/followsJournal/followsJournal.js');
-		require('./routes/followsUser/followsUser.js');
-		require('./routes/followsLabel/followsLabel.js');
+		
+		require('./routes/user/user.js');
+		require('./routes/userLabel/userLabel.js');
 		require('./routes/userPassword/userPassword.js');
 		require('./routes/userPasswordReset/userPasswordReset.js');
 
