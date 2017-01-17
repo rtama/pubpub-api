@@ -53,12 +53,10 @@ export function getJournal(req, res, next) {
 			isAdmin: isAdmin,
 			pubSubmits: journalData.pubSubmits.filter((pubSubmit)=> {
 				if (isAdmin) { return pubSubmit.pub.isPublished || pubSubmit.pub.isRestricted; }
-				console.log('returning here 1');
 				return pubSubmit.pub.isPublished;
 			}),
 			pubFeatures: journalData.pubSubmits.filter((pubFeature)=> {
 				if (isAdmin) { return pubFeature.pub.isPublished || pubFeature.pub.isRestricted; }
-				console.log('returning here 2');
 				return pubFeature.pub.isPublished;
 			}),
 		};

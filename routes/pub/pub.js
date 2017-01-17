@@ -101,29 +101,6 @@ export function getPub(req, res, next) {
 			return res.status(201).json('Not Published');
 		}
 
-		// if (canEdit) {
-		// 	console.timeEnd('pubProcessTime');
-		// 	return res.status(201).json({ ...pubData, canEdit: canEdit, allReactions: reactionsData, allRoles: rolesData });
-		// }
-
-		// if (canReadRestricted) {
-		// 	const outputPub = {
-		// 		...pubData,
-		// 		contributors: pubData.contributors.filter((contributor)=> {
-		// 			return !contributor.isHidden;
-		// 		}),
-		// 		discussions: pubData.discussions.filter((discussion)=> {
-		// 			return discussion.isPublished;
-		// 		}),
-		// 		versions: pubData.versions.filter((version)=> {
-		// 			return version.isPublished;
-		// 		}),
-		// 	};
-
-		// 	console.timeEnd('pubProcessTime');
-		// 	return res.status(201).json({ ...outputPub, canEdit: canEdit, allReactions: reactionsData, allRoles: rolesData });
-		// }
-
 		const outputPub = {
 			...pubData,
 			contributors: pubData.contributors.filter((contributor)=> {
