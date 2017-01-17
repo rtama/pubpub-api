@@ -49,6 +49,7 @@ export function searchPubs(req, res, next) {
 	Pub.findAll({
 		where: {
 			replyRootPubId: null,
+			isPublished: true,
 			$or: [
 				{ title: { ilike: '%' + req.query.q + '%' } },
 				{ slug: { ilike: '%' + req.query.q + '%' } },
@@ -93,6 +94,7 @@ export function searchAll(req, res, next) {
 	const findPubs = Pub.findAll({
 		where: {
 			replyRootPubId: null,
+			isPublished: true,
 			$or: [
 				{ title: { ilike: '%' + req.query.q + '%' } },
 				{ slug: { ilike: '%' + req.query.q + '%' } },
