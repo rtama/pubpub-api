@@ -202,7 +202,7 @@ const License = sequelize.define('License', {
 	title: { type: Sequelize.TEXT },
 	description: { type: Sequelize.TEXT },
 	url: { type: Sequelize.TEXT },
-	avatar: { type: Sequelize.TEXT },
+	avatar: { type: Sequelize.TEXT }, //!TODO: image->avatar
 });
 
 const Label = sequelize.define('Label', {

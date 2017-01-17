@@ -66,7 +66,7 @@ export function postDiscussion(req, res, next) {
 			title: req.body.title,
 			slug: newSlug,
 			description: req.body.description,
-			previewImage: 'https://assets.pubpub.org/_site/pub.png', 
+			avatar: 'https://assets.pubpub.org/_site/pub.png', 
 			replyRootPubId: req.body.replyRootPubId,
 			replyParentPubId: req.body.replyParentPubId,
 			isPublished: !req.body.isPrivate,

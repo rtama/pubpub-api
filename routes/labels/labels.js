@@ -54,6 +54,9 @@ export function postLabel(req, res, next) {
 
 	let authenticateAndCreate;
 
+	// TODO: For global labels, set slug
+	// slug: req.body.title.replace(/[^\w\s-]/gi, '').replace(/ /g, '-').toLowerCase(),
+
 	// If userId is supplied, authenticate and create
 	if (req.body.userId) {
 		if (req.body.userId !== user.id) { return res.status(500).json('Not authorized to create a label for this userId'); }

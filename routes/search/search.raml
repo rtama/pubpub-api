@@ -29,7 +29,7 @@ description: Routes to access PubPub search features
 /journal:
   displayName: Journal
   get: 
-    description: Search for journals by string. Journal name, url, and short description are indexed.
+    description: Search for journals by string. Journal title, url, and short description are indexed.
     queryParameters:
       q:
         type: string
@@ -42,7 +42,7 @@ description: Routes to access PubPub search features
               [
                 {
                 "id": 1,
-                "name": "Journal of physics",
+                "title": "Journal of physics",
                 "slug": "physics",
                 "shortDescription": "This journal is about physics and other interesting things.",
                 "logo": "http://www.image.com/example.jpg",
@@ -72,7 +72,7 @@ description: Routes to access PubPub search features
                 "title": "Exciting new study!",
                 "slug": "exciting",
                 "description": "Here is my description",
-                "previewImage": "http://www.image.com/example.jpg",
+                "avatar": "http://www.image.com/example.jpg",
                 }
               ]
       500:
