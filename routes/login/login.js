@@ -14,8 +14,9 @@ export function login(req, res) {
 	})
 	.then(function(userData) {
 		const loginData = {};
-		for (let index = 0; index < authenticatedUserAttributes.length; index++) {
-			const key = authenticatedUserAttributes[index];
+		const allAttributes = [...authenticatedUserAttributes, 'contributions', 'journalAdmins'];
+		for (let index = 0; index < allAttributes.length; index++) {
+			const key = allAttributes[index];
 			loginData[key] = userData[key];
 		}
 		return res.status(201).json(loginData);
