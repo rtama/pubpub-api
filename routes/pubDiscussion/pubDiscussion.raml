@@ -1,0 +1,34 @@
+displayName: Discussions
+description: Routes to access data about a pub's discussions
+post:
+  description: Create a new Pub
+  body:
+    application/json:
+      formParameters:
+        title: 
+          description: title used for the new pub
+          required: true
+        replyRootPubId:
+          description: id of the root pub this discussion is replying to
+        replyParentPubId:
+          description: id of the immediate parent pub this discussion is replying to
+        description:
+          description: description of the new pub
+        labels: 
+          description: array of ids of labels that will be applied to this discussion
+
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                "id": 15,
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating pub"
+            }
