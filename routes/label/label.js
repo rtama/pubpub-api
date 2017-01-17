@@ -19,7 +19,7 @@ export function queryForLabel(value) {
 	
 }
 
-export function getLabels(req, res, next) {
+export function getLabel(req, res, next) {
 	// Return a single global label and the associated pubs
 
 	console.time('labelQueryTime');
@@ -45,7 +45,7 @@ export function getLabels(req, res, next) {
 		return res.status(500).json(err.message);
 	});
 }
-app.get('/labels', getLabels);
+app.get('/label', getLabel);
 
 export function postLabel(req, res, next) {
 
@@ -122,7 +122,7 @@ export function postLabel(req, res, next) {
 		return res.status(500).json(err.message);
 	});
 }
-app.post('/labels', postLabel);
+app.post('/label', postLabel);
 
 export function putLabel(req, res, next) {
 	const user = req.user || {};
@@ -190,7 +190,7 @@ export function putLabel(req, res, next) {
 		return res.status(500).json(err.message);
 	});
 }
-app.put('/labels', putLabel);
+app.put('/label', putLabel);
 
 export function deleteLabel(req, res, next) {
 	const user = req.user || {};
@@ -251,4 +251,4 @@ export function deleteLabel(req, res, next) {
 		return res.status(500).json(err.message);
 	});
 }
-app.delete('/labels', deleteLabel);
+app.delete('/label', deleteLabel);

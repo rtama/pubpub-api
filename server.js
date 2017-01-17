@@ -127,7 +127,7 @@ if (process.env.WORKER !== 'true') {
 		require('./routes/search/search.js');
 		require('./routes/licenses/licenses.js');
 		require('./routes/signUp/signUp.js');
-		require('./routes/labels/labels.js');
+		require('./routes/label/label.js');
 		
 		require('./routes/followsPub/followsPub.js');
 		require('./routes/followsJournal/followsJournal.js');

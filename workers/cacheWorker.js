@@ -2,7 +2,7 @@ import { redisClient } from '../models';
 import { queryForPub } from '../routes/pub/pub';
 import { queryForUser } from '../routes/user/user';
 import { queryForJournal } from '../routes/journal/journal';
-import { queryForLabel } from '../routes/labels/labels';
+import { queryForLabel } from '../routes/label/label';
 import { queryForActivity } from '../routes/activities/activities';
 
 
