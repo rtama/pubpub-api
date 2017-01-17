@@ -1,5 +1,5 @@
 import app from '../../server';
-import { Pub, User, Label, PubLabel, File, Version, Contributor, Reaction, Role, PubReaction } from '../../models';
+import { Pub, User, Label, PubLabel, Contributor, Reaction, Role, PubReaction } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 import { createActivity } from '../../utilities/createActivity';
 import { userAttributes } from '../user/user';
@@ -16,7 +16,7 @@ export function postDiscussion(req, res, next) {
 		findThreadNumber = Pub.max('threadNumber', {
 			where: { 
 				replyRootPubId: req.body.replyRootPubId,
-				isPublished: !req.body.isPrivate
+				// isPublished: !req.body.isPrivate
 			}
 		})
 		.then(function(maxThreadNumber) {
@@ -42,7 +42,7 @@ export function postDiscussion(req, res, next) {
 			avatar: 'https://assets.pubpub.org/_site/pub.png', 
 			replyRootPubId: req.body.replyRootPubId,
 			replyParentPubId: req.body.replyParentPubId,
-			isPublished: !req.body.isPrivate,
+			isPublished: !req.body.isPrivate, // TODO: Check to make sure the user has canEdit or canRead permission, thus allowing them to post private discussions.
 			threadNumber: threadNumber,
 			license: 1, // Set to CCBY
 		});

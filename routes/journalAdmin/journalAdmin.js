@@ -45,11 +45,6 @@ export function postJournalAdmin(req, res, next) {
 }
 app.post('/journal/admin', postJournalAdmin);
 
-// export function putJournalAdmin(req, res, next) {
-// 	// Not sure there is anything to put for journal admins at this point
-// }
-// app.put('/journal/admins', putJournalAdmin);
-
 export function deleteJournalAdmin(req, res, next) {
 	// Check if authenticated. Remove. Return true.
 	

@@ -119,7 +119,7 @@ export function getPub(req, res, next) {
 		};
 
 		console.timeEnd('pubProcessTime');
-		return res.status(201).json({ ...outputPub, canEdit: canEdit, allReactions: reactionsData, allRoles: rolesData });
+		return res.status(201).json({ ...outputPub, canEdit: canEdit, canRead: canRead, canReadRestricted: canReadRestricted, allReactions: reactionsData, allRoles: rolesData });
 	})
 	.catch(function(err) {
 		console.error('Error in getPub: ', err);
