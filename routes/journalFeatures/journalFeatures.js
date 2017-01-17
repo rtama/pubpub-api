@@ -1,5 +1,5 @@
 import app from '../../server';
-import { Pub, PubFeature, PubSubmit, JournalAdmin } from '../../models';
+import { Pub, PubFeature, PubSubmit, JournalAdmin, Version } from '../../models';
 import { createActivity } from '../../utilities/createActivity';
 // can get all featured
 // Can create feature
@@ -42,9 +42,24 @@ export function postFeatures(req, res, next) {
 		});
 	})
 	.then(function() {
+		return Version.findOne({
+			where: {
+				pubId: req.body.pubId,
+				$or: [
+					{ isPublished: true },
+					{ isRestricted: true },
+				]
+			},
+			order: [['createdAt', 'DESC']],
+		});
+	})
+	.then(function(featureVersion) {
+		if (!featureVersion) { throw new Error('No available version to feature'); }
+
 		return PubFeature.create({
 			pubId: req.body.pubId,
 			journalId: req.body.journalId,
+			versionId: featureVersion.id,
 			isDisplayed: true,
 		});
 	})

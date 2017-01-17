@@ -15,9 +15,6 @@ redisClient.on('error', function (err) {
 	console.log('redisClient Error:  ' + err);
 });
 
-// To trigger a worker to update the cache, add either the pubId or the slug to cacheQueue set.
-// redisClient.saddAsync('cacheQueue', 'p_117', 'p_turtles');
-
 // redisClient.flushdb( function (err, succeeded) {
 // 	console.log('Flushed Redis DB'); 
 // });
@@ -170,6 +167,7 @@ const File = sequelize.define('File', {
 const Version = sequelize.define('Version', {
 	versionMessage: { type: Sequelize.TEXT },
 	isPublished: { type: Sequelize.BOOLEAN },
+	isRestricted: { type: Sequelize.BOOLEAN }, // TODO: is this the right name for this mode? Should they all be one 'accessType' value?
 	hash: { type: Sequelize.TEXT },
 	// datePublished: { type: Sequelize.DATE }, // Don't need this, as the updated date has to be the publish date
 	doi: { type: Sequelize.TEXT },
@@ -698,6 +696,7 @@ Pub.belongsToMany(Journal, { onDelete: 'CASCADE', as: 'journalsFeatured', throug
 Journal.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubsFeatured', through: 'PubFeature', foreignKey: 'journalId' });
 PubFeature.belongsTo(Journal, { onDelete: 'CASCADE', as: 'journal', foreignKey: 'journalId' });
 PubFeature.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
+PubFeature.belongsTo(Version, { onDelete: 'CASCADE', as: 'version', foreignKey: 'versionId' });
 Pub.hasMany(PubFeature, { onDelete: 'CASCADE', as: 'pubFeatures', foreignKey: 'pubId' });
 Journal.hasMany(PubFeature, { onDelete: 'CASCADE', as: 'pubFeatures', foreignKey: 'journalId' });
 
