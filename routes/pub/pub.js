@@ -1,8 +1,7 @@
 import Promise from 'bluebird';
 import app from '../../server';
 import { redisClient, Pub, User, Label, File, Journal, Version, PubReaction, Contributor, FollowsPub, License, InvitedReviewer, Reaction, Role, PubSubmit, PubFeature } from '../../models';
-
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
+import { userAttributes } from '../user/user';
 
 export function queryForPub(value) {
 	const where = isNaN(value) 

@@ -4,8 +4,9 @@ import app from '../../server';
 import { redisClient, SignUp, User, Pub, Journal, Label, Contributor, InvitedReviewer } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 
-const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email', 'accessToken'];
-const unauthenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar'];
+export const userAttributes = ['id', 'username', 'firstName', 'lastName', 'avatar', 'bio'];
+export const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'avatar', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email', 'accessToken'];
+export const unauthenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'avatar', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar'];
 
 export function queryForUser(value) {
 	const where = isNaN(value) 
@@ -87,7 +88,7 @@ export function postUser(req, res, next) {
 			firstName: req.body.firstName,
 			lastName: req.body.lastName,
 			password: req.body.password,
-			image: req.body.image,
+			avatar: req.body.avatar,
 			bio: req.body.bio,
 			publicEmail: req.body.publicEmail,
 			website: req.body.website,
@@ -154,7 +155,7 @@ export function putUser(req, res, next) {
 
 	const updatedUser = {};
 	Object.keys(req.body).map((key)=> {
-		if (['username', 'firstName', 'lastName', 'image', 'email', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar'].indexOf(key) > -1) {
+		if (['username', 'firstName', 'lastName', 'avatar', 'email', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar'].indexOf(key) > -1) {
 			updatedUser[key] = req.body[key];
 		} 
 	});

@@ -2,8 +2,7 @@ import app from '../../server';
 import { Pub, User, Label, PubLabel, File, Version, Contributor, Reaction, Role, PubReaction } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 import { createActivity } from '../../utilities/createActivity';
-
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
+import { userAttributes } from '../user/user';
 
 export function getDiscussions(req, res, next) {
 	// Get user

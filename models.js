@@ -63,7 +63,7 @@ const SignUp = sequelize.define('SignUp', {
 
 const User = sequelize.define('User', {
 	username: {
-		type: Sequelize.STRING, 
+		type: Sequelize.TEXT, 
 		unique: true, 
 		allowNull: false,
 		validate: {
@@ -73,9 +73,9 @@ const User = sequelize.define('User', {
 			// Does this catch spaces? We don't want to allow spaces.
 		},
 	},
-	firstName: { type: Sequelize.STRING, allowNull: false },
-	lastName: { type: Sequelize.STRING, allowNull: false },
-	image: { type: Sequelize.STRING }, // !TODO: image->avatar
+	firstName: { type: Sequelize.TEXT, allowNull: false },
+	lastName: { type: Sequelize.TEXT, allowNull: false },
+	avatar: { type: Sequelize.TEXT }, // !TODO: image->avatar
 	email: { 
 		type: Sequelize.TEXT, 
 		allowNull: false, 
@@ -88,18 +88,18 @@ const User = sequelize.define('User', {
 	isUnclaimed: Sequelize.BOOLEAN, // Used to add a user/author to a pub that isn't in the system. When claimed, the foreign keys are changed/merged with the real account.
 	bio: Sequelize.TEXT,
 	publicEmail: Sequelize.TEXT,
-	github: Sequelize.STRING,
-	orcid: Sequelize.STRING,
-	twitter: Sequelize.STRING,
-	website: Sequelize.STRING,
-	googleScholar: Sequelize.STRING,
-	accessToken: Sequelize.STRING,
+	github: Sequelize.TEXT,
+	orcid: Sequelize.TEXT,
+	twitter: Sequelize.TEXT,
+	website: Sequelize.TEXT,
+	googleScholar: Sequelize.TEXT,
+	accessToken: Sequelize.TEXT,
 	resetHashExpiration: Sequelize.DATE,
 	resetHash: Sequelize.TEXT,
 	inactive: Sequelize.BOOLEAN,
 
 	hash: Sequelize.TEXT,
-	salt: Sequelize.STRING,
+	salt: Sequelize.TEXT,
 }, {
 	hooks: {
 		afterCreate: function(updatedItem, options) { updateUserCache(updatedItem.id); },
@@ -202,7 +202,7 @@ const License = sequelize.define('License', {
 	title: { type: Sequelize.TEXT },
 	description: { type: Sequelize.TEXT },
 	url: { type: Sequelize.TEXT },
-	image: { type: Sequelize.TEXT },
+	avatar: { type: Sequelize.TEXT },
 });
 
 const Label = sequelize.define('Label', {

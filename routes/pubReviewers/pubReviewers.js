@@ -6,8 +6,7 @@ import { createActivity } from '../../utilities/createActivity';
 import { sendEmail } from '../../utilities/sendEmail';
 
 // TODO: is invitationHash needed? We just use the user's id/email to verify the invitation...
-
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
+import { userAttributes } from '../user/user';
 
 export function getReviewers(req, res, next) {
 	// Return all reviewers

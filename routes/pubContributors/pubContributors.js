@@ -1,8 +1,7 @@
 import app from '../../server';
 import { User, Contributor, Role } from '../../models';
 import { createActivity } from '../../utilities/createActivity';
-
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
+import { userAttributes } from '../user/user';
 
 export function getContributors(req, res, next) {
 	// Get user

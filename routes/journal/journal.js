@@ -2,8 +2,7 @@ import Promise from 'bluebird';
 import app from '../../server';
 import { redisClient, Pub, PubSubmit, PubFeature, User, Label, JournalAdmin, Journal, FollowsJournal, InvitedReviewer } from '../../models';
 import { createActivity } from '../../utilities/createActivity';
-
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
+import { userAttributes } from '../user/user';
 
 export function queryForJournal(value) {
 	const where = isNaN(value) 

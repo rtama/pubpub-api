@@ -1,8 +1,7 @@
 import Promise from 'bluebird';
 import app from '../../server';
 import { Pub, User, Label, Journal } from '../../models';
-
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
+import { userAttributes } from '../user/user';
 
 export function searchUsers(req, res, next) {
 	User.findAll({

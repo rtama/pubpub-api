@@ -1,7 +1,6 @@
 import app from '../../server';
 import { User, FileAttribution, File } from '../../models';
-
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
+import { userAttributes } from '../user/user';
 
 // TODO: How are file attributions authorizations handled?
 

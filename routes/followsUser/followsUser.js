@@ -1,8 +1,7 @@
 import app from '../../server';
 import { FollowsUser, User } from '../../models';
 import { createActivity } from '../../utilities/createActivity';
-
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
+import { userAttributes } from '../user/user';
 
 export function getFollows(req, res, next) {
 	// Return a list of users that are following

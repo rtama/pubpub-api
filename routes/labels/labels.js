@@ -1,8 +1,7 @@
 import app from '../../server';
 import { redisClient, Pub, Label, Contributor, JournalAdmin, User } from '../../models';
 import { createActivity } from '../../utilities/createActivity';
-
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
+import { userAttributes } from '../user/user';
 
 export function queryForLabel(value) {
 	const where = isNaN(value) 

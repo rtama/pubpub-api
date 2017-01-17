@@ -1,8 +1,7 @@
 import Promise from 'bluebird';
 import app from '../../server';
+import { userAttributes } from '../user/user';
 import { redisClient, Activity, User, Pub, Label, Journal, FollowsPub, FollowsUser, FollowsJournal, FollowsLabel, Contributor, JournalAdmin } from '../../models';
-
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
 
 const activityFinder = function(type, ids) {
 	return Activity.findAll({

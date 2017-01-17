@@ -6,8 +6,7 @@ import app from '../../server';
 import { processFile } from '../../utilities/processFile';
 import { createActivity } from '../../utilities/createActivity';
 import { User, Version, File, FileRelation, FileAttribution, Contributor, VersionFile, Pub } from '../../models';
-
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
+import { userAttributes } from '../user/user';
 
 
 export function getVersions(req, res, next) {

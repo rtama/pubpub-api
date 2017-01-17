@@ -4,7 +4,7 @@ import passport from 'passport';
 // import Promise from 'bluebird';
 import app from '../../server';
 import { User, Pub, Contributor, Journal, JournalAdmin } from '../../models';
-
+import { authenticatedUserAttributes } from '../user/user';
 // const readFile = Promise.promisify(require('fs').readFile);
 // const acceptedLanguages = ['en', 'es'];
 
@@ -91,7 +91,6 @@ export function login(req, res) {
 		]
 	})
 	.then(function(userData) {
-		const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email', 'journalAdmins', 'contributions', 'accessToken'];
 		const loginData = {};
 		for (let index = 0; index < authenticatedUserAttributes.length; index++) {
 			const key = authenticatedUserAttributes[index];
