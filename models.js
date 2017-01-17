@@ -18,6 +18,7 @@ redisClient.on('error', function (err) {
 // redisClient.flushdb( function (err, succeeded) {
 // 	console.log('Flushed Redis DB'); 
 // });
+
 const updatePubCache = function(pubId) {
 	if (pubId) { redisClient.saddAsync('cacheQueue', `p_${pubId}`); }
 };
@@ -33,7 +34,6 @@ const updateJournalCache = function(journalId) {
 const updateLabelCache = function(labelId) {
 	if (labelId) { redisClient.saddAsync('cacheQueue', `l_${labelId}`); }
 };
-
 /* ------------- */
 
 const Sequelize = require('sequelize');

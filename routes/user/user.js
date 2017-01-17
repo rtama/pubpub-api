@@ -5,7 +5,7 @@ import { redisClient, SignUp, User, Pub, Journal, Label, Contributor, InvitedRev
 import { generateHash } from '../../utilities/generateHash';
 
 export const userAttributes = ['id', 'username', 'firstName', 'lastName', 'avatar', 'bio'];
-export const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'avatar', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email', 'accessToken'];
+export const authenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'avatar', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar', 'email', 'accessToken', 'contributions', 'journalAdmins'];
 export const unauthenticatedUserAttributes = ['id', 'username', 'firstName', 'lastName', 'avatar', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar'];
 
 export function queryForUser(value) {

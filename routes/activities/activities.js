@@ -109,8 +109,8 @@ export function queryForActivity(userId) {
 				myPubs: activitiesData[4],
 				myJournals: activitiesData[5],
 				myUsers: activitiesData[6],
-				assets: assets
 			},
+			assets: assets
 		};
 		return output;
 	});
@@ -128,19 +128,18 @@ export function getActivities(req, res, next) {
 		if (redisResult) { return redisResult; }
 		return queryForActivity(user.id);
 	})
-	.then(function(activitiesData) {
-		if (!activitiesData) { throw new Error('Activities not Found'); }
-		const outputData = typeof activitiesData === 'object' ? activitiesData : JSON.parse(activitiesData);
-		console.log('Using Cache: ', typeof activitiesData !== 'object');
-		const setCache = typeof activitiesData === 'object' ? redisClient.setexAsync('a_' + user.id, 120, JSON.stringify(outputData)) : {};
+	.then(function(activitiesResult) {
+		if (!activitiesResult) { throw new Error('Activities not Found'); }
+		const outputData = typeof activitiesResult === 'object' ? activitiesResult : JSON.parse(activitiesResult);
+		console.log('Using Cache: ', typeof activitiesResult !== 'object');
+		const setCache = typeof activitiesResult === 'object' ? redisClient.setexAsync('a_' + user.id, 120, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, setCache]);
 	})
-	.spread(function(activitiesData, setCacheResult) {
+	.spread(function(activitiesResult, setCacheResult) {
 		console.timeEnd('assetQueryTime');
-		return res.status(201).json({
-			...activitiesData,
-			assets: req.query.assets === true ? activitiesData.assets : undefined,
-		});
+		const outputResult = activitiesResult;
+		if (!req.query.assets) { delete outputResult.assets; }
+		return res.status(201).json(outputResult);
 	})
 	.catch(function(err) {
 		console.error('Error in getActivities: ', err);
