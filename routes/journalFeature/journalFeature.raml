@@ -1,23 +1,5 @@
-displayName: Features
+displayName: Feature
 description: Routes to access data about a journals='s featured pubs
-get: 
-  description: Get all features pubsjournals
-  queryParameters:
-    journalId:
-      type: string
-      required: true
-  responses:
-    200:
-      body:
-        application/json:
-          example: |
-            {
-                id: 9,
-            }
-    500:
-      body:
-        application/json:
-          example: "Journal not found"
 post:
   description: Create a new pub feature
   body:

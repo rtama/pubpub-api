@@ -3,27 +3,6 @@ import { User, JournalAdmin } from '../../models';
 import { createActivity } from '../../utilities/createActivity';
 import { userAttributes } from '../user/user';
 
-export function getJournalAdmins(req, res, next) {
-	// Get user
-	// Get all admins
-	// Return list
-	JournalAdmin.findAll({
-		where: { journalId: req.query.journalId },
-		include: [
-			{ model: User, as: 'user', attributes: userAttributes }
-		]
-	})
-	.then(function(journalAdminsData) {
-		if (!journalAdminsData) { return res.status(500).json('JournalAdmins not found'); }
-		return res.status(201).json(journalAdminsData);
-	})
-	.catch(function(err) {
-		console.error('Error in getJournalAdmins: ', err);
-		return res.status(500).json(err.message);
-	});
-}
-app.get('/journal/admins', getJournalAdmins);
-
 export function postJournalAdmin(req, res, next) {
 	// Authenticate user. Make sure they have edit permissions on the given pub.
 	// Add a single contributor
@@ -64,7 +43,7 @@ export function postJournalAdmin(req, res, next) {
 		return res.status(500).json(err.message);
 	});
 }
-app.post('/journal/admins', postJournalAdmin);
+app.post('/journal/admin', postJournalAdmin);
 
 // export function putJournalAdmin(req, res, next) {
 // 	// Not sure there is anything to put for journal admins at this point
@@ -99,4 +78,4 @@ export function deleteJournalAdmin(req, res, next) {
 		return res.status(500).json(err.message);
 	});
 }
-app.delete('/journal/admins', deleteJournalAdmin);
+app.delete('/journal/admin', deleteJournalAdmin);

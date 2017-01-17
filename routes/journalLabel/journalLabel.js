@@ -1,25 +1,6 @@
 import app from '../../server';
 import { Label, PubLabel, JournalAdmin, Journal } from '../../models';
 
-// These labels are to allow journal admins to apply labels (collections) to specific pubs. 
-// It is similar to the pubLabels routes, but scoped to the journal's labels (collections).
-export function getLabels(req, res, next) {
-	Journal.findOne({
-		where: { id: req.query.journalId },
-		include: [
-			{ model: Label, as: 'collections' }, // These are labels owned by the journal
-		]
-	})
-	.then(function(labelsData) {
-		if (!labelsData || !labelsData.collections.length) { return res.status(500).json('Labels not found'); }
-		return res.status(201).json(labelsData.collections);
-	})
-	.catch(function(err) {
-		console.error('Error in getLabels: ', err);
-		return res.status(500).json(err.message);
-	});
-}
-app.get('/journal/labels', getLabels);
 
 export function postLabel(req, res, next) {
 	// Add a new journal-owned label (collection) to a pub
@@ -42,7 +23,7 @@ export function postLabel(req, res, next) {
 		return res.status(500).json(err.message);
 	});
 }
-app.post('/journal/labels', postLabel);
+app.post('/journal/label', postLabel);
 
 
 export function deleteLabel(req, res, next) {
@@ -60,4 +41,4 @@ export function deleteLabel(req, res, next) {
 		return res.status(500).json(err.message);
 	});
 }
-app.delete('/journal/labels', deleteLabel);
+app.delete('/journal/label', deleteLabel);

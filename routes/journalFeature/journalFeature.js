@@ -1,27 +1,8 @@
 import app from '../../server';
 import { Pub, PubFeature, PubSubmit, JournalAdmin, Version } from '../../models';
 import { createActivity } from '../../utilities/createActivity';
-// can get all featured
-// Can create feature
 
-export function getFeatures(req, res, next) {
-	PubFeature.findAll({
-		where: { journalId: req.query.journalId },
-		include: [
-			{ model: Pub, as: 'pub' }
-		]
-	})
-	.then(function(journalFeaturesData) {
-		return res.status(201).json(journalFeaturesData);
-	})
-	.catch(function(err) {
-		console.error('Error in getJournalFeatures: ', err);
-		return res.status(500).json(err.message);
-	});
-}
-app.get('/journal/features', getFeatures);
-
-export function postFeatures(req, res, next) {
+export function postFeature(req, res, next) {
 	// Create a new journal submission
 	// Return new submission object
 	const user = req.user || {};
@@ -80,4 +61,4 @@ export function postFeatures(req, res, next) {
 		return res.status(500).json(err.message);
 	});
 }
-app.post('/journal/features', postFeatures);
+app.post('/journal/feature', postFeature);

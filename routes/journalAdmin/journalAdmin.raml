@@ -1,25 +1,5 @@
 displayName: JournalAdmins
 description: Routes to access data about a journal's admins
-get: 
-  description: Get all journal admins
-  queryParameters:
-    journalId:
-      type: string
-      required: true
-  responses:
-    200:
-      body:
-        application/json:
-          example: |
-            [
-              {
-                  "id": 8
-              }
-            ]
-    500:
-      body:
-        application/json:
-          example: "Contributors not found"
 post:
   description: Create a new User
   body:

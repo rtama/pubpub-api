@@ -1,23 +1,5 @@
 displayName: Journal Pub Labels
 description: Routes to access data about the labels (collections) owned by a journal, and to apply them to pubs.
-get: 
-  description: Get labels (collections) associated with a given journal.
-  queryParameters:
-    journalId:
-      type: string
-      required: true
-  responses:
-    200:
-      body:
-        application/json:
-          example: |
-            {
-                id: 9,
-            }
-    500:
-      body:
-        application/json:
-          example: "Journal not found"
 post:
   description: Create a PubLabel. The relation between a pub and a label
   body:

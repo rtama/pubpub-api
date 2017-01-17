@@ -1,25 +1,5 @@
-// can get all submitted
-// Can set isRjected with a put a submission
-
 import app from '../../server';
-import { Pub, JournalAdmin, PubSubmit } from '../../models';
-
-export function getSubmits(req, res, next) {
-	PubSubmit.findAll({
-		where: { journalId: req.query.journalId },
-		include: [
-			{ model: Pub, as: 'pub' }
-		]
-	})
-	.then(function(journalSubmitsData) {
-		return res.status(201).json(journalSubmitsData);
-	})
-	.catch(function(err) {
-		console.error('Error in getSubmits: ', err);
-		return res.status(500).json(err.message);
-	});
-}
-app.get('/journal/submits', getSubmits);
+import { JournalAdmin, PubSubmit } from '../../models';
 
 export function putSubmit(req, res, next) {
 	// Enable access to reject a pub submission
@@ -48,4 +28,4 @@ export function putSubmit(req, res, next) {
 		return res.status(500).json(err.message);
 	});
 }
-app.put('/journal/submits', putSubmit);
+app.put('/journal/submit', putSubmit);

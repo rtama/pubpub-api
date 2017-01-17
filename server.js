@@ -145,10 +145,10 @@ if (process.env.WORKER !== 'true') {
 		require('./routes/pubFileAttributions/pubFileAttributions.js');
 		require('./routes/activities/activities.js');
 		require('./routes/journal/journal.js');
-		require('./routes/journalAdmins/journalAdmins.js');
-		require('./routes/journalFeatures/journalFeatures.js');
-		require('./routes/journalSubmits/journalSubmits.js');
-		require('./routes/journalLabels/journalLabels.js');
+		require('./routes/journalAdmin/journalAdmin.js');
+		require('./routes/journalFeature/journalFeature.js');
+		require('./routes/journalSubmit/journalSubmit.js');
+		require('./routes/journalLabel/journalLabel.js');
 		require('./routes/followsPub/followsPub.js');
 		require('./routes/followsJournal/followsJournal.js');
 		require('./routes/followsUser/followsUser.js');
