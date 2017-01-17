@@ -62,7 +62,7 @@ const SignUp = sequelize.define('SignUp', {
 });
 
 const User = sequelize.define('User', {
-	username: { 
+	username: {
 		type: Sequelize.STRING, 
 		unique: true, 
 		allowNull: false,
@@ -75,7 +75,7 @@ const User = sequelize.define('User', {
 	},
 	firstName: { type: Sequelize.STRING, allowNull: false },
 	lastName: { type: Sequelize.STRING, allowNull: false },
-	image: { type: Sequelize.STRING },
+	image: { type: Sequelize.STRING }, // !TODO: image->avatar
 	email: { 
 		type: Sequelize.TEXT, 
 		allowNull: false, 
@@ -126,7 +126,7 @@ const Pub = sequelize.define('Pub', {
 	// publicSlug: { type: Sequelize.STRING }, // Used to share a pub without making it globally public
 	title: { type: Sequelize.TEXT, allowNull: false },
 	description: { type: Sequelize.TEXT },
-	previewImage: { type: Sequelize.TEXT },
+	avatar: { type: Sequelize.TEXT }, // !TODO: previewImage->avatar
 	// isReply: { type: Sequelize.BOOLEAN }, // May not be necessary. Presence of rootReplyPubId dictates isReply
 	isClosed: { type: Sequelize.BOOLEAN }, // Used for replies.
 	hideAuthorsList: { type: Sequelize.BOOLEAN },
@@ -134,6 +134,7 @@ const Pub = sequelize.define('Pub', {
 	distinguishedClone: { type: Sequelize.BOOLEAN }, // ??TODO: Decide: Used to make a clone a 'distinguished branch'. Maybe this should be done with labels instead? If labels, then we have some weird permissioning conflicts between pub owners
 	inactive: Sequelize.BOOLEAN,
 	isPublished: Sequelize.BOOLEAN,
+	isRestricted: Sequelize.BOOLEAN,
 	threadNumber: Sequelize.INTEGER, // Used for discussions, to mark top-level discussion with a unique (per-pub, per published/unpublished) number
 	// cloneParentPubId
 	// cloneParentVersionId // Is cloneParentPubId needed if we are tracking clones by version?
@@ -206,8 +207,8 @@ const License = sequelize.define('License', {
 
 const Label = sequelize.define('Label', {
 	title: { type: Sequelize.TEXT },
+	slug: { type: Sequelize.TEXT }, // !TODO: add slug
 	color: { type: Sequelize.STRING },
-	image: { type: Sequelize.TEXT },
 	description: { type: Sequelize.TEXT },
 	isDisplayed: { type: Sequelize.BOOLEAN }, // Used for some labels to mark whether they are rendered in special places, e.g. in a Journal's nav as collections
 	order: { type: Sequelize.DOUBLE }, // Used for some labels to mark their order, e.g. in a Journal's nav. Doubles in the range of (0-1) exclusive.
@@ -253,7 +254,7 @@ const Highlight = sequelize.define('Highlight', {
 
 
 const Journal = sequelize.define('Journal', {
-	name: {
+	title: { // !TODO: name->title
 		type: Sequelize.TEXT,
 		allowNull: false,
 	},
@@ -265,17 +266,17 @@ const Journal = sequelize.define('Journal', {
 			isLowercase: true,
 		},
 	},
-	shortDescription: { type: Sequelize.TEXT },
-	longDescription: { type: Sequelize.TEXT },
-	logo: { type: Sequelize.STRING },
-	icon: Sequelize.STRING,
-	website: Sequelize.STRING,
-	twitter: Sequelize.STRING,
-	facebook: Sequelize.STRING,
+	description: { type: Sequelize.TEXT }, // !TODO: shortDescription->description
+	about: { type: Sequelize.TEXT }, // !TODO: longDescription->about
+	logo: { type: Sequelize.TEXT },
+	avatar: Sequelize.TEXT, // !TODO: icon->avatar
+	website: Sequelize.TEXT,
+	twitter: Sequelize.TEXT,
+	facebook: Sequelize.TEXT,
 	headerColor: Sequelize.STRING,
 	headerMode: Sequelize.STRING,
 	headerAlign: Sequelize.STRING,
-	headerImage: Sequelize.STRING,
+	headerImage: Sequelize.TEXT,
 	inactive: Sequelize.BOOLEAN,
 }, {
 	hooks: {
@@ -373,7 +374,7 @@ const ApiKey = sequelize.define('ApiKey', {
 const Reaction = sequelize.define('Reaction', {
 	title: Sequelize.TEXT,
 	keywords: Sequelize.TEXT,
-	image: Sequelize.TEXT,
+	icon: Sequelize.TEXT, // !TODO: image->icon
 });
 
 const JournalAdmin = sequelize.define('JournalAdmin', {
