@@ -48,9 +48,21 @@ export function getJournal(req, res, next) {
 			return previous;
 		}, false);
 
-		return res.status(201).json({ ...journalData, isAdmin: isAdmin });
-
-
+		const outputData = {
+			...journalData,
+			isAdmin: isAdmin,
+			pubSubmits: journalData.pubSubmits.filter((pubSubmit)=> {
+				if (isAdmin) { return pubSubmit.pub.isPublished || pubSubmit.pub.isRestricted; }
+				return pubSubmit.pub.isPublished;
+			}),
+			pubFeatures: journalData.pubSubmits.filter((pubFeature)=> {
+				if (isAdmin) { return pubFeature.pub.isPublished || pubFeature.pub.isRestricted; }
+				return pubFeature.pub.isPublished;
+			}),
+		};
+	
+		return res.status(201).json(outputData);
+	
 	})
 	.catch(function(err) {
 		console.error('Error in getJournal: ', err);
