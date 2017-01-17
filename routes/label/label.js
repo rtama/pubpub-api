@@ -12,7 +12,7 @@ export function queryForLabel(value) {
 		where: where,
 		attributes: ['id', 'title', 'color', 'journalId', 'userId', 'pubId', 'isDisplayed', 'description'],
 		include: [
-			{ model: Pub, as: 'pubs' },
+			{ model: Pub, as: 'pubs', where: { isPublished: true } },
 			{ model: User, as: 'followers', attributes: userAttributes }, 
 		],
 	});
