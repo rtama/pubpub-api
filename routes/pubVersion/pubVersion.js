@@ -151,7 +151,7 @@ export function putVersion(req, res, next) {
 
 	const updatedVersion = {};
 	Object.keys(req.body).map((key)=> {
-		if (['isPublished', 'doi', 'defaultFile'].indexOf(key) > -1) {
+		if (['isPublished', 'isRestricted', 'doi', 'defaultFile'].indexOf(key) > -1) {
 			updatedVersion[key] = req.body[key];
 		} 
 	});
@@ -188,6 +188,17 @@ export function putVersion(req, res, next) {
 					createActivity('publishedPub', user.id, req.body.pubId),
 					Pub.update({ isPublished: true }, { where: { id: req.body.pubId }, individualHooks: true })
 				]);
+			});
+		}
+		if (req.body.isRestricted && updatedCount[0] > 0) { 
+			// if isRestricted and updatedCount > 0, that means we set isRestricted to true.
+			// So grab the parent pub to see if we need to update it's isRestricted also. 
+			return Pub.findOne({
+				where: { id: req.body.pubId },
+				raw: true
+			}).then(function(pubData) {
+				if (pubData.isRestricted) { return true; }
+				return Pub.update({ isRestricted: true }, { where: { id: req.body.pubId }, individualHooks: true });
 			});
 		}
 		return true;

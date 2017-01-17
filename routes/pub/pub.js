@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import app from '../../server';
-import { redisClient, Pub, User, Label, File, Journal, Version, PubReaction, Contributor, FollowsPub, License, InvitedReviewer, Reaction, Role, PubSubmit, PubFeature } from '../../models';
+import { redisClient, Pub, User, Label, File, Journal, Version, PubReaction, Contributor, FollowsPub, License, InvitedReviewer, JournalAdmin, Reaction, Role, PubSubmit, PubFeature } from '../../models';
 import { userAttributes } from '../user/user';
 
 export function queryForPub(value) {
@@ -25,7 +25,7 @@ export function queryForPub(value) {
 			},
 			{ model: Label, as: 'labels', through: { attributes: [] } }, // These are labels applied to the pub
 			{ model: Label, separate: true, as: 'pubLabels' }, // These are labels owned by the pub, and used for discussions. 
-			{ model: PubSubmit, separate: true, as: 'pubSubmits', include: [{ model: Journal, as: 'journal' }] },
+			{ model: PubSubmit, separate: true, as: 'pubSubmits', include: [{ model: Journal, as: 'journal', include: [{ model: JournalAdmin, as: 'admins' }] }] },
 			{ model: PubFeature, separate: true, as: 'pubFeatures', include: [{ model: Journal, as: 'journal', include: [{ model: Label, as: 'collections' }] }] },
 			{ model: Pub, separate: true, as: 'clones' },
 			{ model: InvitedReviewer, separate: true, as: 'invitedReviewers', attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId', 'invitationAccepted', 'invitationRejected', 'rejectionReason'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }, { model: Journal, as: 'inviterJournal' }] },
@@ -66,32 +66,81 @@ export function getPub(req, res, next) {
 		console.time('pubProcessTime');
 
 		const canEdit = pubData.contributors.reduce((previous, current)=> {
+			if (current.userId === user.id && (current.canEdit || current.isAuthor)) { return true; }
+			return previous;
+		}, false);
+
+		const canRead = pubData.contributors.reduce((previous, current)=> {
+			if (current.userId === user.id && current.canRead) { return true; }
+			return previous;
+		}, false);
+
+		const pubSubmitsAdmins = pubData.pubSubmits.reduce((previous, current)=> {
+			return [...previous, ...current.journal.admins];
+		}, []);
+
+		const isJournalReviewer = pubSubmitsAdmins.reduce((previous, current)=> {
 			if (current.userId === user.id) { return true; }
 			return previous;
 		}, false);
 
-		if (canEdit) {
-			console.timeEnd('pubProcessTime');
-			return res.status(201).json({ ...pubData, canEdit: canEdit, allReactions: reactionsData, allRoles: rolesData });
-		}
+		const isInvitedReviewer = pubData.invitedReviewers.reduce((previous, current)=> {
+			if (current.invitedUserId === user.id) { return true; }
+			return previous;
+		}, false);
 
-		if (!canEdit && !pubData.isPublished) {
+		const canReadRestricted = isJournalReviewer || isInvitedReviewer;
+
+		if (!(canEdit || canRead || canReadRestricted) && !pubData.isPublished) {
 			console.timeEnd('pubProcessTime');
 			return res.status(201).json('Not Published');
 		}
 
+		if (!(canEdit || canRead) && canReadRestricted && !pubData.isPublished && !pubData.isRestricted) {
+			console.timeEnd('pubProcessTime');
+			return res.status(201).json('Not Published');
+		}
+
+		// if (canEdit) {
+		// 	console.timeEnd('pubProcessTime');
+		// 	return res.status(201).json({ ...pubData, canEdit: canEdit, allReactions: reactionsData, allRoles: rolesData });
+		// }
+
+		// if (canReadRestricted) {
+		// 	const outputPub = {
+		// 		...pubData,
+		// 		contributors: pubData.contributors.filter((contributor)=> {
+		// 			return !contributor.isHidden;
+		// 		}),
+		// 		discussions: pubData.discussions.filter((discussion)=> {
+		// 			return discussion.isPublished;
+		// 		}),
+		// 		versions: pubData.versions.filter((version)=> {
+		// 			return version.isPublished;
+		// 		}),
+		// 	};
+
+		// 	console.timeEnd('pubProcessTime');
+		// 	return res.status(201).json({ ...outputPub, canEdit: canEdit, allReactions: reactionsData, allRoles: rolesData });
+		// }
+
 		const outputPub = {
 			...pubData,
 			contributors: pubData.contributors.filter((contributor)=> {
+				if (canEdit || canRead) { return true; }
 				return !contributor.isHidden;
 			}),
 			discussions: pubData.discussions.filter((discussion)=> {
+				if (canEdit || canRead) { return true; }
 				return discussion.isPublished;
 			}),
 			versions: pubData.versions.filter((version)=> {
+				if (canEdit || canRead) { return true; }
+				if (canReadRestricted) { return version.isPublished || version.isRestricted; }
 				return version.isPublished;
 			}),
 		};
+
 		console.timeEnd('pubProcessTime');
 		return res.status(201).json({ ...outputPub, canEdit: canEdit, allReactions: reactionsData, allRoles: rolesData });
 	})
