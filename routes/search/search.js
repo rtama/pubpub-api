@@ -1,8 +1,7 @@
-import app from '../../server';
 import Promise from 'bluebird';
+import app from '../../server';
 import { Pub, User, Label, Journal } from '../../models';
-
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
+import { userAttributes } from '../user/user';
 
 export function searchUsers(req, res, next) {
 	User.findAll({
@@ -29,12 +28,12 @@ export function searchJournals(req, res, next) {
 	Journal.findAll({
 		where: {
 			$or: [
-				{ name: { ilike: '%' + req.query.q + '%' } },
+				{ title: { ilike: '%' + req.query.q + '%' } },
 				{ slug: { ilike: '%' + req.query.q + '%' } },
-				{ shortDescription: { ilike: '%' + req.query.q + '%' } },
+				{ description: { ilike: '%' + req.query.q + '%' } },
 			]
 		},
-		attributes: ['id', 'name', 'slug', 'shortDescription', 'logo', 'icon']
+		attributes: ['id', 'title', 'slug', 'description', 'logo', 'avatar']
 	})
 	.then(function(results) {
 		return res.status(201).json(results);
@@ -50,13 +49,14 @@ export function searchPubs(req, res, next) {
 	Pub.findAll({
 		where: {
 			replyRootPubId: null,
+			isPublished: true,
 			$or: [
 				{ title: { ilike: '%' + req.query.q + '%' } },
 				{ slug: { ilike: '%' + req.query.q + '%' } },
 				{ description: { ilike: '%' + req.query.q + '%' } },
 			]
 		},
-		attributes: ['id', 'title', 'slug', 'description', 'previewImage']
+		attributes: ['id', 'title', 'slug', 'description', 'avatar']
 	})
 	.then(function(results) {
 		return res.status(201).json(results);
@@ -94,13 +94,14 @@ export function searchAll(req, res, next) {
 	const findPubs = Pub.findAll({
 		where: {
 			replyRootPubId: null,
+			isPublished: true,
 			$or: [
 				{ title: { ilike: '%' + req.query.q + '%' } },
 				{ slug: { ilike: '%' + req.query.q + '%' } },
 				{ description: { ilike: '%' + req.query.q + '%' } },
 			]
 		},
-		attributes: ['id', 'title', 'slug', 'description', 'previewImage']
+		attributes: ['id', 'title', 'slug', 'description', 'avatar']
 	});
 
 	const findUsers = User.findAll({
@@ -117,12 +118,12 @@ export function searchAll(req, res, next) {
 	const findJournals = Journal.findAll({
 		where: {
 			$or: [
-				{ name: { ilike: '%' + req.query.q + '%' } },
+				{ title: { ilike: '%' + req.query.q + '%' } },
 				{ slug: { ilike: '%' + req.query.q + '%' } },
-				{ shortDescription: { ilike: '%' + req.query.q + '%' } },
+				{ description: { ilike: '%' + req.query.q + '%' } },
 			]
 		},
-		attributes: ['id', 'name', 'slug', 'shortDescription', 'logo', 'icon']
+		attributes: ['id', 'title', 'slug', 'description', 'logo', 'avatar']
 	});
 
 	const findLabels = Label.findAll({

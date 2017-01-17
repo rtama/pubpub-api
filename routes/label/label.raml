@@ -1,0 +1,144 @@
+displayName: Label
+description: Routes to access data about labels
+get: 
+  description: Get a single global label and associated pubs.
+  queryParameters:
+    title: 
+      description: title of the label
+      required: true
+      type: string
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            [
+              {
+                  "id": 1,
+                  "title": "Biology",
+                  "color": null
+              },
+              {
+                  "id": 2,
+                  "title": "Physics",
+                  "color": "#335529"
+              }
+            ]
+    500:
+      body:
+        application/json:
+          example: "Label not found"
+post:
+  description: Create a Label. Currently, labels can only be created if associated with a journal, user, of pub.
+  body:
+    application/json:
+      formParameters:
+        userId: 
+          description: id of the user the label is owned by
+        pubId: 
+          description: id of the pub the label is owned by
+        journalId: 
+          description: id of the pub the label is owned by
+        title: 
+          description: title of the label
+          required: true
+        color: 
+          description: color of the label
+        description: 
+          description: Text explaining the purpose of the label
+        isDisplayed: 
+          description: Boolean setting whether the rendered is displayd in certain contexts (e.g. Journal header)
+          type: boolean
+        order: 
+          description: Number of double precision used for order some labels (e.g. Journal collections)
+          type: number
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+              id: 5,
+              userId: 4,
+              title: "My Physics Label",
+              color: "#ff0000",
+              isDisplayed: true,
+              description: "A collection of physics articles",
+              updatedAt: "2016-11-30T21:50:45.124Z",
+              createdAt: "2016-11-30T21:50:45.124Z",
+              journalId: null,
+              pubId: null
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating label"
+            }
+put:
+  description: Update a Label. Currently, labels can only be updated if associated with a journal, user, of pub.
+  body:
+    application/json:
+      formParameters:
+        userId: 
+          description: id of the user the label is owned by
+          type: number
+        pubId: 
+          description: id of the pub the label is owned by
+          type: number
+        journalId: 
+          description: id of the pub the label is owned by
+          type: number
+        labelId: 
+          description: id of the label to be updated
+          required: true
+          type: number
+        title: 
+          description: title of the updated label
+        color: 
+          description: color of the updated label
+        order: 
+          description: Number of double precision used for order some labels (e.g. Journal collections)
+          type: number
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                "id": 15,
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating pub"
+            }
+delete:
+  description: Delete the label
+  body:
+    application/json:
+      formParameters:
+        userId: 
+          description: id of the user the label is owned by
+        pubId: 
+          description: id of the pub the label is owned by
+        journalId: 
+          description: id of the pub the label is owned by
+        labelId: 
+          description: id of the pub the label is being applied to
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: true
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error deleting pub"
+            }

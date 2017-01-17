@@ -1,0 +1,28 @@
+displayName: Feature
+description: Routes to access data about a journals='s featured pubs
+post:
+  description: Create a new pub feature
+  body:
+    application/json:
+      formParameters:
+        pubId: 
+          description: id of the pub to be featured
+          required: true
+        journalId: 
+          description: id of the journal that will be featuring
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                "id": 15,
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error featuring pub"
+            }

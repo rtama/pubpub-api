@@ -21,7 +21,7 @@ p_mypubslug, pub by slug
 u_123, user by id
 u_myusername, user by username
 j_123, journal by id
-j_journaltitle, journal by name
+j_journaltitle, journal by title
 l_123, label by id
 l_labeltitle, label by name
 a_123, activity for a give user id

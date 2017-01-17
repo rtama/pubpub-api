@@ -19,7 +19,7 @@ description: Routes to access PubPub search features
                 "username": "travis",
                 "firstName": "Test",
                 "lastName": "LastName",
-                "image": "https://assets.pubpub.org/lzflunkd/1479834370629.jpg"
+                "avatar": "https://assets.pubpub.org/lzflunkd/1479834370629.jpg"
                 }
               ]
       500:
@@ -29,7 +29,7 @@ description: Routes to access PubPub search features
 /journal:
   displayName: Journal
   get: 
-    description: Search for journals by string. Journal name, url, and short description are indexed.
+    description: Search for journals by string. Journal title, url, and short description are indexed.
     queryParameters:
       q:
         type: string
@@ -42,11 +42,11 @@ description: Routes to access PubPub search features
               [
                 {
                 "id": 1,
-                "name": "Journal of physics",
+                "title": "Journal of physics",
                 "slug": "physics",
-                "shortDescription": "This journal is about physics and other interesting things.",
+                "description": "This journal is about physics and other interesting things.",
                 "logo": "http://www.image.com/example.jpg",
-                "icon": "http://www.image.com/icon.jpg",
+                "avatar": "http://www.image.com/avatar.jpg",
                 }
               ]
       500:
@@ -72,7 +72,7 @@ description: Routes to access PubPub search features
                 "title": "Exciting new study!",
                 "slug": "exciting",
                 "description": "Here is my description",
-                "previewImage": "http://www.image.com/example.jpg",
+                "avatar": "http://www.image.com/example.jpg",
                 }
               ]
       500:

@@ -15,7 +15,7 @@ get:
               username: "jane"
               firstName: "Jane"
               lastName: "Sanchez"
-              image: "https://images.com/1234"
+              avatar: "https://avatars.com/1234"
               email: "jane@email.com (if authenticated)"
               bio: "I am a biologist."
               publicEmail: "jane@public.com"
@@ -57,8 +57,8 @@ post:
         lastName:
           description: first name of the new User to be created
           required: true
-        image:
-          description: image for the new User to be created
+        avatar:
+          description: avatar for the new User to be created
           required: true
         password: 
           description: a hash of the users typed password
@@ -87,7 +87,7 @@ post:
               username: "jane"
               firstName: "Jane"
               lastName: "Sanchez"
-              image: "https://images.com/1234"
+              avatar: "https://avatars.com/1234"
               email: "jane@email.com"
               bio: "I am a biologist."
               publicEmail: "jane@public.com"
@@ -118,8 +118,8 @@ put:
           description: first name of the User
         lastName:
           description: first name of the User
-        image:
-          description: image for the User
+        avatar:
+          description: avatar for the User
         bio: 
           description: bio for the User
         publicEmail: 
@@ -144,7 +144,7 @@ put:
               username: "jane"
               firstName: "Jane"
               lastName: "Sanchez"
-              image: "https://images.com/1234"
+              avatar: "https://avatars.com/1234"
               email: "jane@email.com"
               bio: "I am a biologist."
               publicEmail: "jane@public.com"
@@ -180,5 +180,5 @@ delete:
             {
               error : "User not found"
             }
-/labels: !include ../userLabels/userLabels.raml
+/label: !include ../userLabel/userLabel.raml
 /password: !include ../userPassword/userPassword.raml

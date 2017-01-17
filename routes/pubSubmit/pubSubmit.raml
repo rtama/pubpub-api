@@ -1,0 +1,28 @@
+displayName: Submits
+description: Routes to access data about a pub's journal submissions
+post:
+  description: Create a new pub submission
+  body:
+    application/json:
+      formParameters:
+        pubId: 
+          description: slug used for the pub url
+          required: true
+        journalId: 
+          description: title used for the new pub
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                "id": 15,
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating pub"
+            }

@@ -1,8 +1,7 @@
 import Promise from 'bluebird';
 import app from '../../server';
 import { redisClient, Pub, User, Label, File, Journal, Version, PubReaction, Contributor, FollowsPub, License, InvitedReviewer, Reaction, Role, PubSubmit, PubFeature } from '../../models';
-
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
+import { userAttributes } from '../user/user';
 
 export function queryForPub(value) {
 	const where = isNaN(value) 
@@ -112,7 +111,7 @@ export function postPub(req, res, next) {
 		title: req.body.title,
 		slug: req.body.slug,
 		description: req.body.description,
-		previewImage: req.body.previewImage, 
+		avatar: req.body.avatar, 
 	})
 	.then(function(newPub) {
 		const createContributor = Contributor.create({
@@ -166,7 +165,7 @@ export function putPub(req, res, next) {
 	// Filter to only allow certain fields to be updated
 	const updatedPub = {};
 	Object.keys(req.body).map((key)=> {
-		if (['slug', 'title', 'description', 'previewImage', 'isClosed', 'hideAuthors', 'customAuthorList', 'licenseId', 'defaultContext'].indexOf(key) > -1) {
+		if (['slug', 'title', 'description', 'avatar', 'isClosed', 'hideAuthors', 'customAuthorList', 'licenseId', 'defaultContext'].indexOf(key) > -1) {
 			updatedPub[key] = req.body[key];
 		} 
 	});

@@ -123,36 +123,41 @@ if (process.env.WORKER !== 'true') {
 		/* ------------------- */
 		/* API Endpoints */
 		/* ------------------- */
+		require('./routes/activities/activities.js');
 		require('./routes/search/search.js');
 		require('./routes/licenses/licenses.js');
 		require('./routes/signUp/signUp.js');
-		require('./routes/user/user.js');
-		require('./routes/userLabels/userLabels.js');
-		require('./routes/labels/labels.js');
-		require('./routes/login/login.js');
-		require('./routes/logout/logout.js');
-		require('./routes/pub/pub.js');
-		require('./routes/pubContributors/pubContributors.js');
-		require('./routes/pubContributorRoles/pubContributorRoles.js');
-		require('./routes/pubDiscussions/pubDiscussions.js');
-		require('./routes/pubVersions/pubVersions.js');
-		require('./routes/pubLabels/pubLabels.js');
-		require('./routes/pubReactions/pubReactions.js');
-		require('./routes/pubReviewers/pubReviewers.js');
-		require('./routes/pubSubmits/pubSubmits.js');
-		require('./routes/pubFeatures/pubFeatures.js');
-		require('./routes/pubFileRelations/pubFileRelations.js');
-		require('./routes/pubFileAttributions/pubFileAttributions.js');
-		require('./routes/activities/activities.js');
-		require('./routes/journal/journal.js');
-		require('./routes/journalAdmins/journalAdmins.js');
-		require('./routes/journalFeatures/journalFeatures.js');
-		require('./routes/journalSubmits/journalSubmits.js');
-		require('./routes/journalLabels/journalLabels.js');
+		require('./routes/label/label.js');
+		
 		require('./routes/followsPub/followsPub.js');
 		require('./routes/followsJournal/followsJournal.js');
 		require('./routes/followsUser/followsUser.js');
 		require('./routes/followsLabel/followsLabel.js');
+
+		require('./routes/journal/journal.js');
+		require('./routes/journalAdmin/journalAdmin.js');
+		require('./routes/journalFeature/journalFeature.js');
+		require('./routes/journalSubmit/journalSubmit.js');
+		require('./routes/journalLabel/journalLabel.js');
+
+		require('./routes/login/login.js');
+		require('./routes/logout/logout.js');
+
+		require('./routes/pub/pub.js');
+		require('./routes/pubContributor/pubContributor.js');
+		require('./routes/pubContributorRole/pubContributorRole.js');
+		require('./routes/pubDiscussion/pubDiscussion.js');
+		require('./routes/pubVersion/pubVersion.js');
+		require('./routes/pubLabel/pubLabel.js');
+		require('./routes/pubReaction/pubReaction.js');
+		require('./routes/pubReviewer/pubReviewer.js');
+		require('./routes/pubSubmit/pubSubmit.js');
+		require('./routes/pubFeature/pubFeature.js');
+		require('./routes/pubFileRelation/pubFileRelation.js');
+		require('./routes/pubFileAttribution/pubFileAttribution.js');
+		
+		require('./routes/user/user.js');
+		require('./routes/userLabel/userLabel.js');
 		require('./routes/userPassword/userPassword.js');
 		require('./routes/userPasswordReset/userPasswordReset.js');
 

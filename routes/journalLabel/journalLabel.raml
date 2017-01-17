@@ -1,0 +1,57 @@
+displayName: Journal Pub Labels
+description: Routes to access data about the labels (collections) owned by a journal, and to apply them to pubs.
+post:
+  description: Create a PubLabel. The relation between a pub and a label
+  body:
+    application/json:
+      formParameters:
+        pubId: 
+          description: id of the pub the label is being applied to
+          required: true
+        labelId: 
+          description: id of the label to be applied
+          required: true
+        journalId: 
+          description: id of the journal owning the label
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                "id": 15,
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating PubLabel for this journal"
+            }
+delete:
+  description: Delete the label relationship
+  body:
+    application/json:
+      formParameters:
+        pubId: 
+          description: id of the pub the label is being applied to
+          required: true
+        labelId: 
+          description: id of the label to be applied
+          required: true
+        journalId:
+          description: id of the journal owning the label
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: "Pub set inactive"
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error deleting pub"
+            }

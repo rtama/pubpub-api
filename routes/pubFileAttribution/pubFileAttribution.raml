@@ -1,0 +1,66 @@
+displayName: File Attribution
+description: Routes to access data about a pub's file's attributions
+post:
+  description: Create a new FileRelation
+  body:
+    application/json:
+      formParameters:
+        fileId: 
+          description: id of the source file
+          required: true
+          type: number
+        userId:
+          description: id of the user to be attributed
+          required: true
+          type: number
+        pubId:
+          description: id of the pub this file is associated with
+          required: true
+          type: number
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+              "fileId": 1,
+              "userId": 1,
+              "updatedAt": "2016-11-22T01:41:11.348Z",
+              "createdAt": "2016-11-22T01:41:11.348Z"
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating pub"
+            }
+delete:
+  description: Delete a file attribution
+  body:
+    application/json:
+      formParameters:
+        fileId: 
+          description: id of the source file
+          required: true
+          type: number
+        userId:
+          description: id of the user to be attributed
+          required: true
+          type: number
+        pubId:
+          description: id of the pub this file is associated with
+          required: true
+          type: number
+  responses:
+    200:
+      body:
+        application/json:
+          example: "true"
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error deleting pub"
+            }

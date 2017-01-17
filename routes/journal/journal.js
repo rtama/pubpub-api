@@ -2,8 +2,7 @@ import Promise from 'bluebird';
 import app from '../../server';
 import { redisClient, Pub, PubSubmit, PubFeature, User, Label, JournalAdmin, Journal, FollowsJournal, InvitedReviewer } from '../../models';
 import { createActivity } from '../../utilities/createActivity';
-
-const userAttributes = ['id', 'username', 'firstName', 'lastName', 'image', 'bio'];
+import { userAttributes } from '../user/user';
 
 export function queryForJournal(value) {
 	const where = isNaN(value) 
@@ -61,12 +60,12 @@ export function postJournal(req, res, next) {
 
 
 	Journal.create({
-		name: req.body.name,
+		title: req.body.title,
 		slug: req.body.slug,
-		shortDescription: req.body.shortDescription,
-		longDescription: req.body.longDescription,
+		description: req.body.description,
+		about: req.body.about,
 		logo: req.body.logo,
-		icon: req.body.icon,
+		avatar: req.body.avatar,
 		website: req.body.website,
 		twitter: req.body.twitter,
 		facebook: req.body.facebook,
@@ -122,7 +121,7 @@ export function putJournal(req, res, next) {
 	// Filter to only allow certain fields to be updated
 	const updatedJournal = {};
 	Object.keys(req.body).map((key)=> {
-		if (['slug', 'name', 'shortDescription', 'longDescription', 'logo', 'icon', 'website', 'twitter', 'facebook', 'headerColor', 'headerMode', 'headerAlign', 'headerImage'].indexOf(key) > -1) {
+		if (['slug', 'title', 'description', 'about', 'logo', 'avatar', 'website', 'twitter', 'facebook', 'headerColor', 'headerMode', 'headerAlign', 'headerImage'].indexOf(key) > -1) {
 			updatedJournal[key] = req.body[key];
 		} 
 	});

@@ -16,7 +16,7 @@ get:
               slug: "my-doc-url",
               title: "Analysis of Spectral Filters",
               description: "This document compares 45 spectral filters.",
-              previewImage: "https://assets.pubpub.org/_testing/1483555461063.jpg",
+              avatar: "https://assets.pubpub.org/_testing/1483555461063.jpg",
               isClosed: null,
               hideAuthorsList: null,
               customAuthorList: null,
@@ -61,7 +61,7 @@ post:
         title: 
           description: title used for the new pub
           required: true
-        previewImage:
+        avatar:
           description: preview image to be used for the new pub
           required: true
         description:
@@ -76,7 +76,7 @@ post:
               slug: "my-doc-url",
               title: "Analysis of Spectral Filters",
               description: "This document compares 45 popular spectral filters and measures their efficacy.",
-              previewImage: "https://assets.pubpub.org/_testing/1483555461063.jpg",
+              avatar: "https://assets.pubpub.org/_testing/1483555461063.jpg",
               isClosed: null,
               hideAuthorsList: null,
               customAuthorList: null,
@@ -118,7 +118,7 @@ put:
           description: new title
         description:
           description: new description
-        previewImage:
+        avatar:
           description: new image
         isClosed: 
           description: new isClosed state
@@ -164,17 +164,17 @@ delete:
               error : "Error deleting pub"
             }
 
-/file/relations: !include ../pubFileRelations/pubFileRelations.raml
-/file/attributions: !include ../pubFileAttributions/pubFileAttributions.raml
-/versions: !include ../pubVersions/pubVersions.raml
-/contributors: !include ../pubContributors/pubContributors.raml
-/contributor/roles: !include ../pubContributorRoles/pubContributorRoles.raml
-/discussions: !include ../pubDiscussions/pubDiscussions.raml
-/reviewers: !include ../pubReviewers/pubReviewers.raml
-/labels: !include ../pubLabels/pubLabels.raml
-/reactions: !include ../pubReactions/pubReactions.raml
-/submits: !include ../pubSubmits/pubSubmits.raml
-/features: !include ../pubFeatures/pubFeatures.raml
+/file/relation: !include ../pubFileRelation/pubFileRelation.raml
+/file/attribution: !include ../pubFileAttribution/pubFileAttribution.raml
+/version: !include ../pubVersion/pubVersion.raml
+/contributor: !include ../pubContributor/pubContributor.raml
+/contributor/role: !include ../pubContributorRole/pubContributorRole.raml
+/discussion: !include ../pubDiscussion/pubDiscussion.raml
+/reviewer: !include ../pubReviewer/pubReviewer.raml
+/label: !include ../pubLabel/pubLabel.raml
+/reaction: !include ../pubReaction/pubReaction.raml
+/submit: !include ../pubSubmit/pubSubmit.raml
+/feature: !include ../pubFeature/pubFeature.raml
 
 
 
