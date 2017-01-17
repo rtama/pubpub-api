@@ -30,10 +30,10 @@ export function searchJournals(req, res, next) {
 			$or: [
 				{ title: { ilike: '%' + req.query.q + '%' } },
 				{ slug: { ilike: '%' + req.query.q + '%' } },
-				{ shortDescription: { ilike: '%' + req.query.q + '%' } },
+				{ description: { ilike: '%' + req.query.q + '%' } },
 			]
 		},
-		attributes: ['id', 'title', 'slug', 'shortDescription', 'logo', 'icon']
+		attributes: ['id', 'title', 'slug', 'description', 'logo', 'avatar']
 	})
 	.then(function(results) {
 		return res.status(201).json(results);
@@ -118,10 +118,10 @@ export function searchAll(req, res, next) {
 			$or: [
 				{ title: { ilike: '%' + req.query.q + '%' } },
 				{ slug: { ilike: '%' + req.query.q + '%' } },
-				{ shortDescription: { ilike: '%' + req.query.q + '%' } },
+				{ description: { ilike: '%' + req.query.q + '%' } },
 			]
 		},
-		attributes: ['id', 'title', 'slug', 'shortDescription', 'logo', 'icon']
+		attributes: ['id', 'title', 'slug', 'description', 'logo', 'avatar']
 	});
 
 	const findLabels = Label.findAll({
