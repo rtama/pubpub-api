@@ -15,7 +15,7 @@ export function queryForJournal(value) {
 			{ model: User, as: 'followers', attributes: userAttributes }, 
 			{ model: Label, as: 'collections' }, // These are labels owned by the journal
 			{ model: PubSubmit, as: 'pubSubmits', include: [{ model: Pub, as: 'pub' }] },
-			{ model: PubFeature, as: 'pubFeatures', include: [{ model: Pub, as: 'pub', include: [{ model: Label, as: 'labels', through: { attributes: [] } }] }] },
+			{ model: PubFeature, as: 'pubFeatures', include: [{ model: Pub, as: 'pub', include: [{ model: Label, as: 'labels' }] }] },
 			{ model: InvitedReviewer, as: 'invitationsCreated', attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }] },
 		]
 		// include: [{ all: true }]
@@ -55,7 +55,7 @@ export function getJournal(req, res, next) {
 				if (isAdmin) { return pubSubmit.pub.isPublished || pubSubmit.pub.isRestricted; }
 				return pubSubmit.pub.isPublished;
 			}),
-			pubFeatures: journalData.pubSubmits.filter((pubFeature)=> {
+			pubFeatures: journalData.pubFeatures.filter((pubFeature)=> {
 				if (isAdmin) { return pubFeature.pub.isPublished || pubFeature.pub.isRestricted; }
 				return pubFeature.pub.isPublished;
 			}),

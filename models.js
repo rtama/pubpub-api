@@ -580,10 +580,12 @@ const PubLabel = sequelize.define('PubLabel', {
 	hooks: {
 		afterCreate: function(updatedItem, options) { 
 			updatePubCache(updatedItem.pubId);
+			updateJournalCache(updatedItem.journalId);
 			updateLabelCache(updatedItem.labelId);
 		},
 		afterDestroy: function(updatedItem, options) { 
 			updatePubCache(updatedItem.pubId);
+			updateJournalCache(updatedItem.journalId);
 			updateLabelCache(updatedItem.labelId);
 		},
 	}
@@ -685,6 +687,7 @@ Pub.hasMany(Label, { onDelete: 'CASCADE', as: 'pubLabels', foreignKey: 'pubId' }
 // A Pub can have many Labels and a Label can apply to many pubs
 Pub.belongsToMany(Label, { onDelete: 'CASCADE', as: 'labels', through: 'PubLabel', foreignKey: 'pubId' });
 Label.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubs', through: 'PubLabel', foreignKey: 'labelId' });
+PubLabel.belongsTo(Journal, { onDelete: 'CASCADE', as: 'journal', foreignKey: 'journalId' });
 
 // A Contributor can have many roles and a Role can be used for many contributors
 // Role.belongsToMany(Contributor, { onDelete: 'CASCADE', as: 'contributors', through: 'ContributorRole', foreignKey: 'roleId' });
