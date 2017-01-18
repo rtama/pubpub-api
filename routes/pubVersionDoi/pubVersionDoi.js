@@ -125,7 +125,7 @@ export function postVersionDoi(req, res, next) {
 			},
 			body: '' +
 				'_profile: datacite\n' +
-				'_target: ' + encodeURIComponent('https://v3-dev.pubpub.org/pub/' + pubData.slug) + '\n' +
+				'_target: ' + encodeURIComponent('https://v3-dev.pubpub.org/pub/' + pubData.slug + '?version=' + selectedVersion.hash) + '\n' +
 				'datacite: ' + encodeURIComponent(dataCiteXmlString)
 		});
 	})
