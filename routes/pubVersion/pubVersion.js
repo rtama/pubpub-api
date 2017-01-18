@@ -151,7 +151,7 @@ export function putVersion(req, res, next) {
 
 	const updatedVersion = {};
 	Object.keys(req.body).map((key)=> {
-		if (['isPublished', 'isRestricted', 'doi', 'defaultFile'].indexOf(key) > -1) {
+		if (['isPublished', 'isRestricted', 'defaultFile'].indexOf(key) > -1) {
 			updatedVersion[key] = req.body[key];
 		} 
 	});

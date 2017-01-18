@@ -1,0 +1,31 @@
+displayName: DOI
+description: Routes to create a DOI for a specfic version
+post:
+  description: Create and assign a DOI to a specific version
+  body:
+    application/json:
+      formParameters:
+        pubId: 
+          description: id of the Pub this version is attached to
+          required: true
+          type: number
+        versionId: 
+          description: id of the Version the DOI will be assigned to
+          required: true
+          type: number
+
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                "doi": "10.2237.123"
+            }
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating DOI"
+            }

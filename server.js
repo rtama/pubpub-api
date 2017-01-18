@@ -148,6 +148,7 @@ if (process.env.WORKER !== 'true') {
 		require('./routes/pubContributorRole/pubContributorRole.js');
 		require('./routes/pubDiscussion/pubDiscussion.js');
 		require('./routes/pubVersion/pubVersion.js');
+		require('./routes/pubVersionDoi/pubVersionDoi.js');
 		require('./routes/pubLabel/pubLabel.js');
 		require('./routes/pubReaction/pubReaction.js');
 		require('./routes/pubReviewer/pubReviewer.js');
