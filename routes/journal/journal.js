@@ -80,9 +80,9 @@ export function postJournal(req, res, next) {
 
 
 	Journal.create({
-		title: req.body.title,
+		title: req.body.title.trim(),
 		slug: req.body.slug,
-		description: req.body.description,
+		description: req.body.description.trim(),
 		about: req.body.about,
 		logo: req.body.logo,
 		avatar: req.body.avatar,
@@ -142,7 +142,7 @@ export function putJournal(req, res, next) {
 	const updatedJournal = {};
 	Object.keys(req.body).map((key)=> {
 		if (['slug', 'title', 'description', 'about', 'logo', 'avatar', 'website', 'twitter', 'facebook', 'headerColor', 'headerMode', 'headerAlign', 'headerImage'].indexOf(key) > -1) {
-			updatedJournal[key] = req.body[key];
+			updatedJournal[key] = req.body[key].trim ? req.body[key].trim() : req.body[key];
 		} 
 	});
 
