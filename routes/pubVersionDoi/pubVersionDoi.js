@@ -113,7 +113,6 @@ export function postVersionDoi(req, res, next) {
 			}
 		};
 		const dataCiteXmlString = builder.create(dataciteXmlObject, { headless: true }).end({ pretty: true });
-		// return dataCiteXmlString;
 		return request({
 			// method: 'POST',
 			// uri: 'https://ezid.cdlib.org/shoulder/' + process.env.DOI_SHOULDER,

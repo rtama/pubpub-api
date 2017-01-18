@@ -134,9 +134,9 @@ export function postPub(req, res, next) {
 
 
 	Pub.create({
-		title: req.body.title,
-		slug: req.body.slug,
-		description: req.body.description,
+		title: req.body.title.trim(),
+		slug: req.body.slug.trim(),
+		description: req.body.description.trim(),
 		avatar: req.body.avatar, 
 	})
 	.then(function(newPub) {
@@ -192,7 +192,7 @@ export function putPub(req, res, next) {
 	const updatedPub = {};
 	Object.keys(req.body).map((key)=> {
 		if (['slug', 'title', 'description', 'avatar', 'isClosed', 'hideAuthors', 'customAuthorList', 'licenseId', 'defaultContext'].indexOf(key) > -1) {
-			updatedPub[key] = req.body[key];
+			updatedPub[key] = req.body[key].trim ? req.body[key].trim() : req.body[key];
 		} 
 	});
 

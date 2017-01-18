@@ -85,8 +85,8 @@ export function postUser(req, res, next) {
 		const newUser = {
 			email: email,
 			username: username,
-			firstName: req.body.firstName,
-			lastName: req.body.lastName,
+			firstName: req.body.firstName.trim(),
+			lastName: req.body.lastName.trim(),
 			password: req.body.password,
 			avatar: req.body.avatar,
 			bio: req.body.bio,
@@ -156,7 +156,7 @@ export function putUser(req, res, next) {
 	const updatedUser = {};
 	Object.keys(req.body).map((key)=> {
 		if (['username', 'firstName', 'lastName', 'avatar', 'email', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar'].indexOf(key) > -1) {
-			updatedUser[key] = req.body[key];
+			updatedUser[key] = req.body[key].trim ? req.body[key].trim() : req.body[key];
 		} 
 	});
 
