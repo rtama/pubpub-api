@@ -192,7 +192,7 @@ export function putPub(req, res, next) {
 	const updatedPub = {};
 	Object.keys(req.body).map((key)=> {
 		if (['slug', 'title', 'description', 'avatar', 'isClosed', 'hideAuthors', 'customAuthorList', 'licenseId', 'defaultContext'].indexOf(key) > -1) {
-			updatedPub[key] = req.body[key].trim ? req.body[key].trim() : req.body[key];
+			updatedPub[key] = req.body[key] && req.body[key].trim ? req.body[key].trim() : req.body[key];
 		} 
 	});
 

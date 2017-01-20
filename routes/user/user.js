@@ -156,7 +156,7 @@ export function putUser(req, res, next) {
 	const updatedUser = {};
 	Object.keys(req.body).map((key)=> {
 		if (['username', 'firstName', 'lastName', 'avatar', 'email', 'bio', 'publicEmail', 'github', 'orcid', 'twitter', 'website', 'googleScholar'].indexOf(key) > -1) {
-			updatedUser[key] = req.body[key].trim ? req.body[key].trim() : req.body[key];
+			updatedUser[key] = req.body[key] && req.body[key].trim ? req.body[key].trim() : req.body[key];
 		} 
 	});
 

@@ -142,7 +142,7 @@ export function putJournal(req, res, next) {
 	const updatedJournal = {};
 	Object.keys(req.body).map((key)=> {
 		if (['slug', 'title', 'description', 'about', 'logo', 'avatar', 'website', 'twitter', 'facebook', 'headerColor', 'headerMode', 'headerAlign', 'headerImage'].indexOf(key) > -1) {
-			updatedJournal[key] = req.body[key].trim ? req.body[key].trim() : req.body[key];
+			updatedJournal[key] = req.body[key] && req.body[key].trim ? req.body[key].trim() : req.body[key];
 		} 
 	});
 
