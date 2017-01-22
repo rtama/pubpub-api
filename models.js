@@ -136,6 +136,8 @@ const Pub = sequelize.define('Pub', {
 	isPublished: Sequelize.BOOLEAN,
 	isRestricted: Sequelize.BOOLEAN,
 	threadNumber: Sequelize.INTEGER, // Used for discussions, to mark top-level discussion with a unique (per-pub, per published/unpublished) number
+	headerColor: Sequelize.STRING,
+	headerImage: Sequelize.TEXT,
 	// cloneParentPubId
 	// cloneParentVersionId // Is cloneParentPubId needed if we are tracking clones by version?
 	// rootReplyPubId

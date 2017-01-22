@@ -191,7 +191,7 @@ export function putPub(req, res, next) {
 	// Filter to only allow certain fields to be updated
 	const updatedPub = {};
 	Object.keys(req.body).map((key)=> {
-		if (['slug', 'title', 'description', 'avatar', 'isClosed', 'hideAuthors', 'customAuthorList', 'licenseId', 'defaultContext'].indexOf(key) > -1) {
+		if (['slug', 'title', 'description', 'avatar', 'isClosed', 'hideAuthors', 'customAuthorList', 'licenseId', 'defaultContext', 'headerImage', 'headerColor'].indexOf(key) > -1) {
 			updatedPub[key] = req.body[key] && req.body[key].trim ? req.body[key].trim() : req.body[key];
 		} 
 	});
