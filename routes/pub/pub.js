@@ -19,6 +19,7 @@ export function queryForPub(value) {
 				separate: true,
 				include: [
 					{ model: Contributor, separate: true, as: 'contributors', include: [{ model: Role, as: 'roles' }, { model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
+					{ model: Version, separate: true, as: 'versions', include: [{ model: File, as: 'files' }] },
 					{ model: Label, as: 'labels' },
 					{ model: PubReaction, as: 'pubReactions', include: [{ model: Reaction, as: 'reaction' }] },
 				] 

@@ -39,7 +39,8 @@ const updateLabelCache = function(labelId) {
 const Sequelize = require('sequelize');
 const passportLocalSequelize = require('passport-local-sequelize');
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, { logging: false, dialectOptions: { ssl: true } });
+// const sequelize = new Sequelize(process.env.DATABASE_URL, { logging: false, dialectOptions: { ssl: true } });
+const sequelize = new Sequelize(process.env.DATABASE_URL, { logging: false, dialectOptions: { ssl: false } });
 
 // Change to true to update the model in the database.
 // NOTE: This being set to true will erase your data.
