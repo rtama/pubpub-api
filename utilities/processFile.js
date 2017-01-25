@@ -15,7 +15,7 @@ tmp.setGracefulCleanup();
 
 const uploadToPubPub = function(pathname, fileUrl) {
 	return new Promise(function(resolve, reject) {
-		if (fileUrl.indexOf('https://assets.pubpub.org') === 0) {
+		if (fileUrl.indexOf('https://assets.pubpub.org') === -1) {
 			resolve(uploadLocalFile(pathname));
 		} else {
 			resolve(null);	

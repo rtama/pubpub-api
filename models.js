@@ -68,7 +68,7 @@ const User = sequelize.define('User', {
 		allowNull: false,
 		validate: {
 			isLowercase: true,
-			isAlphanumeric: true, // No special characters
+			// isAlphanumeric: true, // No special characters
 			is: /^.*[A-Za-z]+.*$/, // Must contain at least one letter
 			// Does this catch spaces? We don't want to allow spaces.
 		},
@@ -130,7 +130,7 @@ const Pub = sequelize.define('Pub', {
 	// isReply: { type: Sequelize.BOOLEAN }, // May not be necessary. Presence of rootReplyPubId dictates isReply
 	isClosed: { type: Sequelize.BOOLEAN }, // Used for replies.
 	hideAuthorsList: { type: Sequelize.BOOLEAN },
-	customAuthorList: { type: Sequelize.TEXT },
+	// customAuthorList: { type: Sequelize.TEXT }, I don't think we need this... We can store custom names in the contributor
 	distinguishedClone: { type: Sequelize.BOOLEAN }, // ??TODO: Decide: Used to make a clone a 'distinguished branch'. Maybe this should be done with labels instead? If labels, then we have some weird permissioning conflicts between pub owners
 	inactive: Sequelize.BOOLEAN,
 	isPublished: Sequelize.BOOLEAN,
@@ -158,7 +158,7 @@ const Pub = sequelize.define('Pub', {
 const File = sequelize.define('File', {
 	type: { type: Sequelize.STRING },
 	name: { type: Sequelize.STRING },
-	path: { type: Sequelize.STRING },
+	// path: { type: Sequelize.STRING }, // Path is encoded in the name.
 	url: { type: Sequelize.TEXT },
 	content: { type: Sequelize.TEXT },
 	hash: { type: Sequelize.TEXT },
@@ -168,17 +168,15 @@ const File = sequelize.define('File', {
 // How do versions know their history?
 // Do we need to encode parentVersion and rootVersion to track histories?
 const Version = sequelize.define('Version', {
-	versionMessage: { type: Sequelize.TEXT },
+	message: { type: Sequelize.TEXT },
 	isPublished: { type: Sequelize.BOOLEAN },
 	isRestricted: { type: Sequelize.BOOLEAN }, // TODO: is this the right name for this mode? Should they all be one 'accessType' value?
 	hash: { type: Sequelize.TEXT },
-	// datePublished: { type: Sequelize.DATE }, // Don't need this, as the updated date has to be the publish date
+	publishedAt: { type: Sequelize.DATE }, 
 	doi: { type: Sequelize.TEXT },
 	defaultFile: Sequelize.TEXT,
-	// exportPDF: { type: Sequelize.TEXT }, // TODO: Perhaps this is an external service for all of the exports. Maintains it's own cache, can iterate on its own. No dependency in the versions for old export styles
-	// exportMarkdown: { type: Sequelize.TEXT },
-	// exportXML: { type: Sequelize.TEXT },
-	// exportHTML: { type: Sequelize.TEXT },
+	// pubId
+	// publishedBy
 }, {
 	hooks: {
 		afterCreate: function(updatedItem, options) { updatePubCache(updatedItem.pubId); },
@@ -244,14 +242,17 @@ const Role = sequelize.define('Role', {
 });
 
 const Highlight = sequelize.define('Highlight', {
-	text: { type: Sequelize.TEXT },
-	// userId: userId is used to mark who created the highlight
-	// pubId: pubId is used to mark which pub the highlight is from
-	// versionId: versionId is used to mark which version the highlight is from
-	// versionHash: hash of the version the highlight is from
-	// fileId
-	// fileHash
-	// fileName
+	// userId: { type: Sequelize.INTEGER },
+	// pubId: { type: Sequelize.INTEGER },
+	// versionId: { type: Sequelize.INTEGER },
+	versionHash: { type: Sequelize.TEXT },
+	// fileId: { type: Sequelize.INTEGER },
+	fileHash: { type: Sequelize.TEXT },
+	fileName: { type: Sequelize.TEXT },
+	prefix: { type: Sequelize.TEXT },
+	exact: { type: Sequelize.TEXT },
+	suffix: { type: Sequelize.TEXT },
+	context: { type: Sequelize.TEXT },
 });
 
 
@@ -300,6 +301,7 @@ const Contributor = sequelize.define('Contributor', {
 	},
 	canEdit: Sequelize.BOOLEAN,
 	canRead: Sequelize.BOOLEAN,
+	customName: Sequelize.TEXT,
 	isAuthor: Sequelize.BOOLEAN,
 	isHidden: Sequelize.BOOLEAN, // Whether the contributor shows up on the 'Contributors' list. isAuthor=true forces isHidden false (or isHidden is ignored at least)
 	inactive: Sequelize.BOOLEAN, // Used when a contributor is removed so we have a history of contributors and how they were applied/removed
@@ -569,11 +571,20 @@ const PubReaction = sequelize.define('PubReaction', {
 	// replyRootPubId
 	// reactionId
 }, {
+	indexes: [
+		{
+			name: 'PubReactions_pkey',
+			method: 'BTREE',
+			fields: ['userId', 'pubId', 'reactionId'],
+			unique: true,
+		}
+	],
 	hooks: {
 		afterCreate: function(updatedItem, options) { updatePubCache(updatedItem.replyRootPubId); },
 		afterDestroy: function(updatedItem, options) { updatePubCache(updatedItem.replyRootPubId); },
 	}
 });
+PubReaction.removeAttribute('id'); // This feels a bit stranger, but sequelize is overwriting our index defined above unless we add this.
 
 // Used to connect specific label to specific pub
 const PubLabel = sequelize.define('PubLabel', {
@@ -638,6 +649,7 @@ FileAttribution.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pu
 
 // A version belongs to a single pub, but a pub can have many versions
 Pub.hasMany(Version, { onDelete: 'CASCADE', as: 'versions', foreignKey: 'pubId' });
+Version.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'publishedBy' });
 
 // A user can be an admin on many journals, and a journal can have many admins
 User.belongsToMany(Journal, { onDelete: 'CASCADE', as: 'journals', through: 'JournalAdmin', foreignKey: 'userId' });
@@ -703,6 +715,7 @@ Journal.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubsFeatured', through: '
 PubFeature.belongsTo(Journal, { onDelete: 'CASCADE', as: 'journal', foreignKey: 'journalId' });
 PubFeature.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
 PubFeature.belongsTo(Version, { onDelete: 'CASCADE', as: 'version', foreignKey: 'versionId' });
+PubFeature.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'createdBy' });
 Pub.hasMany(PubFeature, { onDelete: 'CASCADE', as: 'pubFeatures', foreignKey: 'pubId' });
 Journal.hasMany(PubFeature, { onDelete: 'CASCADE', as: 'pubFeatures', foreignKey: 'journalId' });
 
@@ -711,6 +724,7 @@ Pub.belongsToMany(Journal, { onDelete: 'CASCADE', as: 'journalsSubmitted', throu
 Journal.belongsToMany(Pub, { onDelete: 'CASCADE', as: 'pubsSubmitted', through: 'PubSubmit', foreignKey: 'journalId' });
 PubSubmit.belongsTo(Journal, { onDelete: 'CASCADE', as: 'journal', foreignKey: 'journalId' });
 PubSubmit.belongsTo(Pub, { onDelete: 'CASCADE', as: 'pub', foreignKey: 'pubId' });
+PubSubmit.belongsTo(User, { onDelete: 'CASCADE', as: 'user', foreignKey: 'createdBy' });
 Pub.hasMany(PubSubmit, { onDelete: 'CASCADE', as: 'pubSubmits', foreignKey: 'pubId' });
 Journal.hasMany(PubSubmit, { onDelete: 'CASCADE', as: 'pubSubmits', foreignKey: 'journalId' });
 
@@ -740,6 +754,7 @@ Pub.hasMany(Highlight, { onDelete: 'CASCADE', as: 'highlights', foreignKey: 'pub
 Version.hasMany(Highlight, { onDelete: 'CASCADE', as: 'highlights', foreignKey: 'versionId' });
 // A user can have many highlights, but a highlight belongs to only a single user
 User.hasMany(Highlight, { onDelete: 'CASCADE', as: 'highlights', foreignKey: 'userId' });
+File.hasMany(Highlight, { onDelete: 'CASCADE', as: 'highlights', foreignKey: 'fileId' });
 
 // A license can be used on many pubs, but a pub belongs to only a single license
 License.hasMany(Pub, { onDelete: 'CASCADE', as: 'pubs', foreignKey: 'licenseId' });
