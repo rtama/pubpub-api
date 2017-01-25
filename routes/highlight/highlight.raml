@@ -1,0 +1,88 @@
+displayName: Highlight
+description: Routes to create and delete a highlight object
+post:
+  description: Create a new Highlight
+  body:
+    application/json:
+      formParameters:
+        userId:
+          type: number
+          required: true
+        pubId:
+          type: number
+          required: true
+        versionId:
+          type: number
+          required: true
+        versionHash:
+          type: string
+          required: true
+        fileId:
+          type: number
+          required: true
+        fileHash:
+          type: string
+          required: true
+        fileName:
+          type: string
+          required: true
+        prefix:
+          type: string
+          required: true
+        exact:
+          type: string
+          required: true
+        suffix:
+          type: string
+          required: true
+        context:
+          type: string
+          required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+              "userId": 24,
+              "pubId": 13, 
+              "versionId": 29,
+              "versionHash": "6dee0a7e31a21147acc6fab0484bffc7fee946d0",
+              "fileId": 44,
+              "fileHash": "23ee0a7e31a21147acc45ab0484bffc7fee94622",
+              "fileName": "main.ppub",
+              "prefix": "This is ",
+              "exact": "the sentence wi",
+              "suffix": "th the highlight.",
+              "context": "There are many sentences in this document. This is the sentence with the highlight. Do you see it? Great!",
+              "updatedAt": "2016-11-22T02:10:21.874Z",
+              "createdAt": "2016-11-22T02:10:21.874Z"
+            }
+
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error creating highlight"
+            }
+delete:
+  description: Remove a follow
+  body:
+    application/json:
+      formParameters:
+        highlightId: 
+          required: true
+          type: number
+  responses:
+    200:
+      body:
+        application/json:
+          example: "true"
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error deleting highlight"
+            }

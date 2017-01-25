@@ -128,6 +128,7 @@ if (process.env.WORKER !== 'true') {
 		require('./routes/licenses/licenses.js');
 		require('./routes/signUp/signUp.js');
 		require('./routes/label/label.js');
+		require('./routes/highlight/highlight.js');
 		
 		require('./routes/followsPub/followsPub.js');
 		require('./routes/followsJournal/followsJournal.js');
