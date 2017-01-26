@@ -45,11 +45,16 @@ export function getUser(req, res, next) {
 		return Promise.all([outputData, setCache]);
 	})
 	.spread(function(userData, setCacheResult) {
-		const outputUserData = userData;
-		if (!authenticated) {
-			delete outputUserData.email;
-			delete outputUserData.accessToken;
-		}
+		const outputUserData = {
+			...userData,
+			email: authenticated ? userData.email : undefined,
+			accessToken: authenticated ? userData.accessToken : undefined,
+			contributions: userData.contributions.filter((contribution)=> {
+				console.log(contribution);
+				if (!contribution.pub.isPublished && !authenticated) { return false; }
+				return true;
+			}),
+		};
 		console.timeEnd('userQueryTime');
 		
 		return res.status(201).json(outputUserData);
