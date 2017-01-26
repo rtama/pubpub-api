@@ -89,4 +89,42 @@ export function postDiscussion(req, res, next) {
 }
 app.post('/pub/discussion', postDiscussion);
 
-// PUT, DELETE Discussions is not necessary as all of the edits occur through the Pub API routes
+export function putPubDiscussion(req, res, next) {
+
+	// Used to allow Pub authors to close discussions linked to their pub.
+
+	const user = req.user || {};
+	if (!user.id) { return res.status(500).json('Not authorized'); }
+
+	// Filter to only allow certain fields to be updated
+	const updatedPub = {};
+	Object.keys(req.body).map((key)=> {
+		if (['isClosed'].indexOf(key) > -1) {
+			updatedPub[key] = req.body[key] && req.body[key].trim ? req.body[key].trim() : req.body[key];
+		} 
+	});
+
+	Contributor.findOne({
+		where: { userId: user.id, pubId: req.body.replyRootPubId },
+		raw: true,
+	})
+	.then(function(contributorData) {
+		if (!contributorData || (!contributorData.canEdit && !contributorData.isAuthor)) {
+			throw new Error('Not Authorized to update this pub');
+		}
+		return Pub.update(updatedPub, {
+			where: { id: req.body.pubId },
+			individualHooks: true,
+		});
+	})
+	.then(function(updatedCount) {
+		return res.status(201).json(true);
+	})
+	.catch(function(err) {
+		console.error('Error in putPubDiscussion: ', err);
+		return res.status(500).json(err.message);
+	});
+}
+app.put('/pub/discussion', putPubDiscussion);
+
+// DELETE Discussions is not necessary as all of the edits occur through the Pub API routes

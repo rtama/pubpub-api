@@ -34,3 +34,30 @@ post:
             {
               error : "Error creating pub"
             }
+put:
+  description: Used to allow Pub authors to close discussions linked to their pub.
+  body:
+    application/json:
+      formParameters:
+        pubId: 
+          description: id of the pub to be changed
+          required: true
+          type: number
+        replyRootPubId: 
+          required: true
+          type: number
+        isClosed:
+          type: boolean
+        
+  responses:
+    200:
+      body:
+        application/json:
+          example: true
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error updating pub"
+            }
