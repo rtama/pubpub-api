@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import app from '../../server';
-import { Pub, User, Label, Journal } from '../../models';
+import { Pub, User, Label, Journal, Highlight } from '../../models';
 import { userAttributes } from '../user/user';
 
 export function searchUsers(req, res, next) {
@@ -18,7 +18,7 @@ export function searchUsers(req, res, next) {
 		return res.status(201).json(results);
 	})
 	.catch(function(err) {
-		console.error('Error in searchUser: ', err);
+		console.error('Error in searchUsers: ', err);
 		return res.status(500).json(err.message);
 	});
 }
@@ -39,7 +39,7 @@ export function searchJournals(req, res, next) {
 		return res.status(201).json(results);
 	})
 	.catch(function(err) {
-		console.error('Error in searchJournal: ', err);
+		console.error('Error in searchJournals: ', err);
 		return res.status(500).json(err.message);
 	});
 }
@@ -84,11 +84,40 @@ export function searchLabels(req, res, next) {
 		return res.status(201).json(results);
 	})
 	.catch(function(err) {
-		console.error('Error in searchLabel: ', err);
+		console.error('Error in searchLabels: ', err);
 		return res.status(500).json(err.message);
 	});
 }
 app.get('/search/label', searchLabels);
+
+export function searchHighlights(req, res, next) {
+	const user = req.user || {};
+	const userId = user.id;
+	const pubId = req.query.pubId;
+	const search = req.query.q;
+	Highlight.findAll({
+		where: {
+			$or: [
+				{
+					userId: userId,
+					pubId: pubId,
+				},
+				{
+					userId: userId,
+					exact: { ilike: '%' + search + '%' },
+				}
+			]
+		}
+	})
+	.then(function(results) {
+		return res.status(201).json(results);
+	})
+	.catch(function(err) {
+		console.error('Error in searchHighlights: ', err);
+		return res.status(500).json(err.message);
+	});
+}
+app.get('/search/highlight', searchHighlights);
 
 export function searchAll(req, res, next) {
 	const findPubs = Pub.findAll({

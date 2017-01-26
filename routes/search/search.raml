@@ -101,7 +101,33 @@ description: Routes to access PubPub search features
       500:
         body:
           application/json:
-            example: "No Labels found"               
+            example: "No Labels found"    
+/highlight:
+  displayName: Highlight
+  get: 
+    description: Search for highlights made by a given user. If pubId is supplied, all user highlights on that pub will be returned. Additionally, if q is supplied, all user highlights (across all pubs) which match that search will be returned.
+    queryParameters:
+      q:
+        type: string
+      pubId: 
+        type: number
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [
+                {
+                "id": 1,
+                "prefix": "This is",
+                "exact": " a highlighted ",
+                "suffix": "sentence",
+                }
+              ]
+      500:
+        body:
+          application/json:
+            example: "No Highlights found"    
 /all:
   displayName: All
   get: 
