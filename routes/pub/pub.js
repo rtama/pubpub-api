@@ -5,8 +5,8 @@ import { userAttributes } from '../user/user';
 
 export function queryForPub(value) {
 	const where = isNaN(value) 
-		? { slug: value, inactive: { $not: true } }
-		: { id: value, inactive: { $not: true } };
+		? { slug: value }
+		: { id: value };
 	return Pub.findOne({
 		where: where,
 		include: [
@@ -56,9 +56,10 @@ export function getPub(req, res, next) {
 		return queryForPub(req.query.slug);
 	})
 	.then(function(pubData) {
-		if (!pubData) { return res.status(500).json('Pub not found'); }
+		if (!pubData) { throw new Error('Pub not found'); }
 		const outputData = pubData.toJSON ? pubData.toJSON() : JSON.parse(pubData);
 		console.log('Using Cache: ', !pubData.toJSON);
+		if (outputData.inactive) { throw new Error('Pub not found'); }
 		const setCache = pubData.toJSON ? redisClient.setexAsync('p_' + req.query.slug, 120, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, Reaction.findAll({ raw: true }), Role.findAll({ raw: true }), setCache]);
 	})
@@ -237,7 +238,7 @@ export function deletePub(req, res, next) {
 			throw new Error('Not Authorized to delete this pub');
 		}
 		return Pub.update({ inactive: true }, {
-			where: { id: req.body.pubId },
+			where: { id: req.body.pubId, isPublished: { $not: true } },
 			individualHooks: true,
 		});
 	})

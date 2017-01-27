@@ -148,12 +148,18 @@ const Pub = sequelize.define('Pub', {
 	// defaultContext
 }, {
 	hooks: {
-		afterCreate: function(updatedItem, options) { updatePubCache(updatedItem.id); },
-		afterUpdate: function(updatedItem, options) { updatePubCache(updatedItem.id); },
-		afterDelete: function(updatedItem, options) { updatePubCache(updatedItem.id); },
-		afterCreate: function(updatedItem, options) { updatePubCache(updatedItem.replyRootPubId); },
-		afterUpdate: function(updatedItem, options) { updatePubCache(updatedItem.replyRootPubId); },
-		afterDelete: function(updatedItem, options) { updatePubCache(updatedItem.replyRootPubId); },
+		afterCreate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.id); 
+			updatePubCache(updatedItem.replyRootPubId);
+		},
+		afterUpdate: function(updatedItem, options) { 
+			updatePubCache(updatedItem.id); 
+			updatePubCache(updatedItem.replyRootPubId);
+		},
+		afterDelete: function(updatedItem, options) { 
+			updatePubCache(updatedItem.id); 
+			updatePubCache(updatedItem.replyRootPubId);
+		},
 	}
 });
 
