@@ -1,6 +1,10 @@
+import Promise from 'bluebird';
+import SHA1 from 'crypto-js/sha1';
+import encHex from 'crypto-js/enc-hex';
 import app from '../../server';
-import { Pub, User, Label, PubLabel, Contributor, Reaction, Role, PubReaction } from '../../models';
+import { Pub, User, Label, File, PubLabel, Contributor, Reaction, Role, PubReaction, Version, VersionFile } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
+import { processFile } from '../../utilities/processFile';
 import { createActivity } from '../../utilities/createActivity';
 import { userAttributes } from '../user/user';
 
@@ -54,26 +58,69 @@ export function postDiscussion(req, res, next) {
 		return [newDiscussion, createActivity('newDiscussion', user.id, req.body.replyRootPubId, newDiscussion.id)];
 	})
 	.spread(function(newDiscussion, newActivity) {
+		const newDiscussionId = newDiscussion.id;
 		const createContributor = Contributor.create({
 			userId: user.id,
-			pubId: newDiscussion.dataValues.id,
+			pubId: newDiscussionId,
 			isAuthor: true,
 		});
 		const labels = req.body.labels || [];
 		const newLabels = labels.map((labelId)=> {
-			return { pubId: newDiscussion.dataValues.id, labelId: labelId };
+			return { pubId: newDiscussionId, labelId: labelId };
 		});
 		const createPubLabels = PubLabel.bulkCreate(newLabels);
 
+
+		const newFiles = req.body.files || [];
+		const processFilePromises = newFiles.map((file)=> {
+			return processFile(file);
+		});
+
 		// Create versions, labels, files here?
-		return Promise.all([createContributor, createPubLabels]);
+		return Promise.all([newDiscussionId, createContributor, createPubLabels, Promise.all(processFilePromises)]);
+	})
+	.spread(function(newDiscussionId, newContributor, newPubLabels, processResults) {
+		const newFiles = req.body.files || [];
+		const filesHashes = [];
+
+		const newFilesWithContent = newFiles.map((file, index)=> {
+			filesHashes.push(processResults[index].hash);
+			return { ...file, ...processResults[index], pubId: newDiscussionId };
+		});
+
+		// To generate the version hash, take the hash of all the files, sort them alphabetically, concatenate them, and then hash that string.
+		const fileHashString = filesHashes.sort((foo, bar)=> {
+			if (foo > bar) { return 1; }
+			if (foo < bar) { return -1; }
+			return 0;
+		})
+		.reduce((previous, current)=> {
+			return previous + current;
+		}, '');
+
+		const createFiles = File.bulkCreate(newFilesWithContent, { returning: true });
+		const createVersion = Version.create({
+			versionMessage: 'First discussion version',
+			isPublished: !req.body.isPrivate,
+			hash: SHA1(fileHashString).toString(encHex),
+			pubId: newDiscussionId,
+			defaultFile: newFiles[0].name,
+		});
+
+		return Promise.all([createVersion, createFiles]);
+	})
+	.spread(function(addedVersion, addedFiles) {
+		const newVersionFileEntries = [...addedFiles].map((file)=> {
+			return { versionId: addedVersion.id, fileId: file.id };
+		});
+		return VersionFile.bulkCreate(newVersionFileEntries);
 	})
 	.then(function() {
 		return Pub.findOne({
 			where: { slug: newSlug },
 			include: [
 				{ model: Contributor, as: 'contributors', include: [{ model: Role, as: 'roles' }, { model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
-				// { model: Version, as: 'versions', include: [{ model: File, as: 'files', include: [{ model: File, as: 'sources' }, { model: File, as: 'destinations' }, { model: User, as: 'users' }] }] },
+				{ model: Version, separate: true, as: 'versions', include: [{ model: File, as: 'files' }] },
 				{ model: Label, as: 'labels' },
 				{ model: PubReaction, as: 'pubReactions', include: [{ model: Reaction, as: 'reaction' }] },
 			]

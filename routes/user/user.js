@@ -88,19 +88,19 @@ export function postUser(req, res, next) {
 	})
 	.then(function() {
 		const newUser = {
-			email: email,
-			username: username,
+			email: email.trim(),
+			username: username.trim(),
 			firstName: req.body.firstName.trim(),
 			lastName: req.body.lastName.trim(),
 			password: req.body.password,
 			avatar: req.body.avatar,
-			bio: req.body.bio,
+			bio: req.body.bio.trim(),
 			publicEmail: req.body.publicEmail,
-			website: req.body.website,
-			twitter: req.body.twitter,
-			orcid: req.body.orcid,
-			github: req.body.github,
-			googleScholar: req.body.googleScholar,
+			website: req.body.website.trim(),
+			twitter: req.body.twitter.trim(),
+			orcid: req.body.orcid.trim(),
+			github: req.body.github.trim(),
+			googleScholar: req.body.googleScholar.trim(),
 			accessToken: generateHash(),
 		};
 
