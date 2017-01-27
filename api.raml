@@ -52,9 +52,9 @@ documentation:
 
       All content within a pub is versioned. To achieve this, a pub has a series of 'versions'. Each version is a unique list of file ids. New files replace old file ids, and a new version is created. In this way, all (versions of) files are maintained and a pub accesses them through the the version wrapper.
 
-      To create a version, send a `POST` request to `pub/versions` ([go to docs](#pub_versions)). In this version, an array of File objects must be included. If the file URL is not a pubpub URL, the file will be uploaded to pubpub so that they can be properly archived.
+      To create a version, send a `POST` request to `pub/version` ([go to docs](#pub_versions)). In this version, an array of File objects must be included. If the file URL is not a pubpub URL, the file will be uploaded to pubpub so that they can be properly archived.
 
-      `POST` request sample body to `/pub/versions`
+      `POST` request sample body to `/pub/version`
       ```javascript
       {
         pubId: 114, 
@@ -80,9 +80,9 @@ documentation:
 
       #### 3. Add Contributors
         
-      When a pub is created, the authenticated user who created the pub is set by default to be an author. If the pub has additional contributors, they can be added using the API. Submit a `POST` request to `pub/contributors` ([go to docs](#pub_contributors)). If you're unsure of a user's id, you can search for users by name and username using the `search/users` endpoint ([go to docs](#search_user))
+      When a pub is created, the authenticated user who created the pub is set by default to be an author. If the pub has additional contributors, they can be added using the API. Submit a `POST` request to `pub/contributor` ([go to docs](#pub_contributors)). If you're unsure of a user's id, you can search for users by name and username using the `search/users` endpoint ([go to docs](#search_user))
 
-      `POST` request sample body to `/pub/contributors`
+      `POST` request sample body to `/pub/contributor`
       ```javascript
       {
         pubId: 114,
@@ -91,9 +91,9 @@ documentation:
       ```
       By default, this use is added as a contributor with no read or edit permissions, and is not listed as an author. To update these parameters, send a PUT request to 
       
-      PUT request to set permissions to `pub/contributors` ([go to docs](#pub_contributors)). The contributorId is the id of the object returned by the previous `POST` to `/pub/contributors`
+      PUT request to set permissions to `pub/contributor` ([go to docs](#pub_contributors)). The contributorId is the id of the object returned by the previous `POST` to `/pub/contributor`
 
-      `PUT` request sample body to `/pub/contributors`
+      `PUT` request sample body to `/pub/contributor`
       ```javascript
         {
           canEdit: true,
@@ -107,9 +107,9 @@ documentation:
 
       #### 4. Publish a version
 
-      New versions are private by default. If a pub has no public versions, it too is private. To publish a version (and thus make the pub publicly available), send a `PUT` request to `/pub/versions` ([go to docs](#pub_versions)).
+      New versions are private by default. If a pub has no public versions, it too is private. To publish a version (and thus make the pub publicly available), send a `PUT` request to `/pub/version` ([go to docs](#pub_versions)).
 
-      `PUT` request sample body to `/pub/versions`
+      `PUT` request sample body to `/pub/version`
       ```javascript
       {
         isPublished: true,
