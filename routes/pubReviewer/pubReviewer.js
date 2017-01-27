@@ -54,7 +54,7 @@ export function postReviewer(req, res, next) {
 		const hash = signUpData.hash;
 		const templateId = 1219221;
 		const inviterTitle = invitedReviewerData.inviterJournal
-			? invitedReviewerData.inviterUser.firstName + ' ' + invitedReviewerData.inviterUser.lastName + ' from ' + invitedReviewerData.inviterJournal.name
+			? invitedReviewerData.inviterUser.firstName + ' ' + invitedReviewerData.inviterUser.lastName + ' from ' + invitedReviewerData.inviterJournal.title
 			: invitedReviewerData.inviterUser.firstName + ' ' + invitedReviewerData.inviterUser.lastName;
 
 		const pubPathname = '/pub/' + invitedReviewerData.pub.slug;
