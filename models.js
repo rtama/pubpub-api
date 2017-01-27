@@ -44,7 +44,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, { logging: false, dial
 
 // Change to true to update the model in the database.
 // NOTE: This being set to true will erase your data.
-sequelize.sync({ force: false });
+sequelize.sync({ force: true });
 
 // Used to collect emails to create user accounts with.
 // Trigger is attached such that emails are sent when a new row is added.
