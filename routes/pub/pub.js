@@ -222,9 +222,10 @@ export function putPub(req, res, next) {
 app.put('/pub', putPub);
 
 export function deletePub(req, res, next) {
-	// Used to set the pub to inactive
-	
+	// Used to delete the pub
 	// Check if authenticated, update, return true.
+	// If we want to maintain deleted work - we should still destroy so that links cascade deletes 
+	// but perhaps insert the pub into a 'deletedPubs' table
 
 	const user = req.user || {};
 	if (!user.id) { return res.status(500).json('Not authorized'); }
