@@ -59,8 +59,8 @@ export function getPub(req, res, next) {
 		if (!pubData) { throw new Error('Pub not found'); }
 		const outputData = pubData.toJSON ? pubData.toJSON() : JSON.parse(pubData);
 		console.log('Using Cache: ', !pubData.toJSON);
-		if (outputData.inactive) { throw new Error('Pub not found'); }
 		const setCache = pubData.toJSON ? redisClient.setexAsync('p_' + req.query.slug, 120, JSON.stringify(outputData)) : {};
+		if (outputData.inactive) { throw new Error('Pub Deleted'); }
 		return Promise.all([outputData, Reaction.findAll({ raw: true }), Role.findAll({ raw: true }), setCache]);
 	})
 	.spread(function(pubData, reactionsData, rolesData) {
@@ -243,6 +243,14 @@ export function deletePub(req, res, next) {
 		});
 	})
 	.then(function(updatedCount) {
+		return queryForPub(req.body.pubId);
+	})
+	.then(function(pubData) {
+		const output = pubData.toJSON ? pubData.toJSON() : pubData;
+		console.log(`Going to reset p_${pubData.slug}`);
+		return redisClient.setexAsync(`p_${pubData.slug}`, 120, JSON.stringify(output));
+	})
+	.then(function() {
 		return res.status(201).json(true);
 	})
 	.catch(function(err) {
