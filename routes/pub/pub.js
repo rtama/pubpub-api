@@ -237,20 +237,20 @@ export function deletePub(req, res, next) {
 		if (!contributorData.canEdit && !contributorData.isAuthor) {
 			throw new Error('Not Authorized to delete this pub');
 		}
-		return Pub.update({ inactive: true }, {
+		return Pub.findOne({
+			where: { id: req.body.pubId, isPublished: { $not: true } },
+		});
+	})
+	.then(function(pubData) {
+		return redisClient.setexAsync(`p_${pubData.slug}`, 120, JSON.stringify({ inactive: true }));
+	})
+	.then(function() {
+		return Pub.destroy({
 			where: { id: req.body.pubId, isPublished: { $not: true } },
 			individualHooks: true,
 		});
 	})
 	.then(function(updatedCount) {
-		return queryForPub(req.body.pubId);
-	})
-	.then(function(pubData) {
-		const output = pubData.toJSON ? pubData.toJSON() : pubData;
-		console.log(`Going to reset p_${pubData.slug}`);
-		return redisClient.setexAsync(`p_${pubData.slug}`, 120, JSON.stringify(output));
-	})
-	.then(function() {
 		return res.status(201).json(true);
 	})
 	.catch(function(err) {
