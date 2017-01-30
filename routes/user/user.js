@@ -50,7 +50,6 @@ export function getUser(req, res, next) {
 			email: authenticated ? userData.email : undefined,
 			accessToken: authenticated ? userData.accessToken : undefined,
 			contributions: userData.contributions.filter((contribution)=> {
-				console.log(contribution);
 				if (!contribution.pub.isPublished && !authenticated) { return false; }
 				return true;
 			}),

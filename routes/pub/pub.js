@@ -155,9 +155,9 @@ export function postPub(req, res, next) {
 		});
 		// Create default pub-owned labels
 		const createLabels = Label.bulkCreate([
-			{ pubId: newPub.dataValues.id, title: 'Question', color: '#f39c12' },
-			{ pubId: newPub.dataValues.id, title: 'Review', color: '#3498db' },
-			{ pubId: newPub.dataValues.id, title: 'Copy editing', color: '#c0392b' },
+			{ pubId: newPub.dataValues.id, title: 'Question', color: '#ED5565' },
+			{ pubId: newPub.dataValues.id, title: 'Review', color: '#8CC152' },
+			{ pubId: newPub.dataValues.id, title: 'Copy editing', color: '#AC92EC' },
 		]);
 		
 		return Promise.all([createContributor, createFollow, createLabels]);
