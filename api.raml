@@ -6,8 +6,8 @@ documentation:
       This API provides access to the PubPub database.
       All requests and responses are in the form of application/json.
       Requests should be made to the following URL paths added to the hostname
-      https://api-v2-dev.pubpub.org. For example https://api-v2-dev.pubpub.org/user?username=test1.
-      This API and the data it uses are currently accessible through the dev frontend at https://v3-dev.pubpub.org. 
+      https://api-v3.pubpub.org. For example https://api-v3.pubpub.org/user?username=test1.
+      This API and the data it uses are currently accessible through the dev frontend at https://www.pubpub.org. 
 
   - title: Authentication
     content: |
@@ -15,9 +15,9 @@ documentation:
       1. A session cookie in the request headers
       2. [Basic Auth](https://en.wikipedia.org/wiki/Basic_access_authentication)
       
-      The cookie method is used when interacting with the database through a (often proxied) frontend. For API requests made from scripts or bots, it is best to use Basic Auth. To test basic auth, simple URL encoding is sufficient, e.g. `https://[username]:[accessToken]@api-v2-dev.pubpub.org/user?username=test1`
+      The cookie method is used when interacting with the database through a (often proxied) frontend. For API requests made from scripts or bots, it is best to use Basic Auth. To test basic auth, simple URL encoding is sufficient, e.g. `https://[username]:[accessToken]@api-v3.pubpub.org/user?username=test1`
 
-      The accessToken for each user can be found on the settings page their profile (https://v3-dev.pubpub.org/user/test1/profile). 
+      The accessToken for each user can be found on the settings page their profile (https://www.pubpub.org/user/test1/profile). 
 
       For most secured routes, authentication is optional. If authenticated, private data will be returned, but if not, any publicly available data is sent. For example, the public query for a user will return their name, image, and basic profile contents. An authenticated query for a user will return that user's email and other secured fields.
 
