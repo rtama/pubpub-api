@@ -221,7 +221,7 @@ const Journal = sequelize.define('Journal', {
 	description: { 
 		type: Sequelize.TEXT,
 		validate: {
-			len: [1, 140],
+			len: [0, 280],
 		}, 
 	},
 	about: { type: Sequelize.TEXT },
