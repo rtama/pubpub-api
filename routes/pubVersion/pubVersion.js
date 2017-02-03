@@ -81,7 +81,7 @@ export function postVersion(req, res, next) {
 
 		const createFiles = File.bulkCreate(newFilesWithContent, { returning: true });
 		const createVersion = Version.create({
-			versionMessage: req.body.versionMessage,
+			message: req.body.versionMessage,
 			isPublished: !!req.body.isPublished,
 			hash: SHA1(fileHashString).toString(encHex),
 			pubId: req.body.pubId,
