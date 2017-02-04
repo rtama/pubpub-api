@@ -12,6 +12,7 @@
   "scripts": {
     "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "npm run build-docs",
     "start": "nodemon api.js --ignore workers/",
     "start-cache-worker": "WORKER=true nodemon workers/initCacheWorker.js --watch workers/cacheWorker.js",
     "build-docs": "mkdir -p dist; raml2html -t template/template.nunjucks api.raml > dist/index.html"
