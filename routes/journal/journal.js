@@ -13,7 +13,7 @@ export function queryForJournal(value) {
 		include: [
 			{ model: JournalAdmin, as: 'admins', include: [{ model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
 			{ model: User, as: 'followers', attributes: userAttributes }, 
-			{ model: Label, as: 'collections' }, // These are labels owned by the journal
+			{ model: Label, as: 'pages' }, // These are labels owned by the journal
 			{ model: PubSubmit, as: 'pubSubmits', include: [{ model: Pub, as: 'pub' }] },
 			{ model: PubFeature, as: 'pubFeatures', include: [{ model: Pub, as: 'pub', include: [{ model: Label, as: 'labels' }] }] },
 			{ model: InvitedReviewer, as: 'invitationsCreated', attributes: ['name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }] },

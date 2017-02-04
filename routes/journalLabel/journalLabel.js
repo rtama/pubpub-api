@@ -3,7 +3,7 @@ import { Label, PubLabel, JournalAdmin, Journal } from '../../models';
 
 
 export function postLabel(req, res, next) {
-	// Add a new journal-owned label (collection) to a pub
+	// Add a new journal-owned label (page) to a pub
 	// These are already existing labels that we're adding
 	// Authenticate. If the label to be applied has the journalId in which the user is an admin of.
 	const user = req.user || {};

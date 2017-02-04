@@ -27,7 +27,7 @@ export function queryForPub(value) {
 			{ model: Label, as: 'labels', through: { attributes: [] } }, // These are labels applied to the pub
 			{ model: Label, separate: true, as: 'pubLabels' }, // These are labels owned by the pub, and used for discussions. 
 			{ model: PubSubmit, separate: true, as: 'pubSubmits', include: [{ model: Journal, as: 'journal', include: [{ model: JournalAdmin, as: 'admins' }] }] },
-			{ model: PubFeature, separate: true, as: 'pubFeatures', include: [{ model: Journal, as: 'journal', include: [{ model: Label, as: 'collections' }] }] },
+			{ model: PubFeature, separate: true, as: 'pubFeatures', include: [{ model: Journal, as: 'journal', include: [{ model: Label, as: 'pages' }] }] },
 			{ model: Pub, separate: true, as: 'clones' },
 			{ model: InvitedReviewer, separate: true, as: 'invitedReviewers', attributes: ['id', 'name', 'pubId', 'invitedUserId', 'inviterUserId', 'inviterJournalId', 'invitationAccepted', 'invitationRejected', 'rejectionReason'], include: [{ model: User, as: 'invitedUser', attributes: userAttributes }, { model: User, as: 'inviterUser', attributes: userAttributes }, { model: Journal, as: 'inviterJournal' }] },
 			{ model: License, as: 'license' },

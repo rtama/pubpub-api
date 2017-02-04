@@ -19,7 +19,7 @@ const activities = {
 	createdJournal: ['actorUserId', 'targetJournalId'],
 	addedAdmin: ['actorUserId', 'objectUserId', 'targetJournalId'], // Steve(actor) added Erin(object) as an admin to Journal(target)
 	featuredPub: ['actorJournalId', 'targetPubId'], // Journal of Physics(actor) featured Pub (target)
-	createdJournalLabel: ['actorJournalId', 'targetLabelId'], // Journal of Physics(actor) created a new collection, Label(target)
+	createdJournalLabel: ['actorJournalId', 'targetLabelId'], // Journal of Physics(actor) created a new page, Label(target)
 };
 
 export function createActivity(verb, actorId, targetId, objectId) {
