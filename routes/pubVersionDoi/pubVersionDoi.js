@@ -119,8 +119,7 @@ export function postVersionDoi(req, res, next) {
 			// method: 'POST',
 			// uri: 'https://ezid.cdlib.org/shoulder/' + process.env.DOI_SHOULDER,
 			method: 'PUT',
-			// uri: 'https://ezid.cdlib.org/id/' + process.env.DOI_SHOULDER + (pubData.id + 10000),
-			uri: 'https://ezid.cdlib.org/id/' + process.env.DOI_SHOULDER + (pubData.id + 200),
+			uri: 'https://ezid.cdlib.org/id/' + process.env.DOI_SHOULDER + (pubData.id + 10000),
 			headers: {
 				Authorization: process.env.DOI_AUTH,
 				'Content-Type': 'text/plain',
