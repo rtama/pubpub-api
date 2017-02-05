@@ -190,7 +190,9 @@ export function searchFeatured(req, res, next) {
 			isPublished: true,
 			$or: [
 				{ slug: 'designandscience' },
-				{ slug: 'about' },
+				{ slug: 'design-as-participation' },
+				{ slug: 'daisydrives' },
+				{ slug: 'direct-radio-introspection' },
 			]
 		},
 		include: [
@@ -209,6 +211,9 @@ export function searchFeatured(req, res, next) {
 			$or: [
 				{ slug: 'jods' },
 				{ slug: 'resci' },
+				{ slug: 'tjoe' },
+				{ slug: 'constitucioncdmx' },
+				{ slug: 'nho' },
 			]
 		},
 		attributes: ['id', 'title', 'slug', 'description', 'logo', 'avatar']
