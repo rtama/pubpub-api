@@ -21,7 +21,7 @@ export function postSubmit(req, res, next) {
 			where: { id: req.body.pubId }
 		});
 	}).then(function(pub) {
-		if (!pub.isPublished || pub.isRestricted) {
+		if (!pub.isPublished && !pub.isRestricted) {
 			throw new Error('Pub is private. Cannot submit private Pubs');
 		}
 

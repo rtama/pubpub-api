@@ -85,7 +85,7 @@ export function postVersion(req, res, next) {
 			isPublished: !!req.body.isPublished,
 			hash: SHA1(fileHashString).toString(encHex),
 			pubId: req.body.pubId,
-			defaultFile: req.body.defaultFile,
+			defaultFile: req.body.defaultFile || newFilesWithContent[0].name,
 		});
 
 		return Promise.all([createVersion, createFiles]);
