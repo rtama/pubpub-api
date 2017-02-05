@@ -92,13 +92,14 @@ export function postLabel(req, res, next) {
 			raw: true,
 		})
 		.then(function(journalAdmin) {
-			if (!journalAdmin) {
+			if (!journalAdmin || !req.body.title) {
 				throw new Error('Not Authorized to create a label for this journalId');
 			}
 
 			return Label.create({
 				journalId: req.body.journalId,
 				title: req.body.title,
+				slug: req.body.title.replace(/[^\w\s-]/gi, '').trim().replace(/ /g, '-').toLowerCase(),
 				color: req.body.color,
 				isDisplayed: req.body.isDisplayed,
 				description: req.body.description,

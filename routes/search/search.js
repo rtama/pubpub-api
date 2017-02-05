@@ -56,7 +56,7 @@ export function searchPubs(req, res, next) {
 				{ description: { ilike: '%' + req.query.q + '%' } },
 			]
 		},
-		attributes: ['id', 'title', 'slug', 'description', 'avatar']
+		attributes: ['id', 'title', 'slug', 'description', 'avatar', 'isPublished']
 	})
 	.then(function(results) {
 		return res.status(201).json(results);
@@ -130,7 +130,7 @@ export function searchAll(req, res, next) {
 				{ description: { ilike: '%' + req.query.q + '%' } },
 			]
 		},
-		attributes: ['id', 'title', 'slug', 'description', 'avatar']
+		attributes: ['id', 'title', 'slug', 'description', 'avatar', 'isPublished']
 	});
 
 	const findUsers = User.findAll({
