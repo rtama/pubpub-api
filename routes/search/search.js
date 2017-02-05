@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import app from '../../server';
-import { redisClient, Pub, User, Label, Journal, Highlight, Contributor, PubFeature, Version } from '../../models';
+import { redisClient, Pub, User, Label, Journal, Highlight, Contributor, PubFeature, Version, JournalAdmin } from '../../models';
 import { userAttributes } from '../user/user';
 
 export function searchUsers(req, res, next) {
@@ -216,7 +216,13 @@ export function searchFeatured(req, res, next) {
 				{ slug: 'nho' },
 			]
 		},
-		attributes: ['id', 'title', 'slug', 'description', 'logo', 'avatar']
+		attributes: ['id', 'title', 'slug', 'description', 'logo', 'avatar'],
+		include: [
+			{ model: JournalAdmin, as: 'admins' }, // Filter to remove hidden if not authorized
+			{ model: User, as: 'followers', attributes: userAttributes }, 
+			{ model: PubFeature, as: 'pubFeatures', include: [{ model: Pub, as: 'pub' }] },
+			
+		]
 	});
 
 	console.time('searchQueryTime');
@@ -256,8 +262,7 @@ export function searchFeatured(req, res, next) {
 					}),
 					discussions: pub.discussions.filter((discussion)=> {
 						return discussion.isPublished;
-					})
-					.map((discussion)=> {
+					}).map((discussion)=> {
 						return discussion.id;
 					}),
 					versions: pub.versions.filter((version)=> {
@@ -265,7 +270,23 @@ export function searchFeatured(req, res, next) {
 					}),
 				};
 			}),
-			journals: results[1],
+			journals: results[1].map((journal)=> {
+				return {
+					...journal,
+					followers: journal.followers.map((follower)=> {
+						return follower.id;
+					}),
+					admins: journal.admins.map((admin)=> {
+						return admin.id;
+					}),
+					pubFeatures: journal.pubFeatures.filter((pubFeature)=> {
+						return pubFeature.pub.isPublished;
+					}).map((pubFeature)=> {
+						return pubFeature.pubId;
+					}),
+
+				};
+			}),
 		});
 	})
 	.catch(function(err) {
