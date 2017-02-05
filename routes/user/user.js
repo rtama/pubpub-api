@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import passport from 'passport';
 import app from '../../server';
-import { redisClient, SignUp, User, Pub, Journal, Label, Contributor, InvitedReviewer } from '../../models';
+import { redisClient, SignUp, User, Pub, Journal, Label, Contributor, JournalAdmin, InvitedReviewer, Version, PubFeature } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 
 export const userAttributes = ['id', 'username', 'firstName', 'lastName', 'avatar', 'bio'];
@@ -18,8 +18,39 @@ export function queryForUser(value) {
 		attributes: authenticatedUserAttributes,
 		include: [
 			// { model: Pub, as: 'pubs', include: [{ model: Pub, as: 'replyRootPub' }] },
-			{ model: Contributor, separate: true, as: 'contributions', include: [{ model: Pub, as: 'pub', include: [{ model: Pub, as: 'replyRootPub' }] }] },
-			{ model: Journal, as: 'journals' },
+			{ 
+				model: Contributor, 
+				separate: true, 
+				as: 'contributions', 
+				include: [{ 
+					model: Pub, 
+					as: 'pub', 
+					include: [
+						{ model: Pub, as: 'replyRootPub' },
+						{ model: Contributor, separate: true, as: 'contributors', include: [{ model: User, as: 'user', attributes: userAttributes }] }, // Filter to remove hidden if not authorized
+						{ model: User, as: 'followers', attributes: userAttributes }, // Filter to remove FollowsPub data from all but user
+						{ model: Version, separate: true, as: 'versions' },
+						{ model: Pub, as: 'discussions', separate: true },
+						{ model: Label, as: 'labels', through: { attributes: [] } }, // These are labels applied to the pub
+						{ model: PubFeature, separate: true, as: 'pubFeatures', include: [{ model: Journal, as: 'journal' }] },
+					],
+				}] 
+			},
+			{ 
+				model: JournalAdmin, 
+				separate: true, 
+				as: 'journalAdmins', 
+				include: [{ 
+					model: Journal, 
+					as: 'journal', 
+					include: [
+						{ model: JournalAdmin, separate: true, as: 'admins' }, // Filter to remove hidden if not authorized
+						{ model: User, as: 'followers', attributes: userAttributes }, 
+						{ model: PubFeature, separate: true, as: 'pubFeatures', include: [{ model: Pub, as: 'pub' }] },
+					],		
+				}]
+			},
+			// { model: Journal, as: 'journals' }
 			{ model: User, as: 'followers', attributes: unauthenticatedUserAttributes }, 
 			{ model: Pub, as: 'followsPubs' }, 
 			{ model: User, as: 'followsUsers' }, 
@@ -41,7 +72,9 @@ export function getUser(req, res, next) {
 		if (!userData) { throw new Error('User not Found'); }
 		const outputData = userData.toJSON ? userData.toJSON() : JSON.parse(userData);
 		console.log('Using Cache: ', !userData.toJSON);
-		const setCache = userData.toJSON ? redisClient.setexAsync('u_' + username, 120, JSON.stringify(outputData)) : {};
+
+		const cacheTimeout = process.env.IS_PRODUCTION_API === 'TRUE' ? 60 * 5 : 10;
+		const setCache = userData.toJSON ? redisClient.setexAsync('u_' + username, cacheTimeout, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, setCache]);
 	})
 	.spread(function(userData, setCacheResult) {
@@ -52,6 +85,48 @@ export function getUser(req, res, next) {
 			contributions: userData.contributions.filter((contribution)=> {
 				if (!contribution.pub.isPublished && !authenticated) { return false; }
 				return true;
+			}).map((contribution)=> {
+				const pub = contribution.pub || {};
+				return {
+					...contribution,
+					pub: {
+						...pub,
+						followers: pub.followers.map((follower)=> {
+							return follower.id;
+						}),
+						contributors: pub.contributors.filter((contributor)=> {
+							return authenticated || !contributor.isHidden;
+						}),
+						discussions: pub.discussions.filter((discussion)=> {
+							return authenticated || discussion.isPublished;
+						}).map((discussion)=> {
+							return discussion.id;
+						}),
+						versions: pub.versions.filter((version)=> {
+							return authenticated || version.isPublished;
+						}),
+					}
+				};
+			}),
+			journalAdmins: userData.journalAdmins.map((journalAdmin)=> {
+				const journal = journalAdmin.journal || {};
+				return {
+					...journalAdmin,
+					journal: {
+						...journal,
+						followers: journal.followers.map((follower)=> {
+							return follower.id;
+						}),
+						admins: journal.admins.map((admin)=> {
+							return admin.id;
+						}),
+						pubFeatures: journal.pubFeatures.filter((pubFeature)=> {
+							return authenticated || pubFeature.pub.isPublished;
+						}).map((pubFeature)=> {
+							return pubFeature.pubId;
+						}),
+					}
+				};
 			}),
 		};
 		console.timeEnd('userQueryTime');

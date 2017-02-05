@@ -1,5 +1,5 @@
 import app from '../../server';
-import { Journal, Contributor, PubSubmit } from '../../models';
+import { Journal, Contributor, PubSubmit, Pub } from '../../models';
 import { createActivity } from '../../utilities/createActivity';
 
 export function postSubmit(req, res, next) {
@@ -16,6 +16,15 @@ export function postSubmit(req, res, next) {
 		if (!contributor || (!contributor.canEdit && !contributor.isAuthor)) {
 			throw new Error('Not Authorized to edit this pub');
 		}
+
+		return Pub.findOne({
+			where: { id: req.body.pubId }
+		});
+	}).then(function(pub) {
+		if (!pub.isPublished || pub.isRestricted) {
+			throw new Error('Pub is private. Cannot submit private Pubs');
+		}
+
 		return PubSubmit.create({
 			pubId: req.body.pubId,
 			journalId: req.body.journalId
