@@ -150,5 +150,22 @@ description: Routes to access PubPub search features
       500:
         body:
           application/json:
-            example: "No Labels found"               
+            example: "No Items found"               
+/featured:
+  displayName: Featured
+  get: 
+    description: Return a list of featured pubs and journals.
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                pubs: [],
+                journals: [],
+              }
+      500:
+        body:
+          application/json:
+            example: "No Featured items found"               
     

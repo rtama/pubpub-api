@@ -1,14 +1,21 @@
 import app from '../../server';
-import { sequelize, SignUp } from '../../models';
+import { sequelize, SignUp, User } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
 
 export function generateSignUp(email) {
 	// First, try to update the emailSentCount.
 	// If there are no records to update, then we create a new one.
 	// If this fails, it is because the email must be unique and it is already used
-	return SignUp.update({ count: sequelize.literal('count + 1') }, {
-		where: { email: email, completed: false },
-		individualHooks: true, // necessary for afterUpdate hook to fire.
+	return User.findOne({
+		where: { email: email }
+	})
+	.then(function(userData) {
+		if (userData) { throw new Error('Email already used'); }
+
+		return SignUp.update({ count: sequelize.literal('count + 1') }, {
+			where: { email: email, completed: false },
+			individualHooks: true, // necessary for afterUpdate hook to fire.
+		});
 	})
 	.then(function(updateCount) {
 		if (updateCount[0]) { 
