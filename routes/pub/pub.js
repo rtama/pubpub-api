@@ -59,7 +59,8 @@ export function getPub(req, res, next) {
 		if (!pubData) { throw new Error('Pub not found'); }
 		const outputData = pubData.toJSON ? pubData.toJSON() : JSON.parse(pubData);
 		console.log('Using Cache: ', !pubData.toJSON);
-		const setCache = pubData.toJSON ? redisClient.setexAsync('p_' + req.query.slug, 120, JSON.stringify(outputData)) : {};
+		const cacheTimeout = process.env.IS_PRODUCTION_API === 'TRUE' ? 60 * 10 : 10;
+		const setCache = pubData.toJSON ? redisClient.setexAsync('p_' + req.query.slug, cacheTimeout, JSON.stringify(outputData)) : {};
 		if (outputData.inactive) { throw new Error('Pub Deleted'); }
 		return Promise.all([outputData, Reaction.findAll({ raw: true }), Role.findAll({ raw: true }), setCache]);
 	})

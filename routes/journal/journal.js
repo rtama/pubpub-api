@@ -35,7 +35,8 @@ export function getJournal(req, res, next) {
 		if (!journalData) { throw new Error('Journal not Found'); }
 		const outputData = journalData.toJSON ? journalData.toJSON() : JSON.parse(journalData);
 		console.log('Using Cache: ', !journalData.toJSON);
-		const setCache = journalData.toJSON ? redisClient.setexAsync('j_' + slug, 120, JSON.stringify(outputData)) : {};
+		const cacheTimeout = process.env.IS_PRODUCTION_API === 'TRUE' ? 60 * 10 : 10;
+		const setCache = journalData.toJSON ? redisClient.setexAsync('j_' + slug, cacheTimeout, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, setCache]);
 	})
 	.spread(function(journalData, setCacheResult) {

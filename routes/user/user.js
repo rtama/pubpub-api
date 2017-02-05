@@ -73,7 +73,7 @@ export function getUser(req, res, next) {
 		const outputData = userData.toJSON ? userData.toJSON() : JSON.parse(userData);
 		console.log('Using Cache: ', !userData.toJSON);
 
-		const cacheTimeout = process.env.IS_PRODUCTION_API === 'TRUE' ? 60 * 5 : 10;
+		const cacheTimeout = process.env.IS_PRODUCTION_API === 'TRUE' ? 60 * 10 : 10;
 		const setCache = userData.toJSON ? redisClient.setexAsync('u_' + username, cacheTimeout, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, setCache]);
 	})

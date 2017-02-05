@@ -31,7 +31,8 @@ export function getLabel(req, res, next) {
 		if (!labelData) { throw new Error('Label not Found'); }
 		const outputData = labelData.toJSON ? labelData.toJSON() : JSON.parse(labelData);
 		console.log('Using Cache: ', !labelData.toJSON);
-		const setCache = labelData.toJSON ? redisClient.setexAsync('l_' + req.query.title, 120, JSON.stringify(outputData)) : {};
+		const cacheTimeout = process.env.IS_PRODUCTION_API === 'TRUE' ? 60 * 10 : 10;
+		const setCache = labelData.toJSON ? redisClient.setexAsync('l_' + req.query.title, cacheTimeout, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, setCache]);
 	})
 	.spread(function(labelData, setCacheResult) {

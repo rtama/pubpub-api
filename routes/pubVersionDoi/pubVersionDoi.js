@@ -65,7 +65,9 @@ export function postVersionDoi(req, res, next) {
 				},
 				creators: {
 					creator: ()=> {
-						return pubData.contributors.map((contributor)=> {
+						return pubData.contributors.filter((contributor)=> {
+							return contributor.isAuthor;
+						}).map((contributor)=> {
 							const userData = contributor.user || {};
 							let name;
 							if (!userData.lastName) { name = userData.firstName; }
@@ -117,14 +119,15 @@ export function postVersionDoi(req, res, next) {
 			// method: 'POST',
 			// uri: 'https://ezid.cdlib.org/shoulder/' + process.env.DOI_SHOULDER,
 			method: 'PUT',
-			uri: 'https://ezid.cdlib.org/id/' + process.env.DOI_SHOULDER + (pubData.id + 10000),
+			// uri: 'https://ezid.cdlib.org/id/' + process.env.DOI_SHOULDER + (pubData.id + 10000),
+			uri: 'https://ezid.cdlib.org/id/' + process.env.DOI_SHOULDER + (pubData.id + 200),
 			headers: {
 				Authorization: process.env.DOI_AUTH,
 				'Content-Type': 'text/plain',
 			},
 			body: '' +
 				'_profile: datacite\n' +
-				'_target: ' + encodeURIComponent('https://v3-dev.pubpub.org/pub/' + pubData.slug + '?version=' + selectedVersion.hash) + '\n' +
+				'_target: ' + encodeURIComponent('https://www.pubpub.org/pub/' + pubData.slug + '?version=' + selectedVersion.hash) + '\n' +
 				'datacite: ' + encodeURIComponent(dataCiteXmlString)
 		});
 	})
