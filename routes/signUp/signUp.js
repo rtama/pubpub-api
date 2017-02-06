@@ -1,6 +1,7 @@
 import app from '../../server';
 import { sequelize, SignUp, User } from '../../models';
 import { generateHash } from '../../utilities/generateHash';
+import { sendEmail } from '../../utilities/sendEmail';
 
 export function generateSignUp(email) {
 	// First, try to update the emailSentCount.
@@ -49,6 +50,22 @@ app.get('/signup', getSignUp);
 export function postSignUp(req, res, next) {
 	
 	generateSignUp(req.body.email)
+	.then(function(result) {
+		return SignUp.findOne({ where: { email: req.body.email } });
+	})
+	.then(function(signUpData) {
+		const hash = signUpData.hash;
+		const templateId = 1287321;
+		const actionUrl = process.env.IS_PRODUCTION_API
+			? 'https://www.pubpub.org/users/create/' + hash
+			: 'https://dev.pubpub.org/users/create/' + hash;
+		
+		const templateModel = {
+			action_url: actionUrl,
+		};
+		const email = signUpData.email;
+		return sendEmail(email, templateId, templateModel);
+	})
 	.then(function(result) {
 		return res.status(201).json(true);
 	})
