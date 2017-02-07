@@ -89,6 +89,11 @@ const getContent = function(pathname, fileType) {
 				if (err) { reject(err); }
 				resolve(data);
 			});
+		} else if (fileType === 'application/x-bibtex' || pathname.split('.').pop() === 'bib') {
+			fs.readFile(pathname, 'utf8', function (err, data) {
+				if (err) { reject(err); }
+				resolve(data);
+			});
 		} else {
 			resolve(null);
 		}

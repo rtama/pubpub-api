@@ -100,7 +100,7 @@ export function postDiscussion(req, res, next) {
 
 		const createFiles = File.bulkCreate(newFilesWithContent, { returning: true });
 		const createVersion = Version.create({
-			versionMessage: 'First discussion version',
+			message: 'First discussion version',
 			isPublished: !req.body.isPrivate,
 			hash: SHA1(fileHashString).toString(encHex),
 			pubId: newDiscussionId,
@@ -130,7 +130,7 @@ export function postDiscussion(req, res, next) {
 		return res.status(201).json(discussionData);
 	})
 	.catch(function(err) {
-		console.error('Error in postPub: ', err);
+		console.error('Error in postPubDiscussion: ', err);
 		return res.status(500).json(err.message);
 	});
 }

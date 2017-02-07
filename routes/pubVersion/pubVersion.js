@@ -21,7 +21,7 @@ export function postVersion(req, res, next) {
 
 	const user = req.user || {};
 	if (!user.id) { return res.status(500).json('Not authorized'); }
-	if (!req.body.versionMessage) { return res.status(500).json('Version Message Required'); }
+	if (!req.body.message) { return res.status(500).json('Version Message Required'); }
 
 	// Separate old files (ones already parsed on the PubPub end) from new ones
 	const files = req.body.files || [];
@@ -81,7 +81,7 @@ export function postVersion(req, res, next) {
 
 		const createFiles = File.bulkCreate(newFilesWithContent, { returning: true });
 		const createVersion = Version.create({
-			message: req.body.versionMessage,
+			message: req.body.message,
 			isPublished: !!req.body.isPublished,
 			hash: SHA1(fileHashString).toString(encHex),
 			pubId: req.body.pubId,
