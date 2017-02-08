@@ -89,7 +89,7 @@ const getContent = function(pathname, fileType) {
 				if (err) { reject(err); }
 				resolve(data);
 			});
-		} else if (fileType === 'application/x-bibtex' || pathname.split('.').pop() === 'bib') {
+		} else if (fileType === 'application/x-bibtex') {
 			fs.readFile(pathname, 'utf8', function (err, data) {
 				if (err) { reject(err); }
 				resolve(data);
@@ -103,8 +103,12 @@ const getContent = function(pathname, fileType) {
 
 export function processFile(file) {
 	let fileUrl = file.url;
-	const fileType = file.type;
-	const extension = fileUrl ? fileUrl.substr((~-fileUrl.lastIndexOf('.') >>> 0) + 2) : 'jpg';
+	const extension = fileUrl ? fileUrl.split('.').pop() : 'jpg';
+	let fileType = file.type;
+	if (extension === 'md') { fileType = 'text/markdown'; }
+	if (extension === 'bib') { fileType = 'application/x-bibtex'; }
+	if (extension === 'ppub') { fileType = 'ppub'; }
+	
 	
 	// Grab the file. 
 	// If the URL is not a pubpub url, then upload it to pubpub and grab new url
@@ -158,6 +162,7 @@ export function processFile(file) {
 			url: data[0] || fileUrl,
 			hash: data[1] || null,
 			content: data[2] || null,
+			type: fileType
 		};	
 	})
 	.catch(function(err) {
