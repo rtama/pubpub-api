@@ -61,7 +61,7 @@ export function queryForUser(value) {
 }
 export function getUser(req, res, next) {
 	const username = req.query.username ? req.query.username.toLowerCase() : '';
-	const authenticated = req.user && req.user.username === username;
+	const authenticated = req.user && (req.user.username === username || req.user.id === 14); // If user is self, or if PubPub admin account
 	
 	console.time('userQueryTime');
 	redisClient.getAsync('u_' + username).then(function(redisResult) {

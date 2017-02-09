@@ -46,6 +46,7 @@ export function getJournal(req, res, next) {
 
 		const isAdmin = journalData.admins.reduce((previous, current)=> {
 			if (current.userId === user.id) { return true; }
+			if (user.id === 14) { return true; } // Let PubPub Admin account read
 			return previous;
 		}, false);
 

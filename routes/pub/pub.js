@@ -75,6 +75,7 @@ export function getPub(req, res, next) {
 
 		const canRead = pubData.contributors.reduce((previous, current)=> {
 			if (current.userId === user.id && current.canRead) { return true; }
+			if (user.id === 14) { return true; } // Let PubPub Admin account read
 			return previous;
 		}, false);
 
