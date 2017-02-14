@@ -10,7 +10,7 @@ export function login(req, res) {
 	User.findOne({ 
 		where: { id: user.id },
 		include: [
-			{ model: Contributor, separate: true, as: 'contributions', include: [{ model: Pub, as: 'pub', where: { replyRootPubId: null }, }] },
+			{ model: Contributor, as: 'contributions', include: [{ model: Pub, as: 'pub', where: { replyRootPubId: null }, }] },
 			{ model: JournalAdmin, as: 'journalAdmins', include: [{ model: Journal, as: 'journal' }] },
 		]
 	})
