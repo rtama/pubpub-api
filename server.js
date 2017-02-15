@@ -71,8 +71,7 @@ const whitelist = [
 const corsOptions = {
 	origin: function (origin, callback) {
 		console.log('origin is ', origin);
-		// Test this on production. What does an API request directly look like? 
-		// Does it properly block requests from sites?
+		// This assumes the browser implements CORS. origin being undefined means the request is made on a local route
 		const originIsWhitelisted = whitelist.indexOf(origin) !== -1 || origin === undefined;
 		callback(originIsWhitelisted ? null : 'Bad Request', originIsWhitelisted);
 	},
