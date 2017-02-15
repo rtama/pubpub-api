@@ -57,7 +57,7 @@ const whitelist = [
 	'http://localhost:3000',
 	'http://www.funky.com:3000',
 	// Dev Testing
-	'http://test.epsx.org',
+	'https://test.epsx.org',
 	// Primary
 	'https://www.pubpub.org',
 	'https://dev.pubpub.org',
