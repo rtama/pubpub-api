@@ -64,7 +64,14 @@ const whitelist = [
 	'https://staging.pubpub.org',
 	// Journals
 	'https://www.responsivescience.org',
+	'https://jods.mitpress.mit.edu',
+	'https://editor.pubpub.org',
 ];
+
+app.use(function(req,res,next){ 
+	req.headers.origin = req.headers.origin || req.headers.host; 
+	next(); 
+});
 
 const corsOptions = {
 	origin: function (origin, callback) {
@@ -143,17 +150,8 @@ if (process.env.WORKER !== 'true') {
 
 		app.use(middleware);
 
-		// app.all('/*', function(req, res, next) {
-		// 	res.header('Access-Control-Allow-Origin', req.headers.origin);
-		// 	res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
-		// 	res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
-		// 	res.header('Access-Control-Allow-Credentials', true);
-		// 	next();
-		// });
-
 		app.use(function (err, req, res, next) {
 			// Handle errors.
-			// console.log('Error! ' + err + ', ' + next);
 			console.log('Error! ' + err);
 			next();
 		});
