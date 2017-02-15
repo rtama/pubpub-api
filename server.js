@@ -65,12 +65,12 @@ const whitelist = [
 	// Journals
 	'https://www.responsivescience.org',
 	'https://jods.mitpress.mit.edu',
+	'https://www.reclamationsci.com',
 	'https://editor.pubpub.org',
 ];
 
 const corsOptions = {
 	origin: function (origin, callback) {
-		console.log('origin is ', origin);
 		// This assumes the browser implements CORS. origin being undefined means the request is made on a local route
 		const originIsWhitelisted = whitelist.indexOf(origin) !== -1 || origin === undefined;
 		callback(originIsWhitelisted ? null : 'Bad Request', originIsWhitelisted);
