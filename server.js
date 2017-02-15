@@ -68,17 +68,12 @@ const whitelist = [
 	'https://editor.pubpub.org',
 ];
 
-app.use(function(req,res,next){ 
-	req.headers.origin = req.headers.origin || req.headers.host; 
-	next(); 
-});
-
 const corsOptions = {
 	origin: function (origin, callback) {
 		console.log('origin is ', origin);
 		// Test this on production. What does an API request directly look like? 
 		// Does it properly block requests from sites?
-		const originIsWhitelisted = whitelist.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production';
+		const originIsWhitelisted = whitelist.indexOf(origin) !== -1 || origin === undefined;
 		callback(originIsWhitelisted ? null : 'Bad Request', originIsWhitelisted);
 	},
 	methods: 'POST, GET, PUT, DELETE, OPTIONS',
