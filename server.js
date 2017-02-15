@@ -4,6 +4,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import cors from 'cors';
 
 
 import { sequelize, User } from './models';
@@ -46,6 +47,43 @@ app.use(session({
 		maxAge: 30 * 24 * 60 * 60 * 1000// = 30 days.
 	},
 }));
+
+
+/* -------- */
+/* Configure app CORS */
+/* -------- */
+const whitelist = [
+	// Localhost
+	'http://localhost:3000',
+	'http://www.funky.com:3000',
+	// Dev Testing
+	'http://test.epsx.org',
+	// Primary
+	'https://www.pubpub.org',
+	'https://dev.pubpub.org',
+	'https://staging.pubpub.org',
+	// Journals
+	'https://www.responsivescience.org',
+];
+
+const corsOptions = {
+	origin: function (origin, callback) {
+		console.log('origin is ', origin);
+		// Test this on production. What does an API request directly look like? 
+		// Does it properly block requests from sites?
+		const originIsWhitelisted = whitelist.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production';
+		callback(originIsWhitelisted ? null : 'Bad Request', originIsWhitelisted);
+	},
+	methods: 'POST, GET, PUT, DELETE, OPTIONS',
+	allowHeaders: 'X-Requested-With, Content-Type',
+	credentials: true,
+};
+app.use(cors(corsOptions));
+// 	res.header('Access-Control-Allow-Origin', req.headers.origin);
+// 	res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
+// 	res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+// 	res.header('Access-Control-Allow-Credentials', true);
+
 
 /* ------------------- */
 /* Configure app login */
@@ -105,13 +143,13 @@ if (process.env.WORKER !== 'true') {
 
 		app.use(middleware);
 
-		app.all('/*', function(req, res, next) {
-			res.header('Access-Control-Allow-Origin', req.headers.origin);
-			res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
-			res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
-			res.header('Access-Control-Allow-Credentials', true);
-			next();
-		});
+		// app.all('/*', function(req, res, next) {
+		// 	res.header('Access-Control-Allow-Origin', req.headers.origin);
+		// 	res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
+		// 	res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+		// 	res.header('Access-Control-Allow-Credentials', true);
+		// 	next();
+		// });
 
 		app.use(function (err, req, res, next) {
 			// Handle errors.
