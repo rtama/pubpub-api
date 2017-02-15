@@ -6,7 +6,13 @@ import { userAttributes } from '../user/user';
 
 export function queryForJournal(value) {
 	const where = isNaN(value) 
-		? { slug: value, inactive: { $not: true } }
+		? { 
+			$or: [
+				{ slug: value },
+				{ customDomain: value },
+			], 
+			inactive: { $not: true } 
+		}
 		: { id: value, inactive: { $not: true } };
 	return Journal.findOne({
 		where: where,
@@ -36,7 +42,7 @@ export function getJournal(req, res, next) {
 		const outputData = journalData.toJSON ? journalData.toJSON() : JSON.parse(journalData);
 		console.log('Using Cache: ', !journalData.toJSON);
 		const cacheTimeout = process.env.IS_PRODUCTION_API === 'TRUE' ? 60 * 10 : 10;
-		const setCache = journalData.toJSON ? redisClient.setexAsync('j_' + slug, cacheTimeout, JSON.stringify(outputData)) : {};
+		const setCache = journalData.toJSON ? redisClient.setexAsync('j_' + outputData.slug, cacheTimeout, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, setCache]);
 	})
 	.spread(function(journalData, setCacheResult) {
