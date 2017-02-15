@@ -6,11 +6,10 @@ import { authenticatedUserAttributes } from '../user/user';
 export function login(req, res) {
 	const user = req.user;
 	if (!user) { return res.status(201).json({}); }
-
 	User.findOne({ 
 		where: { id: user.id },
 		include: [
-			{ model: Contributor, separate: true, as: 'contributions', include: [{ model: Pub, as: 'pub', where: { replyRootPubId: null }, }] },
+			{ model: Contributor, as: 'contributions', include: [{ model: Pub, as: 'pub', where: { replyRootPubId: null }, }] },
 			{ model: JournalAdmin, as: 'journalAdmins', include: [{ model: Journal, as: 'journal' }] },
 		]
 	})
