@@ -9,7 +9,7 @@ export function login(req, res) {
 	User.findOne({ 
 		where: { id: user.id },
 		include: [
-			{ model: Contributor, as: 'contributions', include: [{ model: Pub, as: 'pub', where: { replyRootPubId: null }, }] },
+			{ model: Contributor, as: 'contributions', include: [{ model: Pub, as: 'pub', where: { replyRootPubId: null }, required: false }] },
 			{ model: JournalAdmin, as: 'journalAdmins', include: [{ model: Journal, as: 'journal' }] },
 		]
 	})
@@ -23,6 +23,7 @@ export function login(req, res) {
 		return res.status(201).json(loginData);
 	})
 	.catch(function(err) {
+		console.log(err);
 		return res.status(500).json(err);
 	});
 
