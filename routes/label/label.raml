@@ -52,6 +52,9 @@ post:
         order: 
           description: Number of double precision used for order some labels (e.g. Journal pages)
           type: number
+        depth: 
+          description: Integer used to nest some labels (e.g. Journal pages)
+          type: number
   responses:
     200:
       body:
@@ -100,6 +103,9 @@ put:
           description: color of the updated label
         order: 
           description: Number of double precision used for order some labels (e.g. Journal pages)
+          type: number
+        depth: 
+          description: Integer used to nest some labels (e.g. Journal pages)
           type: number
   responses:
     200:
