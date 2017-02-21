@@ -120,7 +120,8 @@ export function putReviewer(req, res, next) {
 	})
 	.then(function(updatedInvitation) {
 		if (req.body.invitationAccepted && updatedInvitation[1][0]) {
-			return [updatedInvitation, createActivity('acceptedReviewInvitation', user.id, updatedInvitation[1][0].pubId, updatedInvitation[1][0].inviterJournalId || updatedInvitation[1][0].inviterUserId)];	
+			// return [updatedInvitation, createActivity('acceptedReviewInvitation', user.id, updatedInvitation[1][0].pubId, updatedInvitation[1][0].inviterJournalId || updatedInvitation[1][0].inviterUserId)];	
+			return [updatedInvitation, createActivity('acceptedReviewInvitation', user.id, updatedInvitation[1][0].pubId, updatedInvitation[1][0].inviterUserId)];	
 		}
 		return [updatedInvitation, {}];
 	})
