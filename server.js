@@ -66,6 +66,7 @@ const whitelist = [
 	'https://www.responsivescience.org',
 	'https://jods.mitpress.mit.edu',
 	'https://www.reclamationsci.com',
+	'https://nelm.media.mit.edu',
 	'https://editor.pubpub.org',
 ];
 
