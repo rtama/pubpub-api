@@ -39,6 +39,9 @@ const generateAndSaveFile = function(file) {
 		if (fileType === 'text/markdown' && fileUrl === '/temp.md' && fileContent) {
 			resolve(tmp.file({ postfix: '.' + extension }));
 		}
+		if (fileType === 'application/json' && fileUrl === '/tempHighlights.json' && fileContent) {
+			resolve(tmp.file({ postfix: '.' + extension }));
+		}
 		resolve(null);
 	})
 	.then(function(object) {
@@ -94,6 +97,11 @@ const getContent = function(pathname, fileType) {
 				if (err) { reject(err); }
 				resolve(data);
 			});
+		} else if (fileType === 'application/json') {
+			fs.readFile(pathname, 'utf8', function (err, data) {
+				if (err) { reject(err); }
+				resolve(data);
+			});
 		} else {
 			resolve(null);
 		}
@@ -108,6 +116,7 @@ export function processFile(file) {
 	if (extension === 'md') { fileType = 'text/markdown'; }
 	if (extension === 'bib') { fileType = 'application/x-bibtex'; }
 	if (extension === 'ppub') { fileType = 'ppub'; }
+	if (extension === 'json') { fileType = 'application/json'; }
 	
 	
 	// Grab the file. 
@@ -128,7 +137,6 @@ export function processFile(file) {
 	})
 	.then(function(object) {
 		const pathname = object.path;
-
 		return new Promise(function(resolve, reject) {
 			const writeFile = fs.createWriteStream(pathname);
 			https.get(fileUrl.replace('http://', 'https://'), function(response) {
