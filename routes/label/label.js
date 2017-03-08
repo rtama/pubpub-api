@@ -5,14 +5,14 @@ import { userAttributes } from '../user/user';
 
 export function queryForLabel(value) {
 	const where = isNaN(value) 
-		? { title: value, userId: null, journalId: null, pubId: null }
+		? { slug: value, userId: null, journalId: null, pubId: null }
 		: { id: value, userId: null, journalId: null, pubId: null };
 
 	return Label.findOne({
 		where: where,
-		attributes: ['id', 'title', 'color', 'journalId', 'userId', 'pubId', 'isDisplayed', 'description'],
+		attributes: ['id', 'slug', 'title', 'color', 'journalId', 'userId', 'pubId', 'isDisplayed', 'description'],
 		include: [
-			{ model: Pub, as: 'pubs', where: { isPublished: true } },
+			{ model: Pub, as: 'pubs', where: { isPublished: true }, required: false },
 			{ model: User, as: 'followers', attributes: userAttributes }, 
 		],
 	});
@@ -21,18 +21,17 @@ export function queryForLabel(value) {
 
 export function getLabel(req, res, next) {
 	// Return a single global label and the associated pubs
-
 	console.time('labelQueryTime');
-	redisClient.getAsync('l_' + req.query.title).then(function(redisResult) {
+	redisClient.getAsync('l_' + req.query.slug).then(function(redisResult) {
 		if (redisResult) { return redisResult; }
-		return queryForLabel(req.query.title);
+		return queryForLabel(req.query.slug);
 	})
 	.then(function(labelData) {
 		if (!labelData) { throw new Error('Label not Found'); }
 		const outputData = labelData.toJSON ? labelData.toJSON() : JSON.parse(labelData);
 		console.log('Using Cache: ', !labelData.toJSON);
 		const cacheTimeout = process.env.IS_PRODUCTION_API === 'TRUE' ? 60 * 10 : 10;
-		const setCache = labelData.toJSON ? redisClient.setexAsync('l_' + req.query.title, cacheTimeout, JSON.stringify(outputData)) : {};
+		const setCache = labelData.toJSON ? redisClient.setexAsync('l_' + req.query.slug, cacheTimeout, JSON.stringify(outputData)) : {};
 		return Promise.all([outputData, setCache]);
 	})
 	.spread(function(labelData, setCacheResult) {
