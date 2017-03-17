@@ -1,0 +1,23 @@
+displayName: Journals
+description: User Journals routes
+get:
+  description: Get a User's journals.
+  queryParameters:
+    userId:
+      type: string
+      required: true
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            [
+              "journalAdminsObject"
+            ]
+    500:
+      body:
+        application/json:
+          example: |
+            {
+              error : "Error getting User Journals"
+            }

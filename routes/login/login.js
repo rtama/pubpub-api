@@ -5,6 +5,7 @@ import { authenticatedUserAttributes } from '../user/user';
 
 export function login(req, res) {
 	const user = req.user;
+	// return res.status(201).json(user || {});
 	if (!user) { return res.status(201).json({}); }
 	User.findOne({ 
 		where: { id: user.id },

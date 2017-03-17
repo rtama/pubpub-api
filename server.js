@@ -190,6 +190,7 @@ if (process.env.WORKER !== 'true') {
 		require('./routes/pubFileAttribution/pubFileAttribution.js');
 		
 		require('./routes/user/user.js');
+		require('./routes/userJournals/userJournals.js');
 		require('./routes/userLabel/userLabel.js');
 		require('./routes/userPassword/userPassword.js');
 		require('./routes/userPasswordReset/userPasswordReset.js');
