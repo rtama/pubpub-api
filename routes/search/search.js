@@ -211,6 +211,7 @@ export function searchFeatured(req, res, next) {
 			$or: [
 				{ slug: 'jods' },
 				{ slug: 'resci' },
+				{ slug: 'iai' },
 				{ slug: 'tjoe' },
 				{ slug: 'constitucioncdmx' },
 				{ slug: 'nho' },

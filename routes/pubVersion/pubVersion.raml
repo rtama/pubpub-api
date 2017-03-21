@@ -15,6 +15,9 @@ post:
         isPublished:
           description: Boolean for whether this version should be published
           required: true
+        isRestricted:
+          description: Boolean for whether this version should be restricted
+          required: true
         files: 
           description: All files, those that are new should NOT include an "id" field and they will be added.
         defaultFile:

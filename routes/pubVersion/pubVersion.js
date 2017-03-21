@@ -83,6 +83,7 @@ export function postVersion(req, res, next) {
 		const createVersion = Version.create({
 			message: req.body.message,
 			isPublished: !!req.body.isPublished,
+			isRestricted: !!req.body.isRestricted,
 			hash: SHA1(fileHashString).toString(encHex),
 			pubId: req.body.pubId,
 			defaultFile: req.body.defaultFile || newFilesWithContent[0].name,
