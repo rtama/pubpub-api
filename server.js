@@ -55,6 +55,7 @@ app.use(session({
 const whitelist = [
 	// Localhost
 	'http://localhost:3000',
+	'http://localhost:9001',
 	'http://www.funky.com:3000',
 	// Dev Testing
 	'https://test.epsx.org',
