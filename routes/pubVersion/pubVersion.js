@@ -59,9 +59,11 @@ export function postVersion(req, res, next) {
 		const processFilePromises = newFiles.map((file)=> {
 			return processFile(file);
 		});
+		console.time('ProcessFile Time');
 		return Promise.all(processFilePromises);
 	})
 	.then(function(promiseResults) {
+		console.timeEnd('ProcessFile Time');
 		const filesHashes = oldFiles.map((file)=> { return file.hash; });
 
 		const newFilesWithContent = newFiles.map((file, index)=> {
