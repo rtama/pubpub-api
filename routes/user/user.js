@@ -17,7 +17,6 @@ export function queryForUser(value) {
 		where: where,
 		attributes: authenticatedUserAttributes,
 		include: [
-			// { model: Pub, as: 'pubs', include: [{ model: Pub, as: 'replyRootPub' }] },
 			{ 
 				model: Contributor, 
 				separate: true, 
@@ -32,7 +31,8 @@ export function queryForUser(value) {
 						{ model: Version, separate: true, as: 'versions' },
 						{ model: Pub, as: 'discussions', separate: true },
 						{ model: Label, as: 'labels', through: { attributes: [] } }, // These are labels applied to the pub
-						{ model: PubFeature, separate: true, as: 'pubFeatures', include: [{ model: Journal, as: 'journal' }] },
+						// { model: PubFeature, separate: true, as: 'pubFeatures', include: [{ model: Journal, as: 'journal' }] },
+						{ model: PubFeature, separate: true, as: 'pubFeatures' },
 					],
 				}] 
 			},
@@ -46,14 +46,14 @@ export function queryForUser(value) {
 					include: [
 						{ model: JournalAdmin, separate: true, as: 'admins' }, // Filter to remove hidden if not authorized
 						{ model: User, as: 'followers', attributes: userAttributes }, 
-						{ model: PubFeature, separate: true, as: 'pubFeatures', include: [{ model: Pub, as: 'pub' }] },
+						// { model: PubFeature, separate: true, as: 'pubFeatures', include: [{ model: Pub, as: 'pub' }] },
+						{ model: PubFeature, separate: true, as: 'pubFeatures' },
 					],		
 				}]
 			},
-			// { model: Journal, as: 'journals' }
-			{ model: User, as: 'followers', attributes: unauthenticatedUserAttributes }, 
+			{ model: User, as: 'followers', attributes: userAttributes }, 
 			{ model: Pub, as: 'followsPubs' }, 
-			{ model: User, as: 'followsUsers' }, 
+			{ model: User, as: 'followsUsers', attributes: userAttributes }, 
 			{ model: Journal, as: 'followsJournals' }, 
 			{ model: Label, as: 'followsLabels' }, 
 		]

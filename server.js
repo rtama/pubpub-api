@@ -24,7 +24,7 @@ console.debug = function() {};
 const app = express();
 export default app;
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
 
@@ -55,6 +55,7 @@ app.use(session({
 const whitelist = [
 	// Localhost
 	'http://localhost:3000',
+	'http://localhost:9001',
 	'http://www.funky.com:3000',
 	// Dev Testing
 	'https://test.epsx.org',

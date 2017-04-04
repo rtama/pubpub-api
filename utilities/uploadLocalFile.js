@@ -18,7 +18,8 @@ export function uploadLocalFile(filePath) {
 		: '_testing';
 		
 	const extension = filePath !== undefined ? filePath.substr((~-filePath.lastIndexOf('.') >>> 0) + 2) : 'jpg';
-	const filename = folderName + '/' + new Date().getTime() + '.' + extension;
+	// const filename = folderName + '/' + new Date().getTime() + '.' + extension;
+	const filename = folderName + '/' + (Math.floor(Math.random() * 8)) + new Date().getTime() + '.' + extension;
 
 	return readFile(filePath)
 	.then(function(file) {

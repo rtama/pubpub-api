@@ -10,6 +10,10 @@ import hashFiles from 'hash-files';
 import tmp from 'tmp-promise';
 import { uploadLocalFile } from './uploadLocalFile';
 
+const AWS = require('aws-sdk');
+AWS.config.region = 'us-east-1';
+AWS.config.setPromisesDependency(Promise);
+
 const fsWriteFile = Promise.promisify(fs.writeFile);
 tmp.setGracefulCleanup();
 
@@ -137,43 +141,100 @@ export function processFile(file) {
 	})
 	.then(function(object) {
 		const pathname = object.path;
-		return new Promise(function(resolve, reject) {
-			const writeFile = fs.createWriteStream(pathname);
-			https.get(fileUrl.replace('http://', 'https://'), function(response) {
-				response.pipe(writeFile);
-				writeFile.on('finish', function() {
-					writeFile.close(function() {
 
-						Promise.all([
-							uploadToPubPub(pathname, fileUrl),
-							generateHash(pathname),
-							getContent(pathname, fileType),
-						])
-						.then(function(results) {
-							resolve(results);
+		const needsToUploadToPubPub = fileUrl.indexOf('https://assets.pubpub.org') === -1;
+		const needsGetContent = fileType === 'text/markdown' || fileType === 'ppub' || fileType === 'application/x-bibtex' || fileType === 'application/json';
+		
+
+		if (needsToUploadToPubPub || needsGetContent) {
+			return new Promise(function(resolve, reject) {
+				const writeFile = fs.createWriteStream(pathname);
+				https.get(fileUrl.replace('http://', 'https://'), function(response) {
+					response.pipe(writeFile);
+					writeFile.on('finish', function() {
+						writeFile.close(function() {
+
+							const actionPromises = [];
+							if (needsToUploadToPubPub) {
+								actionPromises.push(uploadToPubPub(pathname, fileUrl));
+							} else {
+								actionPromises.push(null);
+							}
+							if (needsGetContent) {
+								actionPromises.push(getContent(pathname, fileType));
+							} else {
+								actionPromises.push(null);
+							}
+
+							// console.log('actionPromises are', actionPromises)
+
+							Promise.all(actionPromises)
+							.then(function(results) {
+								resolve(results);
+							})
+							.catch(function(err) {
+								reject(err);
+							});
+
+							// Promise.all([
+							// 	uploadToPubPub(pathname, fileUrl),
+							// 	generateHash(pathname),
+							// 	getContent(pathname, fileType),
+							// ])
+							// .then(function(results) {
+							// 	resolve(results);
+							// });
+							
 						});
-						
+
+					})
+					.on('error', function(err) {
+						reject(err);
+
 					});
-
-				})
-				.on('error', function(err) {
+				}).on('error', (err) => {
 					reject(err);
-
 				});
-			}).on('error', (err) => {
-				reject(err);
 			});
-		});
+		}
+		
+		return [];
+		
 	})
 	.then(function(data) {
-		return {
+
+		const outputData = {
 			url: data[0] || fileUrl,
-			hash: data[1] || null,
-			content: data[2] || null,
+			// hash: data[1] || null,
+			content: data[1] || null,
 			type: fileType
-		};	
+		};
+
+		const s3bucket = new AWS.S3({ params: { Bucket: 'assets.pubpub.org' } });
+		const params = {
+			Key: outputData.url.replace('https://assets.pubpub.org/', ''), 
+		};
+
+		const getHead = s3bucket.headObject(params).promise();
+
+		return Promise.all([getHead, outputData]);
+		// return {
+		// 	url: data[0] || fileUrl,
+		// 	hash: data[1] || null,
+		// 	content: data[2] || null,
+		// 	type: fileType
+		// };	
+	})
+	.spread(function(s3HeadData, outputData) {
+		// console.log(s3HeadData);
+		// console.log('output data is ', outputData)
+		return {
+			...outputData,
+			hash: s3HeadData.ETag,
+		};
 	})
 	.catch(function(err) {
-		console.log('Error in process file', file, err);
+		// console.log('Error in process file', file, err);
+		console.log('Error in process file', err);
 	});
 }

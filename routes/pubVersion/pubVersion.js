@@ -25,8 +25,8 @@ export function postVersion(req, res, next) {
 
 	// Separate old files (ones already parsed on the PubPub end) from new ones
 	const files = req.body.files || [];
-	const oldFiles = files.filter((file)=> { return file.id !== undefined; });
-	const newFiles = files.filter((file)=> { return file.id === undefined; });
+	const oldFiles = files.filter((file)=> { return file.id; });
+	const newFiles = files.filter((file)=> { return !file.id; });
 
 	let newVersionId;
 
@@ -59,14 +59,16 @@ export function postVersion(req, res, next) {
 		const processFilePromises = newFiles.map((file)=> {
 			return processFile(file);
 		});
+		console.time('ProcessFile Time');
 		return Promise.all(processFilePromises);
 	})
 	.then(function(promiseResults) {
+		console.timeEnd('ProcessFile Time');
 		const filesHashes = oldFiles.map((file)=> { return file.hash; });
 
 		const newFilesWithContent = newFiles.map((file, index)=> {
 			filesHashes.push(promiseResults[index].hash);
-			return { ...file, ...promiseResults[index], pubId: req.body.pubId };
+			return { ...file, ...promiseResults[index], pubId: req.body.pubId, updatedAt: undefined, createdAt: undefined };
 		});
 
 		// To generate the version hash, take the hash of all the files, sort them alphabetically, concatenate them, and then hash that string.
@@ -83,6 +85,7 @@ export function postVersion(req, res, next) {
 		const createVersion = Version.create({
 			message: req.body.message,
 			isPublished: !!req.body.isPublished,
+			isRestricted: !!req.body.isRestricted,
 			hash: SHA1(fileHashString).toString(encHex),
 			pubId: req.body.pubId,
 			defaultFile: req.body.defaultFile || newFilesWithContent[0].name,
