@@ -40,7 +40,8 @@ const generateAndSaveFile = function(file) {
 		if (fileType === 'ppub' && fileUrl === '/temp.ppub' && fileContent) {
 			resolve(tmp.file({ postfix: '.' + extension }));
 		}
-		if (fileType === 'text/markdown' && fileUrl === '/temp.md' && fileContent) {
+		// if (fileType === 'text/markdown' && fileUrl === '/temp.md' && fileContent) {
+		if (fileUrl === `/temp.${extension}` && fileContent) {
 			resolve(tmp.file({ postfix: '.' + extension }));
 		}
 		if (fileType === 'application/json' && fileUrl === '/tempHighlights.json' && fileContent) {
@@ -130,9 +131,11 @@ export function processFile(file) {
 
 	return setDelay()
 	.then(function() {
+		console.log('hello1');
 		return generateAndSaveFile(file);
 	})
 	.then(function(newFileUrl) {
+		console.log('hello2', newFileUrl);
 		if (newFileUrl) { fileUrl = newFileUrl; }
 		return null;
 	})
@@ -140,12 +143,14 @@ export function processFile(file) {
 		return tmp.file({ postfix: '.' + extension });
 	})
 	.then(function(object) {
+		console.log('hello3');
 		const pathname = object.path;
 
 		const needsToUploadToPubPub = fileUrl.indexOf('https://assets.pubpub.org') === -1;
 		const needsGetContent = fileType === 'text/markdown' || fileType === 'ppub' || fileType === 'application/x-bibtex' || fileType === 'application/json';
 		
 
+		console.log('hello4', needsToUploadToPubPub, needsGetContent);
 		if (needsToUploadToPubPub || needsGetContent) {
 			return new Promise(function(resolve, reject) {
 				const writeFile = fs.createWriteStream(pathname);
@@ -202,7 +207,7 @@ export function processFile(file) {
 		
 	})
 	.then(function(data) {
-
+		console.log('hello5');
 		const outputData = {
 			url: data[0] || fileUrl,
 			// hash: data[1] || null,
