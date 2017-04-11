@@ -121,7 +121,7 @@ export function getUser(req, res, next) {
 							return admin.id;
 						}),
 						pubFeatures: journal.pubFeatures.filter((pubFeature)=> {
-							return authenticated || pubFeature.pub.isPublished;
+							return authenticated || (pubFeature.pub && pubFeature.pub.isPublished);
 						}).map((pubFeature)=> {
 							return pubFeature.pubId;
 						}),
