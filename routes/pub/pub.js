@@ -70,12 +70,12 @@ export function getPub(req, res, next) {
 
 		const canEdit = pubData.contributors.reduce((previous, current)=> {
 			if (current.userId === user.id && (current.canEdit || current.isAuthor)) { return true; }
+			if (user.id === 14) { return true; } // Let PubPub Admin account edit
 			return previous;
 		}, false);
 
 		const canRead = pubData.contributors.reduce((previous, current)=> {
 			if (current.userId === user.id && current.canRead) { return true; }
-			if (user.id === 14) { return true; } // Let PubPub Admin account read
 			return previous;
 		}, false);
 
@@ -205,7 +205,7 @@ export function putPub(req, res, next) {
 		raw: true,
 	})
 	.then(function(contributorData) {
-		if (!contributorData || (!contributorData.canEdit && !contributorData.isAuthor)) {
+		if (!contributorData || (!contributorData.canEdit && !contributorData.isAuthor && user.id !== 14)) {
 			throw new Error('Not Authorized to update this pub');
 		}
 		return Pub.update(updatedPub, {
@@ -237,7 +237,7 @@ export function deletePub(req, res, next) {
 		raw: true,
 	})
 	.then(function(contributorData) {
-		if (!contributorData.canEdit && !contributorData.isAuthor) {
+		if (!contributorData.canEdit && !contributorData.isAuthor && user.id !== 14) {
 			throw new Error('Not Authorized to delete this pub');
 		}
 		return Pub.findOne({
