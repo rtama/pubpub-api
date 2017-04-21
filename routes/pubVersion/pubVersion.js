@@ -136,6 +136,33 @@ export function postVersion(req, res, next) {
 		});
 	})
 	.then(function(newVersion) {
+		const getPub = Pub.findOne({
+			where: { id: req.body.pubId },
+			raw: true
+		});
+
+		return Promise.all([newVersion, getPub]);
+
+	})
+	.spread(function(newVersion, pubData) {
+		if (!pubData.isPublished && req.body.isPublished) {
+			return Promise.all([
+				newVersion,
+				createActivity('publishedPub', user.id, req.body.pubId),
+				Pub.update({ isPublished: true }, { where: { id: req.body.pubId }, individualHooks: true })
+			]);
+		}
+
+		if (pubData.isPublished) {
+			return Promise.all([
+				newVersion,
+				createActivity('newVersion', user.id, req.body.pubId),
+			]);
+		}
+		
+		return [newVersion];
+	})
+	.spread(function(newVersion, activityCreated, updatedPub) {
 		return res.status(201).json(newVersion);
 	})
 	.catch(function(err) {
