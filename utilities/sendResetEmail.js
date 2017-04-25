@@ -3,7 +3,7 @@ const helper = require('sendgrid').mail;
 const sendgrid = require('sendgrid')(sendgridKey);
 
 const fromname = 'PubPub';
-const from = 'team@pubpub.org';
+const from = 'pubpub@media.mit.edu';
 
 export function sendResetEmail(obj) {
 	return new Promise(
