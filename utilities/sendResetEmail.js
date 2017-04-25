@@ -16,7 +16,7 @@ export function sendResetEmail(obj) {
 			const fromEmail = new helper.Email(from, fromname);
 
 			mail.setFrom(fromEmail);
-			mail.setSubject('PubPub Password Reset!');
+			mail.setSubject('PubPub Password Reset');
 
 			const toEmail = new helper.Email(obj.email, obj.username);
 			personalization.addTo(toEmail);
